@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import { IUserDocument, IUserModel } from "../types/user.types";
 
-const userSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema<IUserDocument>(
   {
     name: {
       type: String,
@@ -62,12 +64,30 @@ const userSchema = new mongoose.Schema(
         default: true,
       },
     },
+
+    refreshToken: {
+      type: String,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const User = mongoose.model("User", userSchema);
+// Pre-save hook to hash password if modified
+userSchema.pre('save', async function () {
+  if (!this.isModified('password') || !this.password) return;
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Compare password method
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+  if (!this.password) return false;
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+const User = mongoose.model<IUserDocument, IUserModel>("User", userSchema);
 
 export default User;

@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Model } from "mongoose";
 
 export interface IUserSettings {
   soundEnabled: boolean;
@@ -16,8 +16,13 @@ export interface IUser {
   highestCombo: number;
   averageScore: number;
   settings: IUserSettings;
+  refreshToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface IUserDocument extends IUser, Document {}
+export interface IUserDocument extends IUser, Document {
+  comparePassword(password: string): Promise<boolean>;
+}
+
+export interface IUserModel extends Model<IUserDocument> {}

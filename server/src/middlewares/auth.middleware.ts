@@ -1,19 +1,38 @@
 import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import User from "../models/user.model";
+import { AppError } from "../utils/AppError";
+import { asyncHandler } from "../utils/asyncHandler";
+import { JWT_ACCESS_SECRET } from "../config/config";
 
 export interface AuthRequest extends Request {
-  user?: any; // TODO: Replace with proper user type
+  user?: any;
   accessToken?: string;
   refreshToken?: string;
 }
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
-  // Read/extract slicestorm_accesstoken and slicestorm_refreshtoken from cookies
-  const accessToken = req.cookies?.slicestorm_accesstoken;
-  const refreshToken = req.cookies?.slicestorm_refreshtoken;
+export const authMiddleware = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const token = req.cookies?.slicestorm_accesstoken || req.header("Authorization")?.replace("Bearer ", "");
 
-  req.accessToken = accessToken;
-  req.refreshToken = refreshToken;
+  if (!token) {
+    throw new AppError("Unauthorized request", 401);
+  }
 
-  // TODO: Implement authentication, JWT verification, token refresh, user lookup, or authorization
-  next();
-};
+  try {
+    const decodedToken = jwt.verify(token, JWT_ACCESS_SECRET as string) as any;
+
+    const user = await User.findById(decodedToken?._id).select("-password -refreshToken");
+
+    if (!user) {
+      throw new AppError("Invalid Access Token", 401);
+    }
+
+    req.user = user;
+    req.accessToken = token;
+    req.refreshToken = req.cookies?.slicestorm_refreshtoken;
+
+    next();
+  } catch (error) {
+    throw new AppError("Invalid Access Token", 401);
+  }
+});
