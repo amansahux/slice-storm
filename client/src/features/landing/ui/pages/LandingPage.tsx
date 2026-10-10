@@ -4,10 +4,12 @@ interface Props {
     
 }
 
-export const LandingPage = (props: Props) => {
+export const LandingPage = () => {
     return (
         <div>
             
         </div>
     )
 }
+
+export default LandingPage;
