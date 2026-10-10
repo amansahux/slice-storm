@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { IGameSessionDocument } from "../types/gameSession.types";
 
-const gameSessionSchema = new mongoose.Schema(
+const gameSessionSchema = new mongoose.Schema<IGameSessionDocument>(
   {
     sessionId: {
       type: String,

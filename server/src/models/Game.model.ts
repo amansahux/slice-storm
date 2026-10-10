@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { IGameDocument } from "../types/game.types";
 
-const gameSchema = new mongoose.Schema(
+const gameSchema = new mongoose.Schema<IGameDocument>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
