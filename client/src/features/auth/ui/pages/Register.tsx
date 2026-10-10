@@ -84,76 +84,57 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="bg-arcade-pattern min-h-screen text-[#252525] font-body selection:bg-[#FF8A3D] selection:text-white relative overflow-x-hidden flex flex-col justify-between">
-      {/* ================= TOP MARQUEE NAVBAR ================= */}
-      <header className="w-full bg-white border-b-4 border-[#252525] shadow-[0_4px_0_0_#1b1c1c] sticky top-0 z-50">
-        <div className="flex justify-between items-center w-full px-4 sm:px-6 py-3 max-w-7xl mx-auto">
-          {/* Logo Branding */}
-          <Link
-            to="/"
-            onClick={() => playArcadeSound("click")}
-            className="flex items-center gap-3 group active:translate-y-1 transition-transform"
-          >
-            <img
-              alt="SLICE STORM Logo"
-              className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-[2px_2px_0px_#252525]"
-              src="https://lh3.googleusercontent.com/aida/AEtjO1WUw9lRDvhi-UhWzlX8T0Nc0xAWYblN7QH7-5o7Mv73IPZ7qFY0KD-nrkyDCwKEQuhMZCzJo0f2t6H1g68n5XWWPIgZBqklKhPcsBwU6M4OKyymDlXE0pPiGpcklBOE_kyy3IpRTpELlPRex0pygwgAqW66VvHzN3RA7G2EOM_6wj3rKW-MTyTrAmC5EPnxZzDhmd1vnLVCcJKbOqOEfWHAsHLG44izuG-IRgbgAzg8kus1U8jLmozJYg0"
-            />
-          </Link>
-
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6">
-            <span className="text-[#252525] hover:text-[#D9363E] font-bold text-sm tracking-wider transition-colors cursor-pointer">
-              ARCADE
-            </span>
-            <span className="text-[#252525] hover:text-[#D9363E] font-bold text-sm tracking-wider transition-colors cursor-pointer">
-              LEADERBOARDS
-            </span>
-            <span className="text-[#252525] hover:text-[#D9363E] font-bold text-sm tracking-wider transition-colors cursor-pointer">
-              STORE
-            </span>
-            <span className="text-[#252525] hover:text-[#D9363E] font-bold text-sm tracking-wider transition-colors cursor-pointer">
-              HOW TO PLAY
-            </span>
-          </nav>
-
-          {/* Trailing Controls: Audio Toggle & Login Action */}
+    <div className="paper-pattern text-[#252525] min-h-screen relative overflow-x-hidden selection:bg-[#FF8A3D] selection:text-white font-body flex flex-col justify-between">
+      {/* Main Container */}
+      <div className="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full">
+        {/* TOP HEADER / CORNER ACTIONS */}
+        <header className="flex items-center justify-between pb-4 w-full">
           <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFD84D] font-arcade text-xs text-[#252525] comic-border shadow-pop-sm uppercase tracking-wider">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#5CB85C] border border-[#252525] animate-pulse"></span>
+              Arcade Server Online
+            </span>
+            <span className="hidden sm:inline-block font-display font-black text-xs uppercase tracking-widest text-[#524B40] bg-[#F7E8C3]/80 px-2.5 py-1 rounded-md border border-[#252525]/20">
+              v2.4 Blitz Edition
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Sound FX Toggle Button */}
             <button
               onClick={handleSoundToggle}
-              aria-label="Toggle SFX Sound Effects"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FFD84D] text-[#252525] border-2 border-[#252525] shadow-[2px_2px_0_0_#252525] rounded font-bold text-xs uppercase hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+              aria-label="Toggle sound effects"
+              className="px-3 py-1.5 rounded-xl bg-[#FFF4D6] hover:bg-white comic-border shadow-pop-sm flex items-center gap-2 font-display font-bold text-xs text-[#252525] transition-transform active:translate-y-0.5 cursor-pointer"
               type="button"
             >
               <span className="material-symbols-outlined text-[18px]">
                 {soundOn ? "volume_up" : "volume_off"}
               </span>
               <span className="hidden sm:inline">
-                {soundOn ? "SFX: ON" : "SFX: OFF"}
+                {soundOn ? "FX: ON" : "FX: OFF"}
               </span>
             </button>
 
             <Link
               to="/login"
               onClick={() => playArcadeSound("click")}
-              className="px-4 py-1.5 bg-[#D9363E] text-white border-2 sm:border-[3px] border-[#252525] shadow-[3px_3px_0_0_#252525] rounded font-bold text-xs uppercase tracking-wider hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#252525] active:translate-y-0.5 transition-all"
+              className="px-3.5 py-1.5 rounded-xl bg-[#FFD84D] hover:bg-yellow-400 font-arcade text-xs text-[#252525] comic-border shadow-pop-sm tracking-wide transition-all hover:-translate-y-0.5"
             >
-              LOGIN
+              ALREADY REGISTERED?
             </Link>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* ================= MAIN ARCADE ARENA ================= */}
-      <main className="flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-4">
-          {/* ================= LEFT COLUMN: THE GAME WORLD ================= */}
-          <section className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 relative">
-            <div className="absolute -top-4 -left-6 hidden xl:block animate-drift pointer-events-none">
-              <span className="inline-block px-3 py-1 bg-[#5CB85C] text-white font-bold text-xs uppercase border-2 border-[#252525] shadow-[3px_3px_0_0_#252525] rounded-full rotate-[-6deg]">
-                ★ CRISP ARCADE PHYSICS
-              </span>
-            </div>
+        {/* ================= MAIN ARCADE ARENA ================= */}
+        <main className="my-auto py-4">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* ================= LEFT COLUMN: THE GAME WORLD ================= */}
+            <section className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 relative">
+              <div className="absolute -top-4 -left-6 hidden xl:block animate-drift pointer-events-none">
+                <span className="inline-block px-3 py-1 bg-[#5CB85C] text-white font-bold text-xs uppercase border-2 border-[#252525] shadow-[3px_3px_0_0_#252525] rounded-full rotate-[-6deg]">
+                  ★ CRISP ARCADE PHYSICS
+                </span>
+              </div>
 
             {/* Logo Marquee */}
             <div className="animate-bobble flex flex-col items-center lg:items-start">
@@ -702,38 +683,24 @@ const Register: React.FC = () => {
         </div>
       )}
 
-      {/* ================= ARCADE CABINET FOOTER ================= */}
-      <footer className="w-full border-t-4 border-[#252525] shadow-[0_-4px_0_0_#1b1c1c] mt-8 z-20 bg-[#FFF4D6]">
-        <div className="flex flex-col md:flex-row justify-between items-center w-full px-6 py-6 gap-4 max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-            <span className="font-display font-black text-base text-[#D9363E] uppercase">
-              SLICE STORM
-            </span>
-            <span className="text-xs text-[#524B40] font-bold">
-              © 2025 SLICE STORM ARCADE. ALL RIGHTS RESERVED. JUICE
-              RESPONSIBLY.
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-[#524B40]">
-            <span className="hover:text-[#D9363E] transition-colors cursor-pointer">
-              TERMS OF SERVICE
-            </span>
-            <span className="text-[#252525] font-black">•</span>
-            <span className="hover:text-[#D9363E] transition-colors cursor-pointer">
-              PRIVACY POLICY
-            </span>
-            <span className="text-[#252525] font-black">•</span>
-            <span className="hover:text-[#D9363E] transition-colors cursor-pointer">
-              ARCADE SAFETY
-            </span>
-            <span className="text-[#252525] font-black">•</span>
-            <span className="hover:text-[#D9363E] transition-colors cursor-pointer">
-              SUPPORT
-            </span>
-          </div>
+      {/* ARCADE PAGE FOOTER */}
+      <footer className="mt-6 pt-4 border-t-2 border-[#252525]/15 flex flex-col sm:flex-row items-center justify-between text-xs font-bold text-[#524B40] gap-2">
+        <div className="flex items-center gap-2">
+          <span className="font-arcade text-[#D9363E]">SLICE STORM ARCADE</span>
+          <span>•</span>
+          <span>High-Speed Fruit Action</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="hover:text-[#252525] transition-colors cursor-pointer">
+            Leaderboards
+          </span>
+          <span className="hover:text-[#252525] transition-colors cursor-pointer">
+            Blade Controls
+          </span>
+          <span className="text-stone-400">© 2025 SLICE STORM</span>
         </div>
       </footer>
+    </div>
     </div>
   );
 };
