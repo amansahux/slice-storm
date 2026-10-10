@@ -8,6 +8,8 @@ const requiredEnvVars = [
   "CLIENT_URL",
   "SERVER_URL",
   "NODE_ENV",
+  "JWT_ACCESS_SECRET",
+  "JWT_REFRESH_SECRET",
 ] as const;
 
 // Check for missing environment variables, log each one, and exit if any are missing
@@ -29,3 +31,5 @@ export const PORT = process.env.PORT || 3000;
 export const CLIENT_URL = process.env.CLIENT_URL as string;
 export const SERVER_URL = process.env.SERVER_URL as string;
 export const NODE_ENV = process.env.NODE_ENV as string;
+export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET as string;
+export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;

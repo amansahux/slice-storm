@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 // Routes
-app.use("/api/users", userRoutes);
+app.use("/api/auth", userRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/sessions", gameSessionRoutes);
 app.use("/api/leaderboards", leaderboardRoutes);
