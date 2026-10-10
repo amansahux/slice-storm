@@ -1,1 +1,224 @@
 @import "tailwindcss";
+
+@layer utilities {
+  .font-arcade {
+    font-family: "Titan One", "Bricolage Grotesque", cursive, sans-serif;
+  }
+  .font-display {
+    font-family: "Bricolage Grotesque", sans-serif;
+  }
+  .font-body {
+    font-family: "Rubik", "Plus Jakarta Sans", sans-serif;
+  }
+
+  .paper-pattern {
+    background-color: #f7e8c3;
+    background-image: radial-gradient(#e5d1a4 1.5px, transparent 1.5px),
+      radial-gradient(#ebd9b3 1.5px, #f7e8c3 1.5px);
+    background-size: 24px 24px;
+    background-position: 0 0, 12px 12px;
+  }
+
+  .bg-arcade-pattern {
+    background-color: #fff4d6;
+    background-image: radial-gradient(#252525 1.5px, transparent 1.5px),
+      radial-gradient(#e8d3a2 1.5px, #fff4d6 1.5px);
+    background-size: 32px 32px;
+    background-position: 0 0, 16px 16px;
+  }
+
+  .paper-card-bg {
+    background-color: #fff9e6;
+    background-image: radial-gradient(rgba(217, 54, 62, 0.04) 1px, transparent 0);
+    background-size: 16px 16px;
+  }
+
+  .comic-border {
+    border: 4px solid #252525;
+  }
+  .comic-border-thick {
+    border: 6px solid #252525;
+  }
+
+  .shadow-pop {
+    box-shadow: 6px 6px 0px #252525;
+  }
+  .shadow-pop-lg {
+    box-shadow: 9px 10px 0px #252525;
+  }
+  .shadow-pop-sm {
+    box-shadow: 3px 3px 0px #252525;
+  }
+  .shadow-pop-pressed {
+    box-shadow: 2px 2px 0px #252525;
+  }
+  .shadow-inset-pop {
+    box-shadow: inset 3px 3px 0px rgba(37, 37, 37, 0.12);
+  }
+
+  .shadow-paper-2 {
+    box-shadow: 2px 2px 0px #252525;
+  }
+  .shadow-paper-4 {
+    box-shadow: 4px 4px 0px #252525;
+  }
+  .shadow-paper-6 {
+    box-shadow: 6px 6px 0px #252525;
+  }
+  .shadow-paper-8 {
+    box-shadow: 8px 8px 0px #252525;
+  }
+
+  .arcade-btn-slam {
+    box-shadow: 5px 5px 0px #252525;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .arcade-btn-slam:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px #252525;
+  }
+  .arcade-btn-slam:active {
+    transform: translate(5px, 5px);
+    box-shadow: 0px 0px 0px #252525;
+  }
+
+  .arcade-btn-secondary {
+    box-shadow: 4px 4px 0px #252525;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .arcade-btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #252525;
+  }
+  .arcade-btn-secondary:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #252525;
+  }
+
+  .arcade-btn {
+    transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .arcade-btn:hover {
+    transform: translate(-2px, -3px);
+    box-shadow: 8px 9px 0px #252525;
+  }
+  .arcade-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0px #252525;
+  }
+
+  .washi-tape {
+    background: rgba(255, 216, 77, 0.9);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    clip-path: polygon(3% 0%, 97% 2%, 100% 100%, 0% 98%);
+  }
+
+  .crt-screen {
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+      linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.04),
+        rgba(0, 255, 0, 0.01),
+        rgba(0, 0, 255, 0.04)
+      );
+    background-size: 100% 4px, 6px 100%;
+  }
+
+  .game-input:focus,
+  .arcade-input:focus {
+    outline: none;
+    border-color: #ff8a3d;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.25), 4px 4px 0px #252525;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1.5deg);
+  }
+}
+@keyframes gentleFloatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+@keyframes bladePulse {
+  0%, 100% {
+    transform: rotate(-18deg) scale(1);
+    filter: drop-shadow(0 0 0px #ffd84d);
+  }
+  50% {
+    transform: rotate(-16deg) scale(1.04);
+    filter: drop-shadow(0 0 12px rgba(255, 216, 77, 0.7));
+  }
+}
+@keyframes bobble {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+}
+@keyframes slashShimmer {
+  0% {
+    transform: translateX(-150%) skewX(-30deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(250%) skewX(-30deg);
+    opacity: 0;
+  }
+}
+@keyframes spinBlade {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes particleDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6px, -12px) scale(1.15);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.animate-float-1 {
+  animation: gentleFloat 4.5s ease-in-out infinite;
+}
+.animate-float-2 {
+  animation: gentleFloatReverse 5.2s ease-in-out infinite;
+}
+.animate-blade {
+  animation: bladePulse 3s ease-in-out infinite;
+}
+.animate-bobble {
+  animation: bobble 3.5s ease-in-out infinite;
+}
+.animate-shimmer {
+  animation: slashShimmer 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.animate-spin-blade {
+  animation: spinBlade 0.8s linear infinite;
+}
+.animate-drift {
+  animation: particleDrift 2.4s ease-in-out infinite;
+}
