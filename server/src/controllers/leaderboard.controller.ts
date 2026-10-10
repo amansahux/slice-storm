@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import * as leaderboardService from "../services/leaderboard.service";
+import { GameMode } from "../validators/common.validator";
 
 export const getGlobal = asyncHandler(async (req: Request, res: Response) => {
   const result = await leaderboardService.getGlobalLeaderboard();
@@ -8,6 +9,7 @@ export const getGlobal = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getByMode = asyncHandler(async (req: Request, res: Response) => {
-  const result = await leaderboardService.getModeLeaderboard(req.params.mode);
+  const mode = req.params.mode as GameMode;
+  const result = await leaderboardService.getModeLeaderboard(mode);
   res.status(200).json({ status: "success", data: result });
 });

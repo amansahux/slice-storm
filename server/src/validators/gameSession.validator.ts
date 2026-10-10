@@ -1,13 +1,14 @@
 import { z } from "zod";
+import { GameModeEnum, GameSessionStatusEnum } from "./common.validator";
 
 export const createGameSessionSchema = z.object({
   body: z.object({
-    mode: z.enum(["classic", "arcade"], { required_error: "Mode is required" }),
+    mode: GameModeEnum,
   }),
 });
 
 export const updateGameSessionSchema = z.object({
   body: z.object({
-    status: z.enum(["active", "completed", "expired", "abandoned"]),
+    status: GameSessionStatusEnum,
   }),
 });

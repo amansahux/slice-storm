@@ -1,12 +1,13 @@
 import { Document, Types } from "mongoose";
+import { GameMode, GameSessionStatus } from "../validators/common.validator";
 
 export interface IGameSession {
   sessionId: string;
   userId: Types.ObjectId | string;
-  mode: "classic" | "arcade";
+  mode: GameMode;
   startedAt: Date;
   expiresAt: Date;
-  status: "active" | "completed" | "expired" | "abandoned";
+  status: GameSessionStatus;
   createdAt?: Date;
   updatedAt?: Date;
 }

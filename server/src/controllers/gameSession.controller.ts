@@ -9,6 +9,6 @@ export const create = asyncHandler(async (req: AuthRequest, res: Response) => {
 });
 
 export const updateStatus = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const result = await gameSessionService.updateSessionStatus(req.params.id, req.body.status);
+  const result = await gameSessionService.updateSessionStatus(req.params?.id as string, req.body.status);
   res.status(200).json({ status: "success", data: result });
 });

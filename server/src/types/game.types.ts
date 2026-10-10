@@ -1,9 +1,10 @@
 import { Document, Types } from "mongoose";
+import { GameMode, GameStatus } from "../validators/common.validator";
 
 export interface IGame {
   userId: Types.ObjectId | string;
   sessionId: string;
-  mode: "classic" | "arcade";
+  mode: GameMode;
   score: number;
   fruitsSliced: number;
   fruitsMissed: number;
@@ -12,7 +13,7 @@ export interface IGame {
   accuracy: number;
   duration: number;
   level: number;
-  status: "completed" | "invalid";
+  status: GameStatus;
   createdAt?: Date;
   updatedAt?: Date;
 }
