@@ -4,9 +4,9 @@ import Footer from "../../shared/components/Footer";
 
 const GameLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-[#F7E8C3] paper-pattern text-[#1b1c1c] flex flex-col justify-between">
       <Navbar />
-      <main>
+      <main className="flex-1 flex flex-col">
         <Outlet />
       </main>
       <Footer />
