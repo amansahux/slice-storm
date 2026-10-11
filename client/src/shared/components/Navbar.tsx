@@ -163,33 +163,42 @@ export const Navbar: React.FC<NavbarProps> = memo(
               </div>
             </div>
 
-            {/* Crazy Neo-Brutalist Arcade Katana Hamburger (Mobile Only) */}
+            {/* Crazy Neo-Brutalist Arcade Hamburger with Perfect Center Cross */}
             <button
               type="button"
               onClick={toggleMobileMenu}
               aria-label="Toggle Navigation Menu"
               aria-expanded={isMobileMenuOpen}
-              className={`lg:hidden cursor-pointer relative w-11 h-11 rounded-lg border-3 border-[#1b1c1c] flex flex-col items-center justify-center gap-1.5 p-2 transition-all duration-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none ${
+              className={`lg:hidden cursor-pointer relative w-11 h-11 rounded-lg border-3 border-[#1b1c1c] flex items-center justify-center p-0 transition-all duration-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none ${
                 isMobileMenuOpen
                   ? "bg-[#d9363e] shadow-[2px_2px_0px_#1b1c1c]"
                   : "bg-[#ffe07e] hover:bg-[#ffd84d] shadow-[3px_3px_0px_#1b1c1c]"
               }`}
             >
-              <span
-                className={`block h-[3.5px] w-6 bg-[#1b1c1c] rounded-full transition-transform duration-300 origin-center ${
-                  isMobileMenuOpen ? "rotate-45 translate-y-[8px]" : ""
-                }`}
-              />
-              <span
-                className={`block h-[3.5px] w-6 bg-[#1b1c1c] rounded-full transition-all duration-200 ${
-                  isMobileMenuOpen ? "opacity-0 scale-x-0" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`block h-[3.5px] w-6 bg-[#1b1c1c] rounded-full transition-transform duration-300 origin-center ${
-                  isMobileMenuOpen ? "-rotate-45 -translate-y-[8px]" : ""
-                }`}
-              />
+              <div className="relative w-6 h-5 flex flex-col justify-between items-center pointer-events-none">
+                {/* Top Katana Line */}
+                <span
+                  className={`block h-[3.5px] w-6 bg-[#1b1c1c] rounded-full transition-all duration-200 origin-center ${
+                    isMobileMenuOpen
+                      ? "absolute top-1/2 -translate-y-1/2 rotate-45"
+                      : ""
+                  }`}
+                />
+                {/* Middle Katana Line */}
+                <span
+                  className={`block h-[3.5px] w-6 bg-[#1b1c1c] rounded-full transition-all duration-150 origin-center ${
+                    isMobileMenuOpen ? "opacity-0 scale-x-0" : "opacity-100"
+                  }`}
+                />
+                {/* Bottom Katana Line */}
+                <span
+                  className={`block h-[3.5px] w-6 bg-[#1b1c1c] rounded-full transition-all duration-200 origin-center ${
+                    isMobileMenuOpen
+                      ? "absolute top-1/2 -translate-y-1/2 -rotate-45"
+                      : ""
+                  }`}
+                />
+              </div>
             </button>
           </div>
         </div>
