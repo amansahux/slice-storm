@@ -22,8 +22,8 @@ interface NavbarProps {
 const NAV_LINKS = [
   { id: "ARCADE", label: "ARCADE", icon: "sports_esports" },
   { id: "LEADERBOARDS", label: "LEADERBOARDS", icon: "leaderboard" },
-  { id: "STORE", label: "STORE", icon: "storefront" },
-  { id: "HOW TO PLAY", label: "HOW TO PLAY", icon: "help" },
+  { id: "DASHBOARD", label: "DASHBOARD", icon: "dashboard" },
+  { id: "HISTORY", label: "HISTORY", icon: "history" },
 ] as const;
 
 export const Navbar: React.FC<NavbarProps> = memo(
@@ -63,6 +63,8 @@ export const Navbar: React.FC<NavbarProps> = memo(
           if (item === "ARCADE") navigate("/arcade");
           else if (item === "LEADERBOARDS" && onOpenLeaderboard)
             onOpenLeaderboard();
+          else if (item === "DASHBOARD") navigate("/dashboard");
+          else if (item === "HISTORY") navigate("/history");
           else if (item === "STORE" && onOpenStore) onOpenStore();
           else if (item === "HOW TO PLAY" && onOpenHowToPlay) onOpenHowToPlay();
         }
