@@ -10,8 +10,11 @@ import ProtectedRoute from "./protectedRoutes";
 
 // Pages — lazy loaded for code splitting (Rule 08)
 import { lazy } from "react";
+import { Game } from "../../features/games/ui/pages/Game";
 
-const LandingPage = lazy(() => import("../../features/landing/ui/pages/LandingPage"));
+const LandingPage = lazy(
+  () => import("../../features/landing/ui/pages/LandingPage"),
+);
 const Login = lazy(() => import("../../features/auth/ui/pages/Login"));
 const Register = lazy(() => import("../../features/auth/ui/pages/Register"));
 
@@ -19,39 +22,40 @@ const Register = lazy(() => import("../../features/auth/ui/pages/Register"));
 // const Dashboard = lazy(() => import("../../features/dashboard/ui/pages/Dashboard"));
 
 const router = createBrowserRouter([
-    // ── Public routes (redirect to /dashboard if already logged in) ──
-    {
-        element: <PublicRoute />,
+  // ── Public routes (redirect to /dashboard if already logged in) ──
+  {
+    element: <PublicRoute />,
+    children: [
+      // Landing page — no layout wrapper
+      {
+        path: "/",
+        element: <LandingPage />,
+      },
+      // Auth pages — wrapped in AuthLayout
+      {
+        element: <AuthLayout />,
         children: [
-            // Landing page — no layout wrapper
-            {
-                path: "/",
-                element: <LandingPage />,
-            },
-            // Auth pages — wrapped in AuthLayout
-            {
-                element: <AuthLayout />,
-                children: [
-                    { path: "/login", element: <Login /> },
-                    { path: "/register", element: <Register /> },
-                ],
-            },
+          { path: "/login", element: <Login /> },
+          { path: "/register", element: <Register /> },
         ],
-    },
+      },
+    ],
+  },
 
-    // ── Protected routes (redirect to /login if not authenticated) ──
-    {
-        element: <ProtectedRoute />,
+  // ── Protected routes (redirect to /login if not authenticated) ──
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <GameLayout />,
         children: [
-            {
-                element: <GameLayout />,
-                children: [
-                    // { path: "/dashboard", element: <Dashboard /> },
-                    // Add more protected game routes here
-                ],
-            },
+          { path: "/arcade", element: <Game /> },
+          // { path: "/dashboard", element: <Dashboard /> },
+          // Add more protected game routes here
         ],
-    },
+      },
+    ],
+  },
 ]);
 
 export default router;
