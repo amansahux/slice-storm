@@ -10,7 +10,6 @@ import ProtectedRoute from "./protectedRoutes";
 
 // Pages — lazy loaded for code splitting (Rule 08)
 import { lazy } from "react";
-import { Game } from "../../features/games/ui/pages/Game";
 
 const LandingPage = lazy(
   () => import("../../features/landing/ui/pages/LandingPage"),
@@ -19,7 +18,12 @@ const Login = lazy(() => import("../../features/auth/ui/pages/Login"));
 const Register = lazy(() => import("../../features/auth/ui/pages/Register"));
 
 // Future protected pages — add lazy imports here
-// const Dashboard = lazy(() => import("../../features/dashboard/ui/pages/Dashboard"));
+const Dashboard = lazy(() => import("../../features/dashboard/ui/pages/Dashboard"));
+const Leaderboard = lazy(() => import("../../features/leaderboard/ui/pages/Leaderboard"));
+const History = lazy(() => import("../../features/history/ui/pages/History"));
+const Setting = lazy(() => import("../../features/setting/ui/pages/Setting"));
+const Profile = lazy(() => import("../../features/profile/ui/pages/Profile"));
+import { Game } from "../../features/games/ui/pages/Game";
 
 const router = createBrowserRouter([
   // ── Public routes (redirect to /dashboard if already logged in) ──
@@ -50,8 +54,11 @@ const router = createBrowserRouter([
         element: <GameLayout />,
         children: [
           { path: "/arcade", element: <Game /> },
-          // { path: "/dashboard", element: <Dashboard /> },
-          // Add more protected game routes here
+          { path: "/dashboard", element: <Dashboard /> },
+          { path: "/leaderboard", element: <Leaderboard /> },
+          { path: "/history", element: <History /> },
+          { path: "/setting", element: <Setting /> },
+          { path: "/profile", element: <Profile /> },
         ],
       },
     ],

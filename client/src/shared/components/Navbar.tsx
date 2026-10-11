@@ -1,5 +1,5 @@
 import React, { memo, useState, useCallback, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../app/store";
 import {
@@ -19,30 +19,48 @@ interface NavbarProps {
   onNavClick?: (nav: string) => void;
 }
 
-const NAV_LINKS = [
-  { id: "ARCADE", label: "ARCADE", icon: "sports_esports" },
-  { id: "LEADERBOARDS", label: "LEADERBOARDS", icon: "leaderboard" },
-  { id: "DASHBOARD", label: "DASHBOARD", icon: "dashboard" },
-  { id: "HISTORY", label: "HISTORY", icon: "history" },
+interface NavItemConfig {
+  id: string;
+  label: string;
+  path: string;
+  icon: string;
+}
+
+const NAV_LINKS: readonly NavItemConfig[] = [
+  { id: "ARCADE", label: "ARCADE", path: "/arcade", icon: "sports_esports" },
+  { id: "DASHBOARD", label: "DASHBOARD", path: "/dashboard", icon: "dashboard" },
+  { id: "LEADERBOARDS", label: "LEADERBOARDS", path: "/leaderboard", icon: "leaderboard" },
+  { id: "HISTORY", label: "HISTORY", path: "/history", icon: "history" },
 ] as const;
 
 export const Navbar: React.FC<NavbarProps> = memo(
   ({
     soundOn: propSoundOn,
     onSoundToggle,
-    onOpenLeaderboard,
-    onOpenStore,
-    onOpenHowToPlay,
-    activeNav = "ARCADE",
+    activeNav: propActiveNav,
     onNavClick,
   }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const authUser = useSelector((state: RootState) => state.auth.user);
     const [internalSound, setInternalSound] = useState(isSoundEnabled());
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const currentSoundOn =
       propSoundOn !== undefined ? propSoundOn : internalSound;
+
+    // Derive active nav dynamically from current pathname if not explicitly passed
+    const currentActiveNav = React.useMemo(() => {
+      if (propActiveNav) return propActiveNav.toUpperCase();
+      const currentPath = location.pathname.toLowerCase();
+      if (currentPath === "/arcade") return "ARCADE";
+      if (currentPath === "/dashboard") return "DASHBOARD";
+      if (currentPath === "/leaderboard") return "LEADERBOARDS";
+      if (currentPath === "/history") return "HISTORY";
+      if (currentPath === "/profile") return "PROFILE";
+      if (currentPath === "/setting") return "SETTING";
+      return "";
+    }, [propActiveNav, location.pathname]);
 
     const handleSoundClick = useCallback(() => {
       if (onSoundToggle) {
@@ -54,22 +72,16 @@ export const Navbar: React.FC<NavbarProps> = memo(
     }, [onSoundToggle]);
 
     const handleNav = useCallback(
-      (item: string) => {
+      (link: NavItemConfig) => {
         playArcadeSound("blip");
         setIsMobileMenuOpen(false);
         if (onNavClick) {
-          onNavClick(item);
+          onNavClick(link.id);
         } else {
-          if (item === "ARCADE") navigate("/arcade");
-          else if (item === "LEADERBOARDS" && onOpenLeaderboard)
-            onOpenLeaderboard();
-          else if (item === "DASHBOARD") navigate("/dashboard");
-          else if (item === "HISTORY") navigate("/history");
-          else if (item === "STORE" && onOpenStore) onOpenStore();
-          else if (item === "HOW TO PLAY" && onOpenHowToPlay) onOpenHowToPlay();
+          navigate(link.path);
         }
       },
-      [navigate, onNavClick, onOpenLeaderboard, onOpenStore, onOpenHowToPlay]
+      [navigate, onNavClick]
     );
 
     const toggleMobileMenu = useCallback(() => {
@@ -117,20 +129,23 @@ export const Navbar: React.FC<NavbarProps> = memo(
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-6 font-['Rubik',sans-serif]">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link.id}
-                type="button"
-                onClick={() => handleNav(link.id)}
-                className={`cursor-pointer font-black text-sm tracking-wider uppercase transition-all pb-1 active:translate-y-[1px] ${
-                  activeNav === link.id
-                    ? "text-[#b61929] border-b-4 border-[#b61929]"
-                    : "text-[#1b1c1c] hover:text-[#b61929]"
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = currentActiveNav === link.id;
+              return (
+                <button
+                  key={link.id}
+                  type="button"
+                  onClick={() => handleNav(link)}
+                  className={`cursor-pointer font-black text-sm tracking-wider uppercase transition-all pb-1 active:translate-y-[1px] ${
+                    isActive
+                      ? "text-[#b61929] border-b-4 border-[#b61929] drop-shadow-[0_1px_0_#1b1c1c]"
+                      : "text-[#1b1c1c] hover:text-[#b61929]"
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
           </nav>
 
           {/* Trailing Controls & Crazy Arcade Hamburger */}
@@ -150,8 +165,16 @@ export const Navbar: React.FC<NavbarProps> = memo(
               </span>
             </button>
 
-            {/* Authenticated Player Chip */}
-            <div className="flex items-center gap-1.5 bg-[#FFF4D6] border-2 border-[#1b1c1c] px-2 sm:px-2.5 py-1 rounded-lg shadow-[2px_2px_0px_#1b1c1c]">
+            {/* Authenticated Player Chip / Profile Link */}
+            <Link
+              to="/profile"
+              onClick={() => playArcadeSound("blip")}
+              className={`flex items-center gap-1.5 border-2 border-[#1b1c1c] px-2 sm:px-2.5 py-1 rounded-lg shadow-[2px_2px_0px_#1b1c1c] active:translate-x-[1px] active:translate-y-[1px] transition-all ${
+                currentActiveNav === "PROFILE"
+                  ? "bg-[#ffe07e] ring-2 ring-[#b61929]"
+                  : "bg-[#FFF4D6] hover:bg-[#ffeec2]"
+              }`}
+            >
               <div className="w-6 h-6 rounded-full bg-[#b61929] text-white border border-[#1b1c1c] flex items-center justify-center text-xs font-black">
                 {userInitial}
               </div>
@@ -163,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = memo(
                   VIP
                 </span>
               </div>
-            </div>
+            </Link>
 
             {/* Crazy Neo-Brutalist Arcade Hamburger with Perfect Center Cross */}
             <button
@@ -224,19 +247,19 @@ export const Navbar: React.FC<NavbarProps> = memo(
                   🕹️ ARCADE STATIONS
                 </span>
                 <span className="font-['Rubik',sans-serif] text-[11px] font-bold text-[#5b403f] uppercase">
-                  SELECT MISSION
+                  ACTIVE: {currentActiveNav || "NONE"}
                 </span>
               </div>
 
               {/* Menu Nav Links with Neo-Brutalist Buttons */}
               <div className="flex flex-col gap-2.5">
                 {NAV_LINKS.map((link, idx) => {
-                  const isActive = activeNav === link.id;
+                  const isActive = currentActiveNav === link.id;
                   return (
                     <button
                       key={link.id}
                       type="button"
-                      onClick={() => handleNav(link.id)}
+                      onClick={() => handleNav(link)}
                       className={`cursor-pointer w-full flex items-center justify-between px-4 py-3 rounded-xl border-3 border-[#1b1c1c] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-['Rubik',sans-serif] ${
                         isActive
                           ? "bg-[#b61929] text-white shadow-[4px_4px_0px_#1b1c1c] scale-[1.01]"
@@ -267,6 +290,37 @@ export const Navbar: React.FC<NavbarProps> = memo(
                     </button>
                   );
                 })}
+
+                {/* Additional Settings link in mobile menu */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    playArcadeSound("blip");
+                    setIsMobileMenuOpen(false);
+                    navigate("/setting");
+                  }}
+                  className={`cursor-pointer w-full flex items-center justify-between px-4 py-3 rounded-xl border-3 border-[#1b1c1c] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-['Rubik',sans-serif] ${
+                    currentActiveNav === "SETTING"
+                      ? "bg-[#b61929] text-white shadow-[4px_4px_0px_#1b1c1c]"
+                      : "bg-white text-[#1b1c1c] hover:bg-[#fff9e6] shadow-[3px_3px_0px_#1b1c1c]"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`material-symbols-outlined text-[22px] ${
+                        currentActiveNav === "SETTING" ? "text-white" : "text-[#b61929]"
+                      }`}
+                    >
+                      settings
+                    </span>
+                    <span className="text-base font-black uppercase tracking-wide">
+                      SETTINGS
+                    </span>
+                  </div>
+                  <span className="text-xs font-extrabold px-2 py-0.5 rounded border border-[#1b1c1c] bg-[#eae7e7] text-[#5b403f]">
+                    05
+                  </span>
+                </button>
               </div>
 
               {/* Mobile Quick Action Footer */}
