@@ -99,3 +99,71 @@
 - Keep dependencies intentional and optimize the critical path first.
 - `useMemo`, `useCallback`, `React.memo`, debounce, throttle, lazy loading, and Web Workers are **tools, not defaults**.
 - **Final Rule:** `Measure → Identify → Optimize → Verify`
+
+# 🚀 BACKEND OPTIMIZATION RULES
+
+## 0. Performance Fundamentals
+- Measure before optimizing; identify the actual bottleneck first.
+- Analyze latency, throughput, memory, CPU, I/O, and network independently.
+- Never assume the database is the bottleneck.
+- Avoid premature optimization.
+
+## 1. HTTP / API Performance
+- Send only required fields using MongoDB projection/select.
+- Use pagination for large datasets; avoid huge arrays in responses.
+- Use offset pagination for simple datasets and cursor/keyset for large feeds.
+- Always combine pagination with proper filtering, sorting, and stable sort fields.
+- Filter and sort inside the database, backed by appropriate indexes.
+- Use `Cache-Control` and ETag/conditional requests where useful.
+- Use immutable long-lived caching for versioned static assets.
+- Never publicly cache sensitive/user-specific responses.
+- Rate-limit expensive/sensitive endpoints; use stricter limits for login, OTP, email, AI.
+- Return `429` when limited; use Redis for centralized limits and infrastructure DDoS protection.
+
+## 2. Node.js Performance
+- Never unnecessarily block the event loop; use async I/O.
+- `async/await` does not make CPU-heavy work non-blocking.
+- Run independent I/O concurrently with `Promise.all()`; keep dependent work sequential.
+- Identify CPU-bound vs I/O-bound bottlenecks before optimizing.
+- Use streams and backpressure for large files/data instead of loading everything into memory.
+- Avoid huge datasets, unbounded caches, and retained references in memory.
+- Use Worker Threads for CPU-heavy request-time work.
+- Use background jobs/queues for emails, reports, notifications, image processing, etc.
+
+## 3. Database Access
+- Minimize unnecessary database round trips and redundant queries.
+- Batch related operations instead of querying repeatedly.
+- Never perform unnecessary database queries inside loops (**N+1**).
+- Use `$in` for multiple lookups and `bulkWrite()` for large write batches.
+- Run independent database queries concurrently with `Promise.all()`.
+- Reuse MongoDB connections; connect once at startup.
+- Tune `maxPoolSize` only when workload requires it; bigger pools aren't automatically faster.
+- Use transactions only when atomicity is required and keep them short.
+- Protect expensive queries with reasonable limits such as `maxTimeMS`.
+
+## 4. MongoDB Query Optimization
+- Query only required data using projection/select.
+- Filter and paginate at the database level.
+- Avoid unnecessary `populate()` and aggregation stages.
+- Don't fetch everything just to count/filter in JavaScript.
+- Analyze slow queries with `explain()` instead of guessing.
+
+## 5. MongoDB Indexing
+- Design indexes from real query patterns, not assumptions.
+- Don't index every field; indexes improve reads but add storage and write overhead.
+- Use indexes for frequent filters, sorting, and compound query patterns.
+- Compound index field order matters; use ESR as a design heuristic:
+  `E = Equality → S = Sort → R = Range`
+- Example: `{ department: 1, status: 1, name: 1, createdAt: 1 }`
+- Use selective fields, unique indexes for uniqueness, and TTL indexes for expiring data.
+- Verify index effectiveness with `explain()`.
+
+## 6. 🧠 General Golden Rules
+- `Measure → Identify Bottleneck → Optimize → Measure Again`
+- Reduce unnecessary rendering, database calls, data transfer, memory, and CPU work.
+- Run independent I/O concurrently.
+- Move expensive work away from the request-response path when possible.
+- Cache repeated expensive operations when appropriate.
+- Prefer simple optimizations before complex architecture.
+- Never optimize something that isn't a bottleneck.
+- Always verify improvements with real measurements.
