@@ -15,6 +15,7 @@ import {
 } from "../config/game.constants";
 import { lineIntersectsCircle } from "../systems/collisionSystem";
 import { arcadeAudioEngine } from "../systems/audioSystem";
+import { toggleSound } from "../../../shared/utils/arcadeAudio";
 import {
   drawCartoonFruit,
   drawFruitHalf,
@@ -70,9 +71,9 @@ export const useGameEngine = () => {
     bladeThemeRef.current = selectedBlade;
   }, [selectedBlade]);
 
-  // Audio helper
+  // Audio helper — delegates to unified arcadeAudio so navbar mute stays in sync
   const handleSoundToggle = useCallback(() => {
-    arcadeAudioEngine.setEnabled(!arcadeAudioEngine.enabled);
+    toggleSound();
   }, []);
 
   // Format MM:SS
