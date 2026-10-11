@@ -5,6 +5,7 @@ import {
   toggleSound,
   isSoundEnabled,
 } from "../../../../shared/utils/arcadeAudio";
+import Logo from "../../../../../public/logo.png"
 
 const NAV_ITEMS = [
   { id: "arcade", label: "ARCADE" },
@@ -37,7 +38,7 @@ export const LandingPage: React.FC = () => {
       {
         rootMargin: "-20% 0px -60% 0px",
         threshold: 0.1,
-      }
+      },
     );
 
     NAV_ITEMS.forEach(({ id }) => {
@@ -106,7 +107,7 @@ export const LandingPage: React.FC = () => {
               <img
                 alt="SLICE STORM Logo"
                 className="h-10 sm:h-12 w-auto object-contain drop-shadow-[2px_2px_0px_#252525]"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1W_Ds8rOEhWI7qhd71xYfwcBqc58O_C8-io-tJ77q7XXevtydGqBT9qB3zKMTi_Jv7GNRKqG6jd4pyoWWs7PIVeUlM6_xruRO0VYLHFGVQwcWXUGNxL2Om3tiDwzntF9-oC2K0rQ5YnxyzHRyBUg8g48Vo3cdtjLQ-8iQqsS_8veMqa388NNoCVRuq2LaiNvLiXRceJLc32O4V01TNG4b9nCVqf5ffB3ie4rSZND4cZnrT9R2nllE_hoyg"
+                src={Logo}
               />
             </Link>
             <span className="hidden lg:inline-flex items-center px-2 py-0.5 bg-[#FFE07E] text-[#231B00] border-2 border-[#1b1c1c] rounded font-bold text-xs shadow-[2px_2px_0px_#252525] -rotate-2">

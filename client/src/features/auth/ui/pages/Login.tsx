@@ -6,6 +6,7 @@ import {
   toggleSound,
   isSoundEnabled,
 } from "../../../../shared/utils/arcadeAudio";
+import Logo from "../../../../../public/logo.png"
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -303,7 +304,7 @@ const Login: React.FC = () => {
               <div className="absolute -top-2 right-12 z-30 bg-white/70 border border-[#252525]/40 w-14 h-5 rotate-[12deg] shadow-sm pointer-events-none"></div>
 
               <img
-                src="https://lh3.googleusercontent.com/aida/AEtjO1Wk8dj-FCEyqBsiisW_FOGSJQ4OvQDEcW8ZELOYdTvRd8qXkrofj4ILLALNA86WyYntPtbozLKk_YXQAXx6TlddjplrfPTLThI_JzYEWnhIr2i9jnDfuX2N4c7PqtXIIR57h5bzZX6fhQnite-pB3Bbg_vUnquMIF7RsNW68mfbOVQmHID67UvUQIDnxDOC9EbdtxyjpUG6ksLZ_-kvYGsNsSu9EH_4wIkWA9FZBdBl1b7HhOrgj9nIHg4"
+                src={Logo}
                 alt="SLICE STORM Arcade Logo"
                 className="w-full h-auto drop-shadow-[5px_6px_0px_#252525] select-none pointer-events-none"
               />
