@@ -25,11 +25,11 @@ export const INITIAL_LEADERBOARD: readonly LeaderboardEntry[] = [
 ];
 
 export const GAME_CONSTANTS = {
-  GRAVITY: 0.38,
+  GRAVITY: 0.32,
   MAX_BLADE_POINTS: 16,
-  BOMB_CHANCE: 0.22,
+  BOMB_CHANCE: 0.18,
   BASE_SPAWN_INTERVAL: 75,
   MAX_LIVES: 3,
   BLITZ_DURATION: 60,
-  COMBO_TIMEOUT_MS: 1800,
+  COMBO_TIMEOUT_MS: 1000,
 } as const;
