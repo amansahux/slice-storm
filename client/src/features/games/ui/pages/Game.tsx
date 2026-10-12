@@ -94,6 +94,7 @@ export const Game: React.FC = memo(() => {
             maxCombo={maxCombo}
             onPlayAgain={restartGame}
             onOpenLeaderboard={openLeaderboard}
+            onMainMenu={exitToHome}
           />
         )}
       </main>

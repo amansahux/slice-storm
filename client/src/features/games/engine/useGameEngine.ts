@@ -40,7 +40,7 @@ export const useGameEngine = () => {
   const [combo, setCombo] = useState<number>(0);
   const [maxCombo, setMaxCombo] = useState<number>(0);
   const [timeRemaining, setTimeRemaining] = useState<number>(GAME_CONSTANTS.BLITZ_DURATION);
-  const [survivalSeconds, setSurvivalSeconds] = useState<number>(105);
+  const [survivalSeconds, setSurvivalSeconds] = useState<number>(60);
 
   // Mutable refs for high-frequency 60 FPS animation (Rule 01 & Rule 02)
   const stateRef = useRef<GameState>("START");
@@ -187,23 +187,39 @@ export const useGameEngine = () => {
         });
       }
 
-      textPopupsRef.current.push({
-        text: "BOOM! -1 HEART",
-        x: bomb.x,
-        y: bomb.y - 20,
-        color: "#ba1a1a",
-        scale: 1.4,
-        vy: -2,
-        life: 1.0,
-      });
+      if (modeRef.current === "blitz") {
+        // Blitz Mode: No lives. Deduct 100 points with clear visual feedback
+        setScore((prevScore) => Math.max(0, prevScore - 100));
 
-      setLives((prevLives) => {
-        const next = Math.max(0, prevLives - 1);
-        if (next <= 0 && modeRef.current === "classic") {
-          setGameState("GAMEOVER");
-        }
-        return next;
-      });
+        textPopupsRef.current.push({
+          text: "-100 PTS! BOMB!",
+          x: bomb.x,
+          y: bomb.y - 20,
+          color: "#ba1a1a",
+          scale: 1.5,
+          vy: -2,
+          life: 1.1,
+        });
+      } else {
+        // Classic Survival Mode: Deduct 1 life
+        textPopupsRef.current.push({
+          text: "BOOM! -1 HEART",
+          x: bomb.x,
+          y: bomb.y - 20,
+          color: "#ba1a1a",
+          scale: 1.4,
+          vy: -2,
+          life: 1.0,
+        });
+
+        setLives((prevLives) => {
+          const next = Math.max(0, prevLives - 1);
+          if (next <= 0) {
+            setGameState("GAMEOVER");
+          }
+          return next;
+        });
+      }
     },
     []
   );
@@ -369,7 +385,7 @@ export const useGameEngine = () => {
     setCombo(0);
     setMaxCombo(0);
     setTimeRemaining(GAME_CONSTANTS.BLITZ_DURATION);
-    setSurvivalSeconds(105);
+    setSurvivalSeconds(0);
 
     flyingEntitiesRef.current = [];
     juiceParticlesRef.current = [];

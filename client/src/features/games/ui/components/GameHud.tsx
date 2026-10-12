@@ -81,32 +81,34 @@ export const GameHud: React.FC<GameHudProps> = memo(({
           </div>
         </div>
 
-        {/* 3. TOP-RIGHT CLUSTER: LIVES + TACTILE ARCADE PAUSE BUTTON */}
+        {/* 3. TOP-RIGHT CLUSTER: LIVES (Classic mode only) + TACTILE ARCADE PAUSE BUTTON */}
         <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 md:gap-3 shrink-0">
-          {/* Hearts / Lives Indicator */}
-          <div className="bg-[#FFF4D6] border-2 sm:border-4 border-[#1b1c1c] rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 md:px-3.5 md:py-2 shadow-[2px_2px_0px_#1b1c1c] sm:shadow-[4px_4px_0px_#1b1c1c] flex items-center gap-1 transform rotate-1">
-            <div className="text-[10px] font-['Rubik',sans-serif] text-[#5b403f] mr-0.5 hidden md:block uppercase font-extrabold">
-              LIVES
+          {/* Hearts / Lives Indicator — only active in classic survival mode */}
+          {gameMode === "classic" && (
+            <div className="bg-[#FFF4D6] border-2 sm:border-4 border-[#1b1c1c] rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 md:px-3.5 md:py-2 shadow-[2px_2px_0px_#1b1c1c] sm:shadow-[4px_4px_0px_#1b1c1c] flex items-center gap-1 transform rotate-1">
+              <div className="text-[10px] font-['Rubik',sans-serif] text-[#5b403f] mr-0.5 hidden md:block uppercase font-extrabold">
+                LIVES
+              </div>
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: maxLives }).map((_, idx) => {
+                  const isAlive = idx < lives;
+                  return (
+                    <span
+                      key={idx}
+                      className={`material-symbols-outlined text-[16px] sm:text-[20px] md:text-[24px] transition-all ${
+                        isAlive
+                          ? "text-[#b61929] scale-100"
+                          : "text-gray-400 opacity-20 grayscale scale-90"
+                      }`}
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      favorite
+                    </span>
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex items-center gap-0.5">
-              {Array.from({ length: maxLives }).map((_, idx) => {
-                const isAlive = idx < lives;
-                return (
-                  <span
-                    key={idx}
-                    className={`material-symbols-outlined text-[16px] sm:text-[20px] md:text-[24px] transition-all ${
-                      isAlive
-                        ? "text-[#b61929] scale-100"
-                        : "text-gray-400 opacity-20 grayscale scale-90"
-                    }`}
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    favorite
-                  </span>
-                );
-              })}
-            </div>
-          </div>
+          )}
 
           {/* HUD Tactile Arcade Pause Button (Only enabled/visible during active game) */}
           {isPauseAvailable && (

@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { MainMenuButton } from "./MainMenuButton";
 
 interface GameOverOverlayProps {
   score: number;
@@ -6,6 +7,7 @@ interface GameOverOverlayProps {
   maxCombo: number;
   onPlayAgain: () => void;
   onOpenLeaderboard: () => void;
+  onMainMenu: () => void;
 }
 
 export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
@@ -14,6 +16,7 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
   maxCombo,
   onPlayAgain,
   onOpenLeaderboard,
+  onMainMenu,
 }) => {
   return (
     <div className="absolute z-20 inset-0 flex items-center justify-center p-3 sm:p-4 bg-[#1b1c1c]/65 backdrop-blur-[2px] animate-fadeIn overflow-y-auto">
@@ -68,6 +71,7 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
           >
             VIEW LEADERBOARD
           </button>
+          <MainMenuButton onClick={onMainMenu} />
         </div>
       </div>
     </div>
