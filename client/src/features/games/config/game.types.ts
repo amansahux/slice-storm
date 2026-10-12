@@ -1,8 +1,18 @@
 export type GameMode = "classic" | "blitz";
 export type GameState = "START" | "COUNTDOWN" | "PLAYING" | "PAUSED" | "GAMEOVER";
 
+export type FruitShape =
+  | "watermelon"
+  | "apple"
+  | "orange"
+  | "banana"
+  | "strawberry"
+  | "pineapple"
+  | "kiwi";
+
 export interface FruitTypeConfig {
   name: string;
+  shape: FruitShape;
   radius: number;
   skin: string;
   flesh: string;

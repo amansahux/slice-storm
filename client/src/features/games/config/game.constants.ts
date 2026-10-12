@@ -1,13 +1,13 @@
 import type { FruitTypeConfig, BladeTheme, LeaderboardEntry } from "./game.types";
 
 export const FRUIT_TYPES: readonly FruitTypeConfig[] = [
-  { name: "Watermelon", radius: 46, skin: "#27AE60", flesh: "#EB5757", seeds: true, points: 10 },
-  { name: "Apple", radius: 36, skin: "#E63946", flesh: "#FFF3B0", seeds: false, points: 15 },
-  { name: "Orange", radius: 38, skin: "#F77F00", flesh: "#FCBF49", segments: true, points: 15 },
-  { name: "Banana", radius: 34, skin: "#FFD166", flesh: "#FFFBE6", points: 20 },
-  { name: "Strawberry", radius: 30, skin: "#D62828", flesh: "#F77F00", seeds: true, points: 25 },
-  { name: "Pineapple", radius: 44, skin: "#DDA15E", flesh: "#FFD166", points: 30 },
-  { name: "Kiwi", radius: 32, skin: "#8C564B", flesh: "#2ECC71", seeds: true, points: 20 },
+  { name: "Watermelon", shape: "watermelon", radius: 46, skin: "#27AE60", flesh: "#EB5757", seeds: true, points: 10 },
+  { name: "Apple", shape: "apple", radius: 36, skin: "#E63946", flesh: "#FFF3B0", seeds: false, points: 15 },
+  { name: "Orange", shape: "orange", radius: 38, skin: "#F77F00", flesh: "#FCBF49", segments: true, points: 15 },
+  { name: "Banana", shape: "banana", radius: 38, skin: "#FFD166", flesh: "#FFFBE6", points: 20 },
+  { name: "Strawberry", shape: "strawberry", radius: 32, skin: "#D62828", flesh: "#F77F00", seeds: true, points: 25 },
+  { name: "Pineapple", shape: "pineapple", radius: 46, skin: "#DDA15E", flesh: "#FFD166", points: 30 },
+  { name: "Kiwi", shape: "kiwi", radius: 34, skin: "#8C564B", flesh: "#2ECC71", seeds: true, points: 20 },
 ];
 
 export const BLADE_THEMES: readonly BladeTheme[] = [
