@@ -6,7 +6,7 @@ import {
   toggleSound,
   isSoundEnabled,
 } from "../../../../shared/utils/arcadeAudio";
-import Logo from "../../../../../public/logo.png"
+import Logo from "/logo.png"
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

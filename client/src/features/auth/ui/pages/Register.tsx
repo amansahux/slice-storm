@@ -6,6 +6,7 @@ import {
   toggleSound,
   isSoundEnabled,
 } from "../../../../shared/utils/arcadeAudio";
+import Logo from "/logo.png"
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ const Register: React.FC = () => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          navigate("/dashboard");
+          navigate("/login");
           return 0;
         }
         return prev - 1;
@@ -141,7 +142,7 @@ const Register: React.FC = () => {
               <img
                 alt="SLICE STORM Hero Marquee"
                 className="w-full max-w-[420px] h-auto drop-shadow-[5px_5px_0_0_#252525] mb-2"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1WUw9lRDvhi-UhWzlX8T0Nc0xAWYblN7QH7-5o7Mv73IPZ7qFY0KD-nrkyDCwKEQuhMZCzJo0f2t6H1g68n5XWWPIgZBqklKhPcsBwU6M4OKyymDlXE0pPiGpcklBOE_kyy3IpRTpELlPRex0pygwgAqW66VvHzN3RA7G2EOM_6wj3rKW-MTyTrAmC5EPnxZzDhmd1vnLVCcJKbOqOEfWHAsHLG44izuG-IRgbgAzg8kus1U8jLmozJYg0"
+                src={Logo}
               />
               <div className="inline-flex items-center gap-2 px-5 py-2 bg-[#FF8A3D] text-white border-[3px] border-[#252525] shadow-[4px_4px_0_0_#252525] rounded-md font-display font-black text-lg tracking-wide uppercase rotate-[-1.5deg]">
                 <span className="material-symbols-outlined text-[24px]">
@@ -674,7 +675,7 @@ const Register: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/login")}
               className="w-full py-3 bg-[#5CB85C] text-white font-display font-black text-base uppercase border-[3px] border-[#252525] shadow-[4px_4px_0_0_#252525] rounded-lg hover:-translate-y-0.5 active:translate-y-0.5 cursor-pointer"
             >
               START SLICING NOW!

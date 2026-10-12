@@ -5,7 +5,7 @@ import {
   toggleSound,
   isSoundEnabled,
 } from "../../../../shared/utils/arcadeAudio";
-import Logo from "../../../../../public/logo.png"
+import Logo from "/logo.png"
 
 const NAV_ITEMS = [
   { id: "arcade", label: "ARCADE" },
@@ -1198,7 +1198,7 @@ export const LandingPage: React.FC = () => {
               <img
                 alt="SLICE STORM Logo"
                 className="h-8 w-auto object-contain drop-shadow-[2px_2px_0px_#252525]"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1W_Ds8rOEhWI7qhd71xYfwcBqc58O_C8-io-tJ77q7XXevtydGqBT9qB3zKMTi_Jv7GNRKqG6jd4pyoWWs7PIVeUlM6_xruRO0VYLHFGVQwcWXUGNxL2Om3tiDwzntF9-oC2K0rQ5YnxyzHRyBUg8g48Vo3cdtjLQ-8iQqsS_8veMqa388NNoCVRuq2LaiNvLiXRceJLc32O4V01TNG4b9nCVqf5ffB3ie4rSZND4cZnrT9R2nllE_hoyg"
+                src={Logo}
               />
             </Link>
             <div className="text-xs text-[#5b403f] font-bold">
