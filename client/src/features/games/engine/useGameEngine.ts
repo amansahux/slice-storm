@@ -104,7 +104,10 @@ export const useGameEngine = () => {
 
       const targetX = rect.width / 2 + (Math.random() * 300 - 150);
       const vx = (targetX - startX) * 0.012 + (Math.random() * 2 - 1);
-      const vy = -(Math.random() * 4 + 14);
+
+      // Canvas-responsive launch velocity: guarantees fruits peak inside the canvas (68% - 85% of height)
+      const targetLaunchHeight = (rect.height + 40) * (0.65 + Math.random() * 0.18);
+      const vy = -Math.sqrt(2 * GAME_CONSTANTS.GRAVITY * targetLaunchHeight);
 
       if (isBomb) {
         flyingEntitiesRef.current.push({
