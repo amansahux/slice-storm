@@ -7,6 +7,7 @@ import type {
   JuiceParticle,
   TextPopup,
   BladePoint,
+  ExplosionEffect,
 } from "../config/game.types";
 import {
   FRUIT_TYPES,
@@ -23,6 +24,7 @@ import {
   drawBladeTrail,
   drawJuiceParticles,
   drawTextPopups,
+  drawExplosions,
 } from "../rendering/gameCanvasRenderer";
 
 export const useGameEngine = () => {
@@ -49,6 +51,7 @@ export const useGameEngine = () => {
 
   const flyingEntitiesRef = useRef<FlyingEntity[]>([]);
   const juiceParticlesRef = useRef<JuiceParticle[]>([]);
+  const explosionsRef = useRef<ExplosionEffect[]>([]);
   const textPopupsRef = useRef<TextPopup[]>([]);
   const bladePointsRef = useRef<BladePoint[]>([]);
   const entityIdCounter = useRef(0);
@@ -173,19 +176,41 @@ export const useGameEngine = () => {
       arcadeAudioEngine.playBomb();
       screenShakeRef.current = 18;
 
-      // Burst bomb particles
-      for (let i = 0; i < 30; i++) {
-        juiceParticlesRef.current.push({
-          x: bomb.x,
-          y: bomb.y,
-          vx: (Math.random() - 0.5) * 12,
-          vy: (Math.random() - 0.5) * 12,
-          color: Math.random() > 0.5 ? "#1b1c1c" : "#FF3B30",
-          size: Math.random() * 8 + 4,
-          life: 1.0,
-          decay: 0.02,
-        });
-      }
+      // Create 1-second dynamic cartoon explosion effect (no juice particles)
+      const sparkColors = ["#FFD84D", "#FF8A3D", "#FF3B30", "#FFFFFF", "#1b1c1c"];
+      const sparks = Array.from({ length: 24 }).map(() => {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 70 + 40;
+        return {
+          vx: Math.cos(angle),
+          vy: Math.sin(angle),
+          size: Math.random() * 5 + 3,
+          color: sparkColors[Math.floor(Math.random() * sparkColors.length)],
+          distance: speed,
+        };
+      });
+
+      const smokeColors = ["#4A4A4A", "#2E2E2E", "#1b1c1c", "#6B6B6B"];
+      const smoke = Array.from({ length: 8 }).map((_, i) => {
+        const angle = (i * Math.PI * 2) / 8 + (Math.random() * 0.4 - 0.2);
+        const dist = Math.random() * 20 + 15;
+        return {
+          xOffset: Math.cos(angle) * dist,
+          yOffset: Math.sin(angle) * dist,
+          size: Math.random() * 14 + 16,
+          color: smokeColors[Math.floor(Math.random() * smokeColors.length)],
+          rotation: Math.random() * Math.PI,
+        };
+      });
+
+      explosionsRef.current.push({
+        x: bomb.x,
+        y: bomb.y,
+        progress: 0,
+        maxRadius: 75,
+        sparks,
+        smoke,
+      });
 
       // Remove the exploded bomb immediately
       const bombIndex = flyingEntitiesRef.current.indexOf(bomb);
@@ -401,6 +426,7 @@ export const useGameEngine = () => {
 
     flyingEntitiesRef.current = [];
     juiceParticlesRef.current = [];
+    explosionsRef.current = [];
     textPopupsRef.current = [];
     bladePointsRef.current = [];
     spawnTimerRef.current = 0;
@@ -542,6 +568,15 @@ export const useGameEngine = () => {
           }
         }
 
+        // Explosions update (1 whole second = 60 frames, so 1/60 per frame)
+        for (let i = explosionsRef.current.length - 1; i >= 0; i--) {
+          const exp = explosionsRef.current[i];
+          exp.progress += 1 / 60;
+          if (exp.progress >= 1.0) {
+            explosionsRef.current.splice(i, 1);
+          }
+        }
+
         // Text popups update
         for (let i = textPopupsRef.current.length - 1; i >= 0; i--) {
           const tp = textPopupsRef.current[i];
@@ -588,8 +623,11 @@ export const useGameEngine = () => {
         ctx.restore();
       });
 
-      // Draw juices
+      // Draw juices (from sliced fruits)
       drawJuiceParticles(ctx, juiceParticlesRef.current);
+
+      // Draw explosion animations (shockwave, blast star, smoke, fiery sparks)
+      drawExplosions(ctx, explosionsRef.current);
 
       // Draw blade trail
       drawBladeTrail(ctx, bladePointsRef.current, bladeThemeRef.current);

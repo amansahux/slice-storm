@@ -61,6 +61,27 @@ export interface BladePoint {
   life: number;
 }
 
+export interface ExplosionEffect {
+  x: number;
+  y: number;
+  progress: number; // 0 to 1
+  maxRadius: number;
+  sparks: Array<{
+    vx: number;
+    vy: number;
+    size: number;
+    color: string;
+    distance: number;
+  }>;
+  smoke: Array<{
+    xOffset: number;
+    yOffset: number;
+    size: number;
+    color: string;
+    rotation: number;
+  }>;
+}
+
 export interface GameStats {
   score: number;
   lives: number;

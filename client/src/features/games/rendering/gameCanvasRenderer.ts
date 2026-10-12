@@ -4,6 +4,7 @@ import type {
   TextPopup,
   BladePoint,
   BladeTheme,
+  ExplosionEffect,
 } from "../config/game.types";
 
 /**
@@ -220,3 +221,137 @@ export function drawTextPopups(
     ctx.restore();
   });
 }
+
+export function drawExplosions(
+  ctx: CanvasRenderingContext2D,
+  explosions: ExplosionEffect[]
+) {
+  explosions.forEach((exp) => {
+    const t = exp.progress; // 0 to 1 over 1.0s
+    ctx.save();
+    ctx.translate(exp.x, exp.y);
+
+    // 1. Expanding Shockwave Ring with Ink Outline
+    const shockwaveRadius = exp.maxRadius * (0.3 + 1.2 * t);
+    const shockwaveAlpha = Math.max(0, 1 - t * 1.2);
+    if (shockwaveAlpha > 0) {
+      ctx.save();
+      ctx.globalAlpha = shockwaveAlpha;
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#1b1c1c";
+      ctx.beginPath();
+      ctx.arc(0, 0, shockwaveRadius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = "#FFD84D";
+      ctx.beginPath();
+      ctx.arc(0, 0, Math.max(1, shockwaveRadius - 3), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 2. Comic Blast Star (peaks at t ≈ 0.2, fades out by t ≈ 0.6)
+    if (t < 0.65) {
+      const starScale = Math.sin((t / 0.65) * Math.PI);
+      const outerR = exp.maxRadius * 1.1 * starScale;
+      const innerR = exp.maxRadius * 0.45 * starScale;
+      const points = 12;
+
+      ctx.save();
+      ctx.beginPath();
+      for (let i = 0; i < points * 2; i++) {
+        const radius = i % 2 === 0 ? outerR : innerR;
+        const angle = (i * Math.PI) / points - Math.PI / 2;
+        const px = Math.cos(angle) * radius;
+        const py = Math.sin(angle) * radius;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+
+      // Bold ink border
+      ctx.fillStyle = "#FFD84D";
+      ctx.strokeStyle = "#1b1c1c";
+      ctx.lineWidth = 4;
+      ctx.fill();
+      ctx.stroke();
+
+      // Inner flame star
+      ctx.beginPath();
+      for (let i = 0; i < points * 2; i++) {
+        const radius = (i % 2 === 0 ? outerR : innerR) * 0.65;
+        const angle = (i * Math.PI) / points - Math.PI / 2;
+        const px = Math.cos(angle) * radius;
+        const py = Math.sin(angle) * radius;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "#FF3B30";
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 3. Expanding Smoke Puffs (expand outward and drift upward)
+    exp.smoke.forEach((sm) => {
+      const smokeProgress = Math.min(1, t * 1.1);
+      const sx = sm.xOffset * (1 + smokeProgress * 1.5);
+      const sy = sm.yOffset * (1 + smokeProgress * 1.2) - smokeProgress * 28;
+      const currentSize = sm.size * (0.5 + 0.8 * smokeProgress);
+      const alpha = Math.max(0, 1 - t);
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(sx, sy);
+      ctx.rotate(sm.rotation + t * 0.5);
+
+      ctx.fillStyle = sm.color;
+      ctx.strokeStyle = "#1b1c1c";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, currentSize, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // 4. Fiery Fireball Core (White-hot core -> Orange -> Red)
+    if (t < 0.5) {
+      const coreScale = Math.sin((t / 0.5) * Math.PI);
+      const coreRadius = exp.maxRadius * 0.55 * coreScale;
+      ctx.save();
+      ctx.fillStyle = "#FFFFFF";
+      ctx.strokeStyle = "#1b1c1c";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, coreRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 5. Flying Ember Sparks (high velocity burst, with comic ink dots)
+    exp.sparks.forEach((sp) => {
+      const dist = sp.distance * t * (1.2 - t * 0.3);
+      const sx = sp.vx * dist;
+      const sy = sp.vy * dist + t * t * 35; // gravity arc
+      const sparkAlpha = Math.max(0, 1 - t * 1.1);
+      const sparkSize = Math.max(1.5, sp.size * (1 - t * 0.5));
+
+      ctx.save();
+      ctx.globalAlpha = sparkAlpha;
+      ctx.fillStyle = sp.color;
+      ctx.strokeStyle = "#1b1c1c";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(sx, sy, sparkSize, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    ctx.restore();
+  });
+}
+
