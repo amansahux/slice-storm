@@ -22,328 +22,1065 @@ export function drawCartoonFruit(
 ) {
   ctx.save();
 
+  const ink = "#1B1C1C";
+  const white = "rgba(255,255,255,0.55)";
+
+  // Consistent proportions at every fruit size
+  const line = Math.max(2, r * 0.075);
+  const shadowOffset = r * 0.12;
+
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  const drawShadow = () => {
+    ctx.save();
+    ctx.translate(shadowOffset, shadowOffset);
+    ctx.fillStyle = ink;
+    ctx.strokeStyle = ink;
+    ctx.globalAlpha = 0.95;
+  };
+
+  const finishShadow = () => {
+    ctx.restore();
+  };
+
+  const outline = () => {
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = line;
+    ctx.lineJoin = "round";
+    ctx.stroke();
+  };
+
   switch (sub.shape) {
-    case "banana": {
-      // Curved crescent yellow banana with green stem and brown tip
-      // 3D Shadow
-      ctx.save();
-      ctx.translate(3, 4);
-      ctx.fillStyle = "#1b1c1c";
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.9, -0.9, 2.3);
-      ctx.quadraticCurveTo(0, r * 0.35, -r * 0.9, -0.6);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-
-      // Banana yellow body
-      ctx.fillStyle = sub.skin;
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.9, -0.9, 2.3);
-      ctx.quadraticCurveTo(0, r * 0.35, -r * 0.9, -0.6);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      // Curved ridge spine
-      ctx.strokeStyle = "#E5B800";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.72, -0.8, 2.2);
-      ctx.stroke();
-
-      // Green top stalk
-      ctx.fillStyle = "#70A020";
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.rect(-r * 0.95, -r * 0.7, 7, 10);
-      ctx.fill();
-      ctx.stroke();
-
-      // Dark brown bottom tip
-      ctx.fillStyle = "#4A2F08";
-      ctx.beginPath();
-      ctx.arc(r * 0.58, r * 0.68, 5, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-    }
-
-    case "watermelon": {
-      // Large round-oval with dark green wavy tiger stripes
-      // 3D Offset Shadow
-      ctx.fillStyle = "#1b1c1c";
-      ctx.beginPath();
-      ctx.ellipse(4, 4, r * 1.05, r * 0.9, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Green Rind
-      ctx.fillStyle = sub.skin;
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r * 1.05, r * 0.9, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Dark green cartoon tiger stripes
-      ctx.fillStyle = "#165B33";
-      for (let i = -2; i <= 2; i++) {
-        const xOffset = i * (r * 0.38);
-        ctx.beginPath();
-        ctx.moveTo(xOffset - 4, -r * 0.85);
-        ctx.quadraticCurveTo(xOffset + 8, 0, xOffset - 4, r * 0.85);
-        ctx.lineTo(xOffset + 4, r * 0.85);
-        ctx.quadraticCurveTo(xOffset + 14, 0, xOffset + 4, -r * 0.85);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      // Specular shine
-      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-      ctx.beginPath();
-      ctx.arc(-r * 0.4, -r * 0.35, r * 0.22, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-    }
-
-    case "pineapple": {
-      // Oval body with diamond cross-hatch texture + Spiky green crown on top
-      // 3D Shadow
-      ctx.fillStyle = "#1b1c1c";
-      ctx.beginPath();
-      ctx.ellipse(3, 8, r * 0.78, r * 0.95, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Spiky Crown Leaves (drawn behind pineapple body)
-      ctx.fillStyle = "#2D8A4E";
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3;
-      const leafPoints = [-18, -9, 0, 9, 18];
-      leafPoints.forEach((lx, idx) => {
-        ctx.beginPath();
-        ctx.moveTo(lx * 0.6, -r * 0.6);
-        ctx.lineTo(lx * 1.1, -r * 1.4 - (idx % 2 === 0 ? 8 : 0));
-        ctx.lineTo(lx * 0.6 + 6, -r * 0.6);
-        ctx.fill();
-        ctx.stroke();
-      });
-
-      // Golden Pineapple Body
-      ctx.fillStyle = sub.skin;
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.ellipse(0, 6, r * 0.78, r * 0.95, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Diamond scale cross-hatching
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(0, 6, r * 0.75, r * 0.92, 0, 0, Math.PI * 2);
-      ctx.clip();
-
-      ctx.strokeStyle = "#B26B1E";
-      ctx.lineWidth = 2.2;
-      for (let d = -60; d <= 60; d += 16) {
-        ctx.beginPath();
-        ctx.moveTo(-r, d);
-        ctx.lineTo(r, d + 40);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(r, d);
-        ctx.lineTo(-r, d + 40);
-        ctx.stroke();
-      }
-
-      // Center dots on pineapple diamonds
-      ctx.fillStyle = "#7D430C";
-      for (let dy = -20; dy <= 30; dy += 16) {
-        for (let dx = -20; dx <= 20; dx += 16) {
-          ctx.beginPath();
-          ctx.arc(dx, dy + 6, 2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-      ctx.restore();
-      break;
-    }
-
-    case "strawberry": {
-      // Teardrop / Heart shaped with yellow seeds and three-leaf green hat
-      // 3D Shadow
-      ctx.fillStyle = "#1b1c1c";
-      ctx.beginPath();
-      ctx.moveTo(3, 4 - r * 0.6);
-      ctx.bezierCurveTo(3 + r, 4 - r * 0.5, 3 + r * 0.8, 4 + r * 0.6, 3, 4 + r * 1.05);
-      ctx.bezierCurveTo(3 - r * 0.8, 4 + r * 0.6, 3 - r, 4 - r * 0.5, 3, 4 - r * 0.6);
-      ctx.fill();
-
-      // Red Body
-      ctx.fillStyle = sub.skin;
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.6);
-      ctx.bezierCurveTo(r, -r * 0.5, r * 0.8, r * 0.6, 0, r * 1.05);
-      ctx.bezierCurveTo(-r * 0.8, r * 0.6, -r, -r * 0.5, 0, -r * 0.6);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      // Tiny yellow seeds
-      ctx.fillStyle = "#FFD84D";
-      for (let row = -1; row <= 2; row++) {
-        const rowY = row * (r * 0.28);
-        const count = 4 - Math.abs(row);
-        for (let c = 0; c < count; c++) {
-          const seedX = (c - (count - 1) / 2) * (r * 0.38);
-          ctx.beginPath();
-          ctx.ellipse(seedX, rowY, 1.8, 2.6, 0.2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      // Green Leaf Cap
-      ctx.fillStyle = "#34C759";
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 0.6);
-      ctx.lineTo(r * 0.5, -r * 0.85);
-      ctx.lineTo(r * 0.2, -r * 0.6);
-      ctx.lineTo(0, -r * 1.0);
-      ctx.lineTo(-r * 0.2, -r * 0.6);
-      ctx.lineTo(-r * 0.5, -r * 0.85);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      break;
-    }
-
+    // ─────────────────────────────────────────────
+    // APPLE
+    // ─────────────────────────────────────────────
     case "apple": {
-      // Indented top apple with brown stem and bright green leaf
-      // 3D Shadow
-      ctx.fillStyle = "#1b1c1c";
-      ctx.beginPath();
-      ctx.arc(-r * 0.35 + 3, 4, r * 0.68, 0, Math.PI * 2);
-      ctx.arc(r * 0.35 + 3, 4, r * 0.68, 0, Math.PI * 2);
-      ctx.fill();
+      // Shadow
+      drawShadow();
 
-      // Apple Red Lobes
+      ctx.beginPath();
+      ctx.moveTo(0, -r * 0.18);
+      ctx.bezierCurveTo(
+        r * 0.25,
+        -r * 0.72,
+        r * 0.9,
+        -r * 0.62,
+        r * 0.92,
+        -r * 0.02
+      );
+      ctx.bezierCurveTo(
+        r * 0.95,
+        r * 0.55,
+        r * 0.55,
+        r * 0.95,
+        0,
+        r
+      );
+      ctx.bezierCurveTo(
+        -r * 0.55,
+        r * 0.95,
+        -r * 0.95,
+        r * 0.55,
+        -r * 0.92,
+        -r * 0.02
+      );
+      ctx.bezierCurveTo(
+        -r * 0.9,
+        -r * 0.62,
+        -r * 0.25,
+        -r * 0.72,
+        0,
+        -r * 0.18
+      );
+      ctx.fill();
+      finishShadow();
+
+      // Body
       ctx.fillStyle = sub.skin;
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3.5;
       ctx.beginPath();
-      ctx.moveTo(0, -r * 0.3);
-      ctx.bezierCurveTo(r * 0.8, -r * 0.85, r * 1.15, r * 0.4, 0, r * 0.95);
-      ctx.bezierCurveTo(-r * 1.15, r * 0.4, -r * 0.8, -r * 0.85, 0, -r * 0.3);
-      ctx.closePath();
+      ctx.moveTo(0, -r * 0.18);
+      ctx.bezierCurveTo(
+        r * 0.25,
+        -r * 0.72,
+        r * 0.9,
+        -r * 0.62,
+        r * 0.92,
+        -r * 0.02
+      );
+      ctx.bezierCurveTo(
+        r * 0.95,
+        r * 0.55,
+        r * 0.55,
+        r * 0.95,
+        0,
+        r
+      );
+      ctx.bezierCurveTo(
+        -r * 0.55,
+        r * 0.95,
+        -r * 0.95,
+        r * 0.55,
+        -r * 0.92,
+        -r * 0.02
+      );
+      ctx.bezierCurveTo(
+        -r * 0.9,
+        -r * 0.62,
+        -r * 0.25,
+        -r * 0.72,
+        0,
+        -r * 0.18
+      );
       ctx.fill();
-      ctx.stroke();
+      outline();
 
-      // Brown Stem
+      // Stem
       ctx.strokeStyle = "#6B4423";
-      ctx.lineWidth = 3.5;
-      ctx.lineCap = "round";
+      ctx.lineWidth = line * 1.15;
       ctx.beginPath();
-      ctx.moveTo(0, -r * 0.3);
-      ctx.quadraticCurveTo(4, -r * 0.75, 8, -r * 0.85);
+      ctx.moveTo(0, -r * 0.18);
+      ctx.quadraticCurveTo(
+        r * 0.02,
+        -r * 0.48,
+        r * 0.16,
+        -r * 0.68
+      );
       ctx.stroke();
 
-      // Green Leaf
+      // Leaf
       ctx.fillStyle = "#34C759";
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.ellipse(8, -r * 0.6, 7, 4, -0.6, 0, Math.PI * 2);
+      ctx.ellipse(
+        r * 0.25,
+        -r * 0.58,
+        r * 0.25,
+        r * 0.11,
+        -0.35,
+        0,
+        Math.PI * 2
+      );
       ctx.fill();
-      ctx.stroke();
-
-      // Specular Shine
-      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.beginPath();
-      ctx.arc(-r * 0.4, -r * 0.25, r * 0.2, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-    }
-
-    case "kiwi": {
-      // Fuzzy brown exterior with textured specks
-      // 3D Shadow
-      ctx.fillStyle = "#1b1c1c";
-      ctx.beginPath();
-      ctx.ellipse(3, 4, r * 0.92, r * 0.82, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Brown fuzzy skin
-      ctx.fillStyle = sub.skin;
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r * 0.92, r * 0.82, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Fuzzy skin hair dots
-      ctx.fillStyle = "#5E381A";
-      for (let i = 0; i < 18; i++) {
-        const angle = (i * Math.PI * 2) / 18;
-        const dist = r * (0.45 + (i % 3) * 0.15);
-        ctx.beginPath();
-        ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 1.8, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      break;
-    }
-
-    case "orange":
-    default: {
-      // Round citrus with textured dimples and little green stem node
-      // 3D Shadow
-      ctx.fillStyle = "#1b1c1c";
-      ctx.beginPath();
-      ctx.arc(4, 4, r, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Orange Skin
-      ctx.fillStyle = sub.skin;
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Citrus peel pores
-      ctx.fillStyle = "#D46B08";
-      for (let i = 0; i < 12; i++) {
-        const angle = (i * 137.5 * Math.PI) / 180;
-        const dist = (i / 12) * (r * 0.7);
-        ctx.beginPath();
-        ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 1.8, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Little green leaf at top
-      ctx.fillStyle = "#34C759";
-      ctx.strokeStyle = "#1b1c1c";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(4, -r + 2, 6, 3, 0.4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
+      outline();
 
       // Shine
-      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.fillStyle = white;
       ctx.beginPath();
-      ctx.arc(-r * 0.35, -r * 0.35, r * 0.2, 0, Math.PI * 2);
+      ctx.ellipse(
+        -r * 0.38,
+        -r * 0.28,
+        r * 0.13,
+        r * 0.22,
+        -0.45,
+        0,
+        Math.PI * 2
+      );
       ctx.fill();
+
       break;
+    }
+
+    // ─────────────────────────────────────────────
+    // ORANGE
+    // ─────────────────────────────────────────────
+    case "orange": {
+      drawShadow();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.92, 0, Math.PI * 2);
+      ctx.fill();
+      finishShadow();
+
+      ctx.fillStyle = sub.skin;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.92, 0, Math.PI * 2);
+      ctx.fill();
+      outline();
+
+      // Peel texture
+      ctx.fillStyle = "#D46B08";
+
+      for (let i = 0; i < 22; i++) {
+        const angle = i * 2.39996;
+        const distance = r * (0.18 + ((i % 5) / 5) * 0.62);
+
+        ctx.beginPath();
+        ctx.arc(
+          Math.cos(angle) * distance,
+          Math.sin(angle) * distance,
+          Math.max(1, r * 0.025),
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+
+      // Leaf
+      ctx.fillStyle = "#34C759";
+      ctx.beginPath();
+      ctx.ellipse(
+        r * 0.18,
+        -r * 0.87,
+        r * 0.24,
+        r * 0.1,
+        -0.35,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      outline();
+
+      // Shine
+      ctx.fillStyle = white;
+      ctx.beginPath();
+      ctx.ellipse(
+        -r * 0.34,
+        -r * 0.34,
+        r * 0.17,
+        r * 0.24,
+        -0.5,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      break;
+    }
+
+    // ─────────────────────────────────────────────
+    // WATERMELON
+    // ─────────────────────────────────────────────
+    case "watermelon": {
+      drawShadow();
+
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 1.02, r * 0.86, 0, 0, Math.PI * 2);
+      ctx.fill();
+      finishShadow();
+
+      // Rind
+      ctx.fillStyle = sub.skin;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 1.02, r * 0.86, 0, 0, Math.PI * 2);
+      ctx.fill();
+      outline();
+
+      // Stripes clipped inside fruit
+      ctx.save();
+
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 0.98, r * 0.82, 0, 0, Math.PI * 2);
+      ctx.clip();
+
+      ctx.strokeStyle = "#165B33";
+      ctx.lineWidth = r * 0.14;
+
+      for (let i = -2; i <= 2; i++) {
+        const x = i * r * 0.38;
+
+        ctx.beginPath();
+        ctx.moveTo(x - r * 0.18, -r);
+        ctx.quadraticCurveTo(
+          x + r * 0.2,
+          0,
+          x - r * 0.18,
+          r
+        );
+        ctx.stroke();
+      }
+
+      ctx.restore();
+
+      // Shine
+      ctx.fillStyle = white;
+      ctx.beginPath();
+      ctx.ellipse(
+        -r * 0.4,
+        -r * 0.32,
+        r * 0.18,
+        r * 0.12,
+        -0.45,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      break;
+    }
+
+    // ─────────────────────────────────────────────
+    // PINEAPPLE
+    // ─────────────────────────────────────────────
+  case "pineapple": {
+  const darkGreen = "#176B3A";
+  const leafGreen = "#2F9E55";
+  const lightGreen = "#55B86A";
+  const diamondColor = "#A86518";
+
+  // ─────────────────────────────────────────────
+  // CROWN / LEAVES
+  // ─────────────────────────────────────────────
+
+  ctx.save();
+
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  const leaves = [
+    { x: -0.42, h: 0.62, rot: -0.42 },
+    { x: -0.25, h: 0.82, rot: -0.28 },
+    { x: -0.08, h: 0.96, rot: -0.12 },
+    { x: 0.08, h: 1.0, rot: 0.08 },
+    { x: 0.25, h: 0.82, rot: 0.27 },
+    { x: 0.42, h: 0.62, rot: 0.42 },
+  ];
+
+  leaves.forEach((leaf, index) => {
+    ctx.save();
+
+    ctx.translate(
+      r * leaf.x,
+      -r * 0.68
+    );
+
+    ctx.rotate(leaf.rot);
+
+    ctx.beginPath();
+
+    ctx.moveTo(0, r * 0.12);
+
+    ctx.bezierCurveTo(
+      -r * 0.13,
+      -r * leaf.h * 0.45,
+      -r * 0.13,
+      -r * leaf.h * 0.82,
+      0,
+      -r * leaf.h
+    );
+
+    ctx.bezierCurveTo(
+      r * 0.13,
+      -r * leaf.h * 0.78,
+      r * 0.13,
+      -r * leaf.h * 0.35,
+      0,
+      r * 0.12
+    );
+
+    ctx.closePath();
+
+    ctx.fillStyle =
+      index % 2 === 0
+        ? darkGreen
+        : leafGreen;
+
+    ctx.fill();
+
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = Math.max(1.5, r * 0.055);
+    ctx.stroke();
+
+    // Leaf highlight
+    ctx.strokeStyle = lightGreen;
+    ctx.lineWidth = Math.max(1, r * 0.025);
+
+    ctx.beginPath();
+    ctx.moveTo(0, r * 0.02);
+    ctx.quadraticCurveTo(
+      0,
+      -r * leaf.h * 0.45,
+      0,
+      -r * leaf.h * 0.82
+    );
+    ctx.stroke();
+
+    ctx.restore();
+  });
+
+  ctx.restore();
+
+  // ─────────────────────────────────────────────
+  // BODY SHADOW
+  // ─────────────────────────────────────────────
+
+  drawShadow();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -r * 0.58,
+    -r * 0.48
+  );
+
+  ctx.bezierCurveTo(
+    -r * 0.82,
+    -r * 0.12,
+    -r * 0.72,
+    r * 0.62,
+    -r * 0.32,
+    r * 0.94
+  );
+
+  ctx.bezierCurveTo(
+    -r * 0.12,
+    r * 1.08,
+    r * 0.12,
+    r * 1.08,
+    r * 0.32,
+    r * 0.94
+  );
+
+  ctx.bezierCurveTo(
+    r * 0.72,
+    r * 0.62,
+    r * 0.82,
+    -r * 0.12,
+    r * 0.58,
+    -r * 0.48
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+  finishShadow();
+
+  // ─────────────────────────────────────────────
+  // PINEAPPLE BODY
+  // ─────────────────────────────────────────────
+
+  ctx.fillStyle = sub.skin;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -r * 0.58,
+    -r * 0.48
+  );
+
+  ctx.bezierCurveTo(
+    -r * 0.82,
+    -r * 0.12,
+    -r * 0.72,
+    r * 0.62,
+    -r * 0.32,
+    r * 0.94
+  );
+
+  ctx.bezierCurveTo(
+    -r * 0.12,
+    r * 1.08,
+    r * 0.12,
+    r * 1.08,
+    r * 0.32,
+    r * 0.94
+  );
+
+  ctx.bezierCurveTo(
+    r * 0.72,
+    r * 0.62,
+    r * 0.82,
+    -r * 0.12,
+    r * 0.58,
+    -r * 0.48
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+  outline();
+
+  // ─────────────────────────────────────────────
+  // DIAMOND TEXTURE
+  // ─────────────────────────────────────────────
+
+  ctx.save();
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -r * 0.55,
+    -r * 0.42
+  );
+
+  ctx.bezierCurveTo(
+    -r * 0.72,
+    0,
+    -r * 0.6,
+    r * 0.55,
+    -r * 0.28,
+    r * 0.88
+  );
+
+  ctx.bezierCurveTo(
+    0,
+    r * 1.0,
+    r * 0.28,
+    r * 0.9,
+    r * 0.58,
+    r * 0.45
+  );
+
+  ctx.bezierCurveTo(
+    r * 0.7,
+    0,
+    r * 0.65,
+    -r * 0.35,
+    r * 0.55,
+    -r * 0.42
+  );
+
+  ctx.closePath();
+
+  ctx.clip();
+
+  ctx.strokeStyle = diamondColor;
+  ctx.lineWidth = Math.max(1.5, r * 0.045);
+  ctx.lineCap = "round";
+
+  const spacing = r * 0.27;
+
+  // Diagonal lines
+  for (
+    let offset = -r * 1.5;
+    offset <= r * 1.5;
+    offset += spacing
+  ) {
+    ctx.beginPath();
+
+    ctx.moveTo(
+      -r * 1.2,
+      offset
+    );
+
+    ctx.lineTo(
+      r * 1.2,
+      offset + r * 1.1
+    );
+
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      r * 1.2,
+      offset
+    );
+
+    ctx.lineTo(
+      -r * 1.2,
+      offset + r * 1.1
+    );
+
+    ctx.stroke();
+  }
+
+  ctx.restore();
+
+  // ─────────────────────────────────────────────
+  // DIAMOND CENTERS
+  // ─────────────────────────────────────────────
+
+  ctx.fillStyle = "#7D4A13";
+
+  const dots = [
+    [-0.28, -0.28],
+    [0, -0.38],
+    [0.28, -0.25],
+
+    [-0.42, 0],
+    [-0.14, -0.02],
+    [0.14, 0.02],
+    [0.42, 0.02],
+
+    [-0.28, 0.28],
+    [0, 0.35],
+    [0.28, 0.3],
+
+    [-0.14, 0.58],
+    [0.14, 0.58],
+  ];
+
+  dots.forEach(([x, y]) => {
+    ctx.beginPath();
+
+    ctx.arc(
+      r * x,
+      r * y,
+      Math.max(1.2, r * 0.025),
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+  });
+
+  // ─────────────────────────────────────────────
+  // JUICY HIGHLIGHT
+  // ─────────────────────────────────────────────
+
+  ctx.fillStyle = white;
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    -r * 0.32,
+    -r * 0.22,
+    r * 0.11,
+    r * 0.22,
+    -0.45,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  // Small secondary highlight
+  ctx.globalAlpha = 0.35;
+
+  ctx.beginPath();
+
+  ctx.arc(
+    -r * 0.15,
+    -r * 0.48,
+    r * 0.055,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
+
+  break;
+}
+
+    // ─────────────────────────────────────────────
+    // STRAWBERRY
+    // ─────────────────────────────────────────────
+    case "strawberry": {
+      drawShadow();
+
+      ctx.beginPath();
+      ctx.moveTo(0, -r * 0.58);
+      ctx.bezierCurveTo(
+        r * 0.95,
+        -r * 0.52,
+        r * 0.88,
+        r * 0.45,
+        0,
+        r * 1.02
+      );
+      ctx.bezierCurveTo(
+        -r * 0.88,
+        r * 0.45,
+        -r * 0.95,
+        -r * 0.52,
+        0,
+        -r * 0.58
+      );
+      ctx.fill();
+      finishShadow();
+
+      // Body
+      ctx.fillStyle = sub.skin;
+      ctx.beginPath();
+      ctx.moveTo(0, -r * 0.58);
+      ctx.bezierCurveTo(
+        r * 0.95,
+        -r * 0.52,
+        r * 0.88,
+        r * 0.45,
+        0,
+        r * 1.02
+      );
+      ctx.bezierCurveTo(
+        -r * 0.88,
+        r * 0.45,
+        -r * 0.95,
+        -r * 0.52,
+        0,
+        -r * 0.58
+      );
+      ctx.fill();
+      outline();
+
+      // Seeds
+      ctx.fillStyle = "#FFD84D";
+
+      const seedRows = [-0.25, 0.05, 0.35, 0.62];
+
+      seedRows.forEach((row, rowIndex) => {
+        const count = rowIndex === 0 ? 3 : rowIndex === 1 ? 4 : 5;
+
+        for (let i = 0; i < count; i++) {
+          const x =
+            (i - (count - 1) / 2) * r * 0.27;
+
+          const y = r * row;
+
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(0.2);
+
+          ctx.beginPath();
+          ctx.ellipse(
+            0,
+            0,
+            Math.max(1, r * 0.025),
+            Math.max(1.5, r * 0.045),
+            0,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+
+          ctx.restore();
+        }
+      });
+
+      // Crown
+      ctx.fillStyle = "#34C759";
+      ctx.beginPath();
+
+      ctx.moveTo(0, -r * 0.55);
+      ctx.lineTo(r * 0.4, -r * 0.85);
+      ctx.lineTo(r * 0.18, -r * 0.5);
+      ctx.lineTo(0, -r * 0.98);
+      ctx.lineTo(-r * 0.18, -r * 0.5);
+      ctx.lineTo(-r * 0.4, -r * 0.85);
+      ctx.closePath();
+
+      ctx.fill();
+      outline();
+
+      // Shine
+      ctx.fillStyle = white;
+      ctx.beginPath();
+      ctx.ellipse(
+        -r * 0.3,
+        -r * 0.25,
+        r * 0.1,
+        r * 0.18,
+        -0.4,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      break;
+    }
+
+    // ─────────────────────────────────────────────
+    // KIWI
+    // ─────────────────────────────────────────────
+    case "kiwi": {
+      drawShadow();
+
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 0.94, r * 0.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      finishShadow();
+
+      ctx.fillStyle = sub.skin;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 0.94, r * 0.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      outline();
+
+      // Fuzzy texture
+      ctx.fillStyle = "#5E381A";
+
+      for (let i = 0; i < 28; i++) {
+        const angle = i * 2.39996;
+        const distance = r * (0.38 + (i % 4) * 0.12);
+
+        ctx.beginPath();
+        ctx.arc(
+          Math.cos(angle) * distance,
+          Math.sin(angle) * distance * 0.85,
+          Math.max(0.8, r * 0.018),
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+
+      // Highlight
+      ctx.fillStyle = "rgba(255,255,255,0.22)";
+      ctx.beginPath();
+      ctx.ellipse(
+        -r * 0.35,
+        -r * 0.28,
+        r * 0.14,
+        r * 0.1,
+        -0.4,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      break;
+    }
+
+    // ─────────────────────────────────────────────
+    // BANANA
+    // ─────────────────────────────────────────────
+case "banana": {
+  const bananaYellow = sub.skin || "#F7C928";
+  const bananaLight = "#FFE477";
+  const bananaDark = "#D39A16";
+
+  // ─────────────────────────────────────────────
+  // BANANA SHAPE
+  // Wide + slightly curved, not overly bent
+  // ─────────────────────────────────────────────
+
+  const drawBananaPath = () => {
+    ctx.beginPath();
+
+    // Top-left
+    ctx.moveTo(-r * 0.78, -r * 0.35);
+
+    // Top edge
+    ctx.bezierCurveTo(
+      -r * 0.35,
+      -r * 0.58,
+      r * 0.35,
+      -r * 0.55,
+      r * 0.72,
+      -r * 0.28
+    );
+
+    // Right tip
+    ctx.bezierCurveTo(
+      r * 0.84,
+      -r * 0.18,
+      r * 0.86,
+      -r * 0.02,
+      r * 0.76,
+      r * 0.08
+    );
+
+    // Bottom-right
+    ctx.bezierCurveTo(
+      r * 0.62,
+      r * 0.22,
+      r * 0.35,
+      r * 0.38,
+      r * 0.02,
+      r * 0.4
+    );
+
+    // Bottom-left
+    ctx.bezierCurveTo(
+      -r * 0.35,
+      r * 0.42,
+      -r * 0.65,
+      r * 0.3,
+      -r * 0.82,
+      r * 0.05
+    );
+
+    // Left tip
+    ctx.bezierCurveTo(
+      -r * 0.9,
+      -r * 0.05,
+      -r * 0.88,
+      -r * 0.22,
+      -r * 0.78,
+      -r * 0.35
+    );
+
+    ctx.closePath();
+  };
+
+  // ─────────────────────────────────────────────
+  // SHADOW
+  // ─────────────────────────────────────────────
+
+  ctx.save();
+
+  ctx.translate(
+    r * 0.08,
+    r * 0.1
+  );
+
+  drawBananaPath();
+
+  ctx.fillStyle = ink;
+  ctx.fill();
+
+  ctx.restore();
+
+  // ─────────────────────────────────────────────
+  // BODY
+  // ─────────────────────────────────────────────
+
+  drawBananaPath();
+
+  ctx.fillStyle = bananaYellow;
+
+  ctx.fill();
+
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = Math.max(
+    2,
+    r * 0.075
+  );
+
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  ctx.stroke();
+
+  // ─────────────────────────────────────────────
+  // INNER RIDGE
+  // ─────────────────────────────────────────────
+
+  ctx.strokeStyle = bananaDark;
+
+  ctx.lineWidth = Math.max(
+    1.5,
+    r * 0.045
+  );
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -r * 0.65,
+    -r * 0.18
+  );
+
+  ctx.bezierCurveTo(
+    -r * 0.2,
+    -r * 0.38,
+    r * 0.3,
+    -r * 0.32,
+    r * 0.58,
+    -r * 0.12
+  );
+
+  ctx.stroke();
+
+  // ─────────────────────────────────────────────
+  // TOP TIP
+  // Yellow / brown only
+  // NO GREEN
+  // ─────────────────────────────────────────────
+
+  ctx.fillStyle = bananaDark;
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    -r * 0.83,
+    -r * 0.39,
+    r * 0.14,
+    r * 0.16,
+    r * 0.04
+  );
+
+  ctx.fill();
+
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = Math.max(
+    1.5,
+    r * 0.045
+  );
+
+  ctx.stroke();
+
+  // ─────────────────────────────────────────────
+  // RIGHT TIP
+  // ─────────────────────────────────────────────
+
+  ctx.fillStyle = "#6A4515";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    r * 0.78,
+    -r * 0.02,
+    r * 0.055,
+    r * 0.08,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  // ─────────────────────────────────────────────
+  // MAIN HIGHLIGHT
+  // ─────────────────────────────────────────────
+
+  ctx.fillStyle = bananaLight;
+
+  ctx.globalAlpha = 0.8;
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    -r * 0.22,
+    -r * 0.3,
+    r * 0.08,
+    r * 0.25,
+    -0.2,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
+
+  // Small shine
+  ctx.fillStyle = white;
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    -r * 0.08,
+    -r * 0.32,
+    r * 0.045,
+    r * 0.11,
+    -0.3,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+  break;
+}
+
+    default: {
+      // Generic fruit fallback
+      drawShadow();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.9, 0, Math.PI * 2);
+      ctx.fill();
+      finishShadow();
+
+      ctx.fillStyle = sub.skin;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.9, 0, Math.PI * 2);
+      ctx.fill();
+      outline();
+
+      ctx.fillStyle = white;
+      ctx.beginPath();
+      ctx.arc(
+        -r * 0.3,
+        -r * 0.3,
+        r * 0.16,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
     }
   }
 
@@ -361,83 +1098,328 @@ export function drawFruitHalf(
   side: number = 1
 ) {
   ctx.save();
+
+  const ink = "#1B1C1C";
+  const white = "rgba(255,255,255,0.5)";
+  const line = Math.max(2, r * 0.075);
+
   ctx.scale(side, 1);
 
-  // Dark Ink Extrusion Shadow
-  ctx.fillStyle = "#1b1c1c";
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  // ─────────────────────────────────────────────
+  // Helper: half-circle
+  // ─────────────────────────────────────────────
+
+  const drawHalfShape = (
+    radius: number,
+    fill: string,
+    offsetX = 0,
+    offsetY = 0
+  ) => {
+    ctx.beginPath();
+
+    ctx.arc(
+      offsetX,
+      offsetY,
+      radius,
+      -Math.PI / 2,
+      Math.PI / 2
+    );
+
+    ctx.lineTo(offsetX, offsetY - radius);
+    ctx.closePath();
+
+    ctx.fillStyle = fill;
+    ctx.fill();
+
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = line;
+    ctx.stroke();
+  };
+
+  // ─────────────────────────────────────────────
+  // Outer dark extrusion
+  // ─────────────────────────────────────────────
+
+  ctx.save();
+  ctx.translate(r * 0.1, r * 0.1);
+
+  drawHalfShape(r * 0.96, ink);
+
+  ctx.restore();
+
+  // ─────────────────────────────────────────────
+  // Fruit-specific outer body
+  // ─────────────────────────────────────────────
+
+  drawHalfShape(r * 0.96, sub.skin);
+
+  // ─────────────────────────────────────────────
+  // JUICY FLESH
+  // ─────────────────────────────────────────────
+
+  const flesh = sub.flesh || "#F8D98B";
+
   ctx.beginPath();
-  ctx.arc(3, 3, r, -Math.PI / 2, Math.PI / 2);
+
+  ctx.arc(
+    0,
+    0,
+    r * 0.76,
+    -Math.PI / 2,
+    Math.PI / 2
+  );
+
+  ctx.lineTo(0, -r * 0.76);
   ctx.closePath();
+
+  ctx.fillStyle = flesh;
   ctx.fill();
 
-  // Outer Rind
-  ctx.fillStyle = sub.skin;
-  ctx.strokeStyle = "#1b1c1c";
-  ctx.lineWidth = 3.5;
-  ctx.beginPath();
-  ctx.arc(0, 0, r, -Math.PI / 2, Math.PI / 2);
-  ctx.closePath();
-  ctx.fill();
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = Math.max(1.5, r * 0.05);
   ctx.stroke();
 
-  // Inner Juicy Flesh Cross-Section
-  ctx.fillStyle = sub.flesh;
-  ctx.beginPath();
-  ctx.arc(0, 0, r * 0.76, -Math.PI / 2, Math.PI / 2);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  // ─────────────────────────────────────────────
+  // WATERMELON / STRAWBERRY SEEDS
+  // ─────────────────────────────────────────────
 
-  // Fruit Specific Cross-Section Insides:
-  if (sub.shape === "watermelon" || sub.seeds) {
-    // Black seeds floating in red watermelon/strawberry flesh
-    ctx.fillStyle = "#1b1c1c";
-    const seedAngles = [-0.9, -0.4, 0, 0.4, 0.9];
-    seedAngles.forEach((a) => {
+  if (sub.shape === "watermelon" || sub.shape === "strawberry" || sub.seeds) {
+    ctx.fillStyle = ink;
+
+    const seeds = [
+      [0.28, -0.38],
+      [0.48, -0.1],
+      [0.3, 0.2],
+      [0.52, 0.4],
+      [0.18, 0.5],
+      [0.65, 0.15],
+    ];
+
+    seeds.forEach(([x, y], index) => {
+      ctx.save();
+
+      ctx.translate(
+        r * x,
+        r * y
+      );
+
+      ctx.rotate(index * 0.35);
+
       ctx.beginPath();
-      ctx.arc(Math.cos(a) * (r * 0.48), Math.sin(a) * (r * 0.48), 2.8, 0, Math.PI * 2);
+      ctx.ellipse(
+        0,
+        0,
+        Math.max(1, r * 0.035),
+        Math.max(1.8, r * 0.065),
+        0,
+        0,
+        Math.PI * 2
+      );
       ctx.fill();
+
+      ctx.restore();
     });
-  } else if (sub.shape === "orange" || sub.segments) {
-    // Citrus wedges / segment rays
-    ctx.strokeStyle = "#FFFFFF";
-    ctx.lineWidth = 2;
-    for (let i = -2; i <= 2; i++) {
-      const a = (i * Math.PI) / 6;
+  }
+
+  // ─────────────────────────────────────────────
+  // ORANGE / CITRUS SEGMENTS
+  // ─────────────────────────────────────────────
+
+  if (sub.shape === "orange" || sub.segments) {
+    ctx.strokeStyle = "rgba(255,255,255,0.8)";
+    ctx.lineWidth = Math.max(1, r * 0.035);
+
+    const segmentCount = 7;
+
+    for (let i = 0; i < segmentCount; i++) {
+      const angle =
+        -Math.PI / 2 +
+        (Math.PI * i) / (segmentCount - 1);
+
       ctx.beginPath();
-      ctx.moveTo(2, 0);
-      ctx.lineTo(Math.cos(a) * (r * 0.68), Math.sin(a) * (r * 0.68));
+
+      ctx.moveTo(0, 0);
+
+      ctx.lineTo(
+        Math.cos(angle) * r * 0.7,
+        Math.sin(angle) * r * 0.7
+      );
+
       ctx.stroke();
     }
-  } else if (sub.shape === "kiwi") {
-    // Light cream center with black poppy seeds ring
+  }
+
+  // ─────────────────────────────────────────────
+  // KIWI
+  // ─────────────────────────────────────────────
+
+  if (sub.shape === "kiwi") {
+    // Pale center
     ctx.fillStyle = "#E8F5E9";
+
     ctx.beginPath();
-    ctx.arc(0, 0, r * 0.28, -Math.PI / 2, Math.PI / 2);
+    ctx.arc(
+      0,
+      0,
+      r * 0.25,
+      -Math.PI / 2,
+      Math.PI / 2
+    );
+    ctx.lineTo(0, -r * 0.25);
     ctx.closePath();
     ctx.fill();
 
-    ctx.fillStyle = "#1b1c1c";
-    for (let a = -1.2; a <= 1.2; a += 0.35) {
+    ctx.strokeStyle = "#C4D9C8";
+    ctx.lineWidth = Math.max(1, r * 0.025);
+    ctx.stroke();
+
+    // Kiwi seeds
+    ctx.fillStyle = ink;
+
+    for (let i = 0; i < 12; i++) {
+      const angle =
+        -Math.PI / 2 +
+        (Math.PI * i) / 11;
+
+      const distance = r * 0.48;
+
       ctx.beginPath();
-      ctx.arc(Math.cos(a) * (r * 0.44), Math.sin(a) * (r * 0.44), 1.8, 0, Math.PI * 2);
+
+      ctx.ellipse(
+        Math.cos(angle) * distance,
+        Math.sin(angle) * distance,
+        Math.max(0.8, r * 0.025),
+        Math.max(1, r * 0.04),
+        angle,
+        0,
+        Math.PI * 2
+      );
+
       ctx.fill();
     }
-  } else if (sub.shape === "apple") {
-    // Apple star core & brown seeds
-    ctx.fillStyle = "#4A2F08";
-    ctx.beginPath();
-    ctx.ellipse(r * 0.28, 0, 3, 2, 0, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (sub.shape === "banana") {
-    // Pale cream banana interior with 3 central star dots
-    ctx.fillStyle = "#8D734A";
-    ctx.beginPath();
-    ctx.arc(r * 0.25, 0, 1.5, 0, Math.PI * 2);
-    ctx.arc(r * 0.15, -3, 1.2, 0, Math.PI * 2);
-    ctx.arc(r * 0.15, 3, 1.2, 0, Math.PI * 2);
-    ctx.fill();
   }
+
+  // ─────────────────────────────────────────────
+  // APPLE CORE
+  // ─────────────────────────────────────────────
+
+  if (sub.shape === "apple") {
+    ctx.fillStyle = "#F6E0B5";
+
+    ctx.beginPath();
+    ctx.arc(
+      0,
+      0,
+      r * 0.22,
+      -Math.PI / 2,
+      Math.PI / 2
+    );
+    ctx.lineTo(0, -r * 0.22);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = "#D0A76B";
+    ctx.lineWidth = Math.max(1, r * 0.025);
+    ctx.stroke();
+
+    // Apple seeds
+    ctx.fillStyle = "#4A2F08";
+
+    for (let i = 0; i < 2; i++) {
+      ctx.save();
+
+      ctx.translate(
+        r * 0.15,
+        (i === 0 ? -1 : 1) * r * 0.1
+      );
+
+      ctx.rotate(i === 0 ? -0.3 : 0.3);
+
+      ctx.beginPath();
+
+      ctx.ellipse(
+        0,
+        0,
+        Math.max(1, r * 0.025),
+        Math.max(1.5, r * 0.05),
+        0,
+        0,
+        Math.PI * 2
+      );
+
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // BANANA CROSS SECTION
+  // ─────────────────────────────────────────────
+
+  if (sub.shape === "banana") {
+    ctx.fillStyle = "#FFF1B8";
+
+    ctx.beginPath();
+    ctx.arc(
+      0,
+      0,
+      r * 0.52,
+      -Math.PI / 2,
+      Math.PI / 2
+    );
+    ctx.lineTo(0, -r * 0.52);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = "#D9B94A";
+    ctx.lineWidth = Math.max(1, r * 0.025);
+    ctx.stroke();
+
+    // Central banana dots
+    ctx.fillStyle = "#8D734A";
+
+    [
+      [0.22, -0.12],
+      [0.3, 0],
+      [0.22, 0.12],
+    ].forEach(([x, y]) => {
+      ctx.beginPath();
+
+      ctx.arc(
+        r * x,
+        r * y,
+        Math.max(0.8, r * 0.025),
+        0,
+        Math.PI * 2
+      );
+
+      ctx.fill();
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // JUICY HIGHLIGHT
+  // ─────────────────────────────────────────────
+
+  ctx.fillStyle = white;
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    r * 0.25,
+    -r * 0.35,
+    r * 0.08,
+    r * 0.15,
+    -0.4,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
 
   ctx.restore();
 }
