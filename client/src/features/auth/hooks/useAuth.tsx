@@ -92,14 +92,16 @@ export const useAuth = () => {
   });
 
   // ── Register Mutation ──
+  // NOTE: Registration does NOT auto-authenticate. The user must log in
+  // separately to obtain a session token. We intentionally skip setUser /
+  // queryClient updates so PublicRoute keeps them on the register page
+  // and the success modal can render before redirecting to /login.
   const registerMutation = useMutation({
     mutationFn: async (payload: RegisterPayload) => {
       const response = await registerApi(payload);
       return response.data.data;
     },
-    onSuccess: (authUser) => {
-      dispatch(setUser(authUser));
-      queryClient.setQueryData(AUTH_QUERY_KEY, authUser);
+    onSuccess: () => {
       playArcadeSound("success");
     },
     onError: (err) => {

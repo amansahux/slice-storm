@@ -27,6 +27,7 @@ const Register: React.FC = () => {
     watch,
   } = useRegisterForm({
     onSuccess: () => {
+      setCountdown(3);
       setShowSuccessModal(true);
       playArcadeSound("success");
     },
@@ -665,7 +666,7 @@ const Register: React.FC = () => {
                 timer
               </span>
               <span>
-                REDIRECTING TO PLAYFIELD IN{" "}
+                REDIRECTING TO LOGIN IN{" "}
                 <span className="text-[#D9363E] font-black text-base">
                   {countdown}
                 </span>
@@ -678,7 +679,7 @@ const Register: React.FC = () => {
               onClick={() => navigate("/login")}
               className="w-full py-3 bg-[#5CB85C] text-white font-display font-black text-base uppercase border-[3px] border-[#252525] shadow-[4px_4px_0_0_#252525] rounded-lg hover:-translate-y-0.5 active:translate-y-0.5 cursor-pointer"
             >
-              START SLICING NOW!
+              GO TO LOGIN →
             </button>
           </div>
         </div>

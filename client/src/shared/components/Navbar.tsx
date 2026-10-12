@@ -7,7 +7,7 @@ import {
   toggleSound,
   playArcadeSound,
 } from "../utils/arcadeAudio";
-import Logo from "../../../public/logo.png";
+import Logo from "/logo.png";
 
 interface NavbarProps {
   soundOn?: boolean;
