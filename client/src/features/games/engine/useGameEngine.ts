@@ -187,6 +187,12 @@ export const useGameEngine = () => {
         });
       }
 
+      // Remove the exploded bomb immediately
+      const bombIndex = flyingEntitiesRef.current.indexOf(bomb);
+      if (bombIndex !== -1) {
+        flyingEntitiesRef.current.splice(bombIndex, 1);
+      }
+
       if (modeRef.current === "blitz") {
         // Blitz Mode: No lives. Deduct 100 points with clear visual feedback
         setScore((prevScore) => Math.max(0, prevScore - 100));
@@ -248,6 +254,12 @@ export const useGameEngine = () => {
         });
         return current;
       });
+
+      // Remove the original sliced whole fruit
+      const fruitIndex = flyingEntitiesRef.current.indexOf(fruit);
+      if (fruitIndex !== -1) {
+        flyingEntitiesRef.current.splice(fruitIndex, 1);
+      }
 
       // Spawn two halves
       const sliceAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x);

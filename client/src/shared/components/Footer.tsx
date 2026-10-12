@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Link } from "react-router";
-import Logo from "../../../public/logo.png";
+import Logo from "/logo.png";
 import { playArcadeSound } from "../utils/arcadeAudio";
 
 interface FooterProps {
