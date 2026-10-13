@@ -28,8 +28,10 @@ export const GAME_CONSTANTS = {
   GRAVITY: 0.32,
   MAX_BLADE_POINTS: 16,
   BOMB_CHANCE: 0.18,
+  MAX_BOMB_CHANCE: 0.28, // Bomb chance gradually rises with score
   BASE_SPAWN_INTERVAL: 75,
+  MIN_SPAWN_INTERVAL: 55, // Wave spawn speed quickens as score grows
   MAX_LIVES: 3,
   BLITZ_DURATION: 60,
-  COMBO_TIMEOUT_MS: 1000,
+  COMBO_TIMEOUT_MS: 700,
 } as const;

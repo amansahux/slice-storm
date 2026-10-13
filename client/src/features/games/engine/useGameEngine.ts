@@ -58,6 +58,8 @@ export const useGameEngine = () => {
 
   const screenShakeRef = useRef<number>(0);
   const spawnTimerRef = useRef<number>(0);
+  const scoreRef = useRef<number>(0);
+  const comboRef = useRef<number>(0);
   const comboTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gameClockIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -89,16 +91,32 @@ export const useGameEngine = () => {
   const timeRemainingText =
     gameMode === "blitz" ? formatTime(timeRemaining) : formatTime(survivalSeconds);
 
-  // Spawning logic
+  // Spawning logic: difficulty increases as score and combo increase
   const spawnWave = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const count = Math.floor(Math.random() * 3) + 1; // 1 to 3 items
+
+    // Difficulty scaling factor based on current score (0 to 1 scaling up to 1000 score)
+    const currentScore = scoreRef.current;
+    const currentCombo = comboRef.current;
+    const scoreFactor = Math.min(1, currentScore / 1000);
+    const comboFactor = Math.min(0.4, currentCombo * 0.04);
+    const difficultyLevel = Math.min(1.2, scoreFactor + comboFactor);
+
+    // 1. Bomb Probability increases a little with score & combo (making game tougher)
+    const dynamicBombChance = Math.min(
+      GAME_CONSTANTS.MAX_BOMB_CHANCE,
+      GAME_CONSTANTS.BOMB_CHANCE + difficultyLevel * (GAME_CONSTANTS.MAX_BOMB_CHANCE - GAME_CONSTANTS.BOMB_CHANCE)
+    );
+
+    // 2. Wave count: 1-3 items initially, occasionally up to 4 at higher scores
+    const maxItems = difficultyLevel > 0.6 ? 4 : 3;
+    const count = Math.floor(Math.random() * (maxItems - 1 + 1)) + 1;
 
     for (let i = 0; i < count; i++) {
       entityIdCounter.current++;
-      const isBomb = Math.random() < GAME_CONSTANTS.BOMB_CHANCE;
+      const isBomb = Math.random() < dynamicBombChance;
       const startX = Math.random() * (rect.width * 0.7) + rect.width * 0.15;
       const startY = rect.height + 40;
 
@@ -147,19 +165,42 @@ export const useGameEngine = () => {
   const triggerComboIncrement = useCallback((hits: number) => {
     setCombo((prevCombo) => {
       const nextCombo = prevCombo + hits;
+      comboRef.current = nextCombo;
       setMaxCombo((prevMax) => Math.max(prevMax, nextCombo));
 
       if (nextCombo >= 3) {
         arcadeAudioEngine.playCombo();
-        if (nextCombo % 3 === 0 && canvasRef.current) {
+        if (canvasRef.current) {
           const rect = canvasRef.current.getBoundingClientRect();
+          let comboTitle = `+${hits} COMBO!`;
+          let comboColor = "#FF8A3D";
+          let comboScale = 1.6;
+
+          if (nextCombo >= 10) {
+            comboTitle = "⚡ GODLIKE BLADE! ⚡";
+            comboColor = "#FFD84D";
+            comboScale = 2.4;
+          } else if (nextCombo >= 7) {
+            comboTitle = "🔥 UNSTOPPABLE! 🔥";
+            comboColor = "#FF3B30";
+            comboScale = 2.1;
+          } else if (nextCombo >= 5) {
+            comboTitle = "💥 MEGA SLICE! 💥";
+            comboColor = "#fe893c";
+            comboScale = 1.9;
+          } else if (nextCombo >= 3) {
+            comboTitle = "★ COMBO SLICE! ★";
+            comboColor = "#5CB85C";
+            comboScale = 1.7;
+          }
+
           textPopupsRef.current.push({
-            text: nextCombo >= 6 ? "JUICE FRENZY!" : "COMBO SLICE!",
+            text: comboTitle,
             x: rect.width / 2,
             y: rect.height * 0.35,
-            color: "#FF8A3D",
-            scale: 1.8,
-            vy: -1.5,
+            color: comboColor,
+            scale: comboScale,
+            vy: -1.6,
             life: 1.2,
           });
         }
@@ -170,6 +211,7 @@ export const useGameEngine = () => {
     if (comboTimerRef.current) clearTimeout(comboTimerRef.current);
     comboTimerRef.current = setTimeout(() => {
       setCombo(0);
+      comboRef.current = 0;
     }, GAME_CONSTANTS.COMBO_TIMEOUT_MS);
   }, []);
 
@@ -223,7 +265,11 @@ export const useGameEngine = () => {
 
       if (modeRef.current === "blitz") {
         // Blitz Mode: No lives. Deduct 100 points with clear visual feedback
-        setScore((prevScore) => Math.max(0, prevScore - 100));
+        setScore((prevScore) => {
+          const nextScore = Math.max(0, prevScore - 100);
+          scoreRef.current = nextScore;
+          return nextScore;
+        });
 
         textPopupsRef.current.push({
           text: "-100 PTS! BOMB!",
@@ -267,8 +313,12 @@ export const useGameEngine = () => {
       setFruitsSliced((prev) => prev + 1);
 
       setCombo((current) => {
-        const pts = fruitSub.points * Math.max(1, current + 1);
-        setScore((prevScore) => prevScore + pts);
+        const pts = Math.min(50, fruitSub.points * Math.max(1, current + 1));
+        setScore((prevScore) => {
+          const nextScore = prevScore + pts;
+          scoreRef.current = nextScore;
+          return nextScore;
+        });
 
         // Comic popup
         textPopupsRef.current.push({
