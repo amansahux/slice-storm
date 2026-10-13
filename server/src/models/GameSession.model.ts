@@ -20,7 +20,7 @@ const gameSessionSchema = new mongoose.Schema<IGameSessionDocument>(
     mode: {
       type: String,
       required: true,
-      enum: ["classic", "arcade"],
+      enum: ["classic", "blitz", "arcade", "zen"],
     },
 
     startedAt: {
