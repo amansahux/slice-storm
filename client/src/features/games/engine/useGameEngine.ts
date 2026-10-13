@@ -194,6 +194,15 @@ export const useGameEngine = () => {
             comboScale = 1.7;
           }
 
+          // Remove previous combo popup so only one shows at a time
+          textPopupsRef.current = textPopupsRef.current.filter(
+            (tp) =>
+              !tp.text.includes("COMBO") &&
+              !tp.text.includes("UNSTOPPABLE") &&
+              !tp.text.includes("GODLIKE") &&
+              !tp.text.includes("MEGA SLICE")
+          );
+
           textPopupsRef.current.push({
             text: comboTitle,
             x: rect.width / 2,
