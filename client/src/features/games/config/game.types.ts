@@ -1,4 +1,4 @@
-export type GameMode = "classic" | "blitz" | "arcade" | "zen";
+export type GameMode = "classic" | "arcade" | "zen";
 export type GameState = "START" | "COUNTDOWN" | "PLAYING" | "PAUSED" | "GAMEOVER";
 
 export type FruitShape =

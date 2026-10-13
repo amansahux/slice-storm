@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from "axios";
 import axiosInstance from "../../../config/axiosInstance";
 
-export type GameMode = "classic" | "blitz" | "arcade" | "zen";
+export type GameMode = "classic" | "arcade" | "zen";
 export type GameStatus = "completed" | "invalid";
 export type GameSessionStatus =
   | "active"

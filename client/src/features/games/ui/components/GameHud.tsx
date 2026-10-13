@@ -76,7 +76,7 @@ export const GameHud: React.FC<GameHudProps> = memo(({
             <span>{timeRemainingText}</span>
             <span className="text-[#5b403f] font-normal hidden xs:inline">|</span>
             <span className="hidden xs:inline">
-              {gameMode === "classic" ? "SURVIVAL" : "BLITZ 60s"}
+              {gameMode === "classic" ? "SURVIVAL" : "ARCADE 60s"}
             </span>
           </div>
         </div>

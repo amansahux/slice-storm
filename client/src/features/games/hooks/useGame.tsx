@@ -185,7 +185,7 @@ export const useGame = () => {
 
       if (isAuthenticated && activeSession) {
         const duration =
-          engine.gameMode === "blitz"
+          engine.gameMode === "arcade"
             ? 60 - engine.timeRemaining
             : engine.survivalSeconds;
 

@@ -6,7 +6,7 @@ import { CountdownOverlay } from "../components/CountdownOverlay";
 import { PauseOverlay } from "../components/PauseOverlay";
 import { GameOverOverlay } from "../components/GameOverOverlay";
 import { LeaderboardModal } from "../components/LeaderboardModal";
-import { useGame } from "../../hooks/useGAme";
+import { useGame } from "../../hooks/useGame";
 
 export const Game: React.FC = memo(() => {
   // All business logic, session orchestration & TanStack Query states encapsulated in useGame hook

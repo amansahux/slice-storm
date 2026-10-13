@@ -64,15 +64,15 @@ export const StartOverlay: React.FC<StartOverlayProps> = memo(({
 
           <button
             type="button"
-            onClick={() => onSelectGameMode("blitz")}
+            onClick={() => onSelectGameMode("arcade")}
             className={`cursor-pointer p-2.5 sm:p-3 rounded-lg border-3 border-[#1b1c1c] flex flex-col items-center transition-all ${
-              gameMode === "blitz"
+              gameMode === "arcade"
                 ? "bg-[#ffe07e] text-[#231b00] shadow-[4px_4px_0px_#1b1c1c] -translate-y-0.5"
                 : "bg-white text-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] opacity-85 hover:opacity-100"
             }`}
           >
             <span className="font-['Rubik',sans-serif] text-xs sm:text-sm font-black uppercase">
-              BLITZ 60s
+              ARCADE 60s
             </span>
             <span className="text-[10px] sm:text-[11px] font-['Rubik',sans-serif] font-bold opacity-80">
               Frenzy Timer • No Drop Loss

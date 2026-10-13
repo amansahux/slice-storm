@@ -41,7 +41,7 @@ export const useGameEngine = () => {
   const [fruitsSliced, setFruitsSliced] = useState<number>(0);
   const [combo, setCombo] = useState<number>(0);
   const [maxCombo, setMaxCombo] = useState<number>(0);
-  const [timeRemaining, setTimeRemaining] = useState<number>(GAME_CONSTANTS.BLITZ_DURATION);
+  const [timeRemaining, setTimeRemaining] = useState<number>(GAME_CONSTANTS.ARCADE_DURATION);
   const [survivalSeconds, setSurvivalSeconds] = useState<number>(60);
 
   // Mutable refs for high-frequency 60 FPS animation (Rule 01 & Rule 02)
@@ -89,7 +89,7 @@ export const useGameEngine = () => {
   }, []);
 
   const timeRemainingText =
-    gameMode === "blitz" ? formatTime(timeRemaining) : formatTime(survivalSeconds);
+    gameMode === "arcade" ? formatTime(timeRemaining) : formatTime(survivalSeconds);
 
   // Spawning logic: difficulty increases as score and combo increase
   const spawnWave = useCallback(() => {
@@ -272,8 +272,8 @@ export const useGameEngine = () => {
         flyingEntitiesRef.current.splice(bombIndex, 1);
       }
 
-      if (modeRef.current === "blitz") {
-        // Blitz Mode: No lives. Deduct 100 points with clear visual feedback
+      if (modeRef.current === "arcade") {
+        // Arcade Mode: No lives lost. Deduct 100 points with clear visual feedback
         setScore((prevScore) => {
           const nextScore = Math.max(0, prevScore - 100);
           scoreRef.current = nextScore;
@@ -483,7 +483,7 @@ export const useGameEngine = () => {
     setFruitsSliced(0);
     setCombo(0);
     setMaxCombo(0);
-    setTimeRemaining(GAME_CONSTANTS.BLITZ_DURATION);
+    setTimeRemaining(GAME_CONSTANTS.ARCADE_DURATION);
     setSurvivalSeconds(0);
 
     flyingEntitiesRef.current = [];
@@ -497,7 +497,7 @@ export const useGameEngine = () => {
 
     gameClockIntervalRef.current = setInterval(() => {
       if (stateRef.current === "PLAYING") {
-        if (modeRef.current === "blitz") {
+        if (modeRef.current === "arcade") {
           setTimeRemaining((prev) => {
             if (prev <= 1) {
               setGameState("GAMEOVER");

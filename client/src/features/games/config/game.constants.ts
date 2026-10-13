@@ -32,6 +32,6 @@ export const GAME_CONSTANTS = {
   BASE_SPAWN_INTERVAL: 75,
   MIN_SPAWN_INTERVAL: 55, // Wave spawn speed quickens as score grows
   MAX_LIVES: 3,
-  BLITZ_DURATION: 60,
+  ARCADE_DURATION: 60,
   COMBO_TIMEOUT_MS: 700,
 } as const;

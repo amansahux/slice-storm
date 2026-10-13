@@ -18,7 +18,7 @@ const gameSchema = new mongoose.Schema<IGameDocument>(
     mode: {
       type: String,
       required: true,
-      enum: ["classic", "blitz", "arcade", "zen"],
+      enum: ["classic", "arcade", "zen"],
     },
 
     score: {

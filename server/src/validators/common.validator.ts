@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const GameModeEnum = z.enum(["classic", "blitz", "arcade", "zen"]);
+export const GameModeEnum = z.enum(["classic", "arcade", "zen"]);
 
 export const GameStatusEnum = z.enum(["completed", "invalid"]);
 
