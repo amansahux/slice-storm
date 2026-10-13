@@ -1,7 +1,7 @@
 import type { FruitTypeConfig, BladeTheme, LeaderboardEntry } from "./game.types";
 
 export const FRUIT_TYPES: readonly FruitTypeConfig[] = [
-  { name: "Watermelon", shape: "watermelon", radius: 46, skin: "#27AE60", flesh: "#EB5757", seeds: true, points: 10 },
+  { name: "Watermelon", shape: "watermelon", radius: 46, skin: "#27AE60", flesh: "#EB5757", seeds: true, points: 20 },
   { name: "Apple", shape: "apple", radius: 36, skin: "#E63946", flesh: "#FFF3B0", seeds: false, points: 15 },
   { name: "Orange", shape: "orange", radius: 38, skin: "#F77F00", flesh: "#FCBF49", segments: true, points: 15 },
   { name: "Banana", shape: "banana", radius: 38, skin: "#FFD166", flesh: "#FFFBE6", points: 20 },

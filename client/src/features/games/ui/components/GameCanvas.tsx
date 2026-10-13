@@ -19,7 +19,9 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     isPointerDownRef.current = true;
     onBladeStart(e.clientX, e.clientY);
-  }, [onBladeStart]);
+    // Immediately add a nearby point so a single click creates a blade segment
+    onAddBladePoint(e.clientX + 8, e.clientY + 8);
+  }, [onBladeStart, onAddBladePoint]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isPointerDownRef.current) return;
@@ -35,8 +37,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   const handleTouchStart = useCallback((e: React.TouchEvent<HTMLCanvasElement>) => {
     isPointerDownRef.current = true;
     const t = e.touches[0];
-    if (t) onBladeStart(t.clientX, t.clientY);
-  }, [onBladeStart]);
+    if (t) {
+      onBladeStart(t.clientX, t.clientY);
+      // Immediately add a nearby point so a single tap creates a blade segment
+      onAddBladePoint(t.clientX + 8, t.clientY + 8);
+    }
+  }, [onBladeStart, onAddBladePoint]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent<HTMLCanvasElement>) => {
     if (!isPointerDownRef.current) return;
