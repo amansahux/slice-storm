@@ -724,6 +724,8 @@ export const useGameEngine = () => {
     fruitsSliced,
     combo,
     maxCombo,
+    survivalSeconds,
+    timeRemaining,
     timeRemainingText,
     setGameMode,
     setSelectedBlade,

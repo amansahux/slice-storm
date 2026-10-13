@@ -1,16 +1,19 @@
 import React, { memo } from "react";
+import type { LeaderboardUserEntry } from "../../apis/game.api";
 import type { LeaderboardEntry } from "../../config/game.types";
 
 interface LeaderboardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  entries: readonly LeaderboardEntry[];
+  entries: readonly (LeaderboardEntry | LeaderboardUserEntry)[];
+  isLoading?: boolean;
 }
 
 export const LeaderboardModal: React.FC<LeaderboardModalProps> = memo(({
   isOpen,
   onClose,
   entries,
+  isLoading = false,
 }) => {
   if (!isOpen) return null;
 
@@ -30,25 +33,41 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = memo(({
           </button>
         </div>
 
-        <div className="space-y-2 mb-6">
-          {entries.map((entry) => (
-            <div
-              key={entry.rank}
-              className={`flex justify-between items-center p-2.5 rounded border-2 border-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] font-['Rubik',sans-serif] font-bold text-sm ${
-                entry.rank === 1
-                  ? "bg-[#ffe07e] text-[#231b00]"
-                  : "bg-white text-[#1b1c1c]"
-              }`}
-            >
-              <span className="tracking-wide">
-                {entry.rank}. {entry.name}
-              </span>
-              <span className="text-[#b61929] font-black">
-                {entry.score.toLocaleString()} PTS
-              </span>
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="py-8 flex flex-col items-center justify-center gap-2">
+            <div className="w-8 h-8 border-4 border-[#b61929] border-t-transparent rounded-full animate-spin" />
+            <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase tracking-wider">
+              Loading Champions...
+            </span>
+          </div>
+        ) : entries.length === 0 ? (
+          <div className="py-8 text-center font-['Rubik',sans-serif] text-sm text-[#5b403f]">
+            No Dojo records yet. Be the first to slice!
+          </div>
+        ) : (
+          <div className="space-y-2 mb-6 max-h-72 overflow-y-auto pr-1">
+            {entries.map((entry) => (
+              <div
+                key={entry.rank}
+                className={`flex justify-between items-center p-2.5 rounded border-2 border-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] font-['Rubik',sans-serif] font-bold text-sm ${
+                  entry.rank === 1
+                    ? "bg-[#ffe07e] text-[#231b00]"
+                    : "bg-white text-[#1b1c1c]"
+                }`}
+              >
+                <span className="tracking-wide flex items-center gap-2">
+                  <span className="w-5 text-center font-black">
+                    {entry.rank === 1 ? "👑" : `${entry.rank}.`}
+                  </span>
+                  {entry.name}
+                </span>
+                <span className="text-[#b61929] font-black">
+                  {entry.score.toLocaleString()} PTS
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <button
           type="button"
