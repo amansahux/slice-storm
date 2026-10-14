@@ -15,7 +15,6 @@ export interface CreateGameInput {
   maxCombo?: number;
   accuracy?: number;
   duration: number;
-  level?: number;
   status?: GameStatus;
 }
 
@@ -38,7 +37,6 @@ export const createGame = async (data: CreateGameInput) => {
     maxCombo = 0,
     accuracy = 0,
     duration,
-    level = 1,
     status = "completed",
   } = data;
 
@@ -72,7 +70,6 @@ export const createGame = async (data: CreateGameInput) => {
     maxCombo,
     accuracy,
     duration,
-    level,
     status,
   });
 

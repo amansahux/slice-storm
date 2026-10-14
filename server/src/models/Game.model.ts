@@ -64,12 +64,6 @@ const gameSchema = new mongoose.Schema<IGameDocument>(
       min: 0,
     },
 
-    level: {
-      type: Number,
-      default: 1,
-      min: 1,
-    },
-
     status: {
       type: String,
       enum: ["completed", "invalid"],
