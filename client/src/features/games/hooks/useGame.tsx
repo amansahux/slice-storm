@@ -117,11 +117,23 @@ export const useGame = () => {
   }, [engine, isAuthenticated, createSessionMutation]);
 
   /**
-   * Restart Game Flow
+   * Restart Game Flow:
+   * If session is not finished/submitted yet, mark current active session as abandoned,
+   * then create a new session and restart match.
    */
   const handleRestartGame = useCallback(() => {
+    const activeSession = activeSessionRef.current;
+    if (activeSession && !hasSubmittedGameRef.current && isAuthenticated) {
+      updateSessionMutation.mutate({
+        sessionId: activeSession,
+        status: "abandoned",
+      });
+    }
+    // Reset active session references before starting new session
+    setCurrentSessionId(null);
+    activeSessionRef.current = null;
     handleStartGame();
-  }, [handleStartGame]);
+  }, [handleStartGame, isAuthenticated, updateSessionMutation]);
 
   /**
    * Exit To Home / Abandon Flow

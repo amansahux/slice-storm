@@ -1,11 +1,10 @@
 import React, { memo } from "react";
-import type { LeaderboardUserEntry } from "../../apis/game.api";
 import type { LeaderboardEntry } from "../../config/game.types";
 
 interface LeaderboardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  entries: readonly (LeaderboardEntry | LeaderboardUserEntry)[];
+  entries: readonly LeaderboardEntry[];
   isLoading?: boolean;
 }
 
