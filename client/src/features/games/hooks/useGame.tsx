@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../app/store";
@@ -7,18 +7,17 @@ import {
   updateSessionStatusAPI,
   createGameAPI,
   getGameHistoryAPI,
-  getModeLeaderboardAPI,
+
   type CreateGamePayload,
   type GameMode,
   type GameSessionStatus,
 } from "../apis/game.api";
 import { useGameEngine } from "../engine/useGameEngine";
-import { INITIAL_LEADERBOARD } from "../config/game.constants";
+
 
 export const GAME_QUERY_KEYS = {
   history: (page = 1) => ["games", "history", page] as const,
-  leaderboardMode: (mode: GameMode) => ["games", "leaderboard", mode] as const,
-  leaderboardGlobal: () => ["games", "leaderboard", "global"] as const,
+
 };
 
 /**
@@ -27,7 +26,7 @@ export const GAME_QUERY_KEYS = {
  * - Integrates 60 FPS HTML5 game engine
  * - Manages secure Session lifecycle (create session -> start countdown -> play -> sync game result)
  * - Records game results to server on GAMEOVER with optimistic cache updates
- * - Provides mode/global leaderboards and game history with query caching & stale times
+ * - Records game results to server on GAMEOVER with optimistic cache updates
  * - Complies strictly with OPTIMIZATION_RULES.md (Stable references, memoized derived values, no duplicate state)
  */
 export const useGame = () => {
@@ -42,8 +41,7 @@ export const useGame = () => {
   const activeSessionRef = useRef<string | null>(null);
   const hasSubmittedGameRef = useRef<boolean>(false);
 
-  // Modal UI state (kept local close to usage - Rule 02)
-  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+
 
   // Sync session ref
   useEffect(() => {
@@ -88,9 +86,8 @@ export const useGame = () => {
       return response.data.data;
     },
     onSuccess: () => {
-      // Invalidate relevant query caches to refresh stats & leaderboards (Rule 06)
+      // Invalidate relevant query caches to refresh stats (Rule 06)
       queryClient.invalidateQueries({ queryKey: ["games", "history"] });
-      queryClient.invalidateQueries({ queryKey: ["games", "leaderboard"] });
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
     onError: (err) => {
@@ -100,20 +97,7 @@ export const useGame = () => {
 
   // ── 2. TANSTACK QUERIES (SERVER STATE) ──
 
-  // Leaderboard Query for Current Game Mode
-  const {
-    data: modeLeaderboard,
-    isLoading: isLeaderboardLoading,
-    refetch: refetchLeaderboard,
-  } = useQuery({
-    queryKey: GAME_QUERY_KEYS.leaderboardMode(engine.gameMode),
-    queryFn: async ({ signal }) => {
-      const response = await getModeLeaderboardAPI(engine.gameMode, { signal });
-      return response.data.data;
-    },
-    staleTime: 60 * 1000, // 1 minute fresh time (Rule 06)
-    gcTime: 5 * 60 * 1000,
-  });
+
 
   // User Game History Query (Only when authenticated)
   const {
@@ -212,23 +196,7 @@ export const useGame = () => {
     saveGameMutation,
   ]);
 
-  // Modal actions (stable references - Rule 01)
-  const openLeaderboard = useCallback(() => {
-    setIsLeaderboardOpen(true);
-    refetchLeaderboard();
-  }, [refetchLeaderboard]);
 
-  const closeLeaderboard = useCallback(() => {
-    setIsLeaderboardOpen(false);
-  }, []);
-
-  // Display leaderboard entries with INITIAL_LEADERBOARD fallback
-  const displayLeaderboard = useMemo(() => {
-    if (modeLeaderboard && modeLeaderboard.length > 0) {
-      return modeLeaderboard;
-    }
-    return INITIAL_LEADERBOARD;
-  }, [modeLeaderboard]);
 
   return {
     // Engine Passthroughs
@@ -256,12 +224,7 @@ export const useGame = () => {
     restartGame: handleRestartGame,
     exitToHome: handleExitToHome,
 
-    // Leaderboard Modal & Data
-    isLeaderboardOpen,
-    openLeaderboard,
-    closeLeaderboard,
-    leaderboardEntries: displayLeaderboard,
-    isLeaderboardLoading,
+
 
     // Server State
     currentSessionId,

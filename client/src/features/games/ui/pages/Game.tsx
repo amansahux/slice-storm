@@ -5,7 +5,7 @@ import { StartOverlay } from "../components/StartOverlay";
 import { CountdownOverlay } from "../components/CountdownOverlay";
 import { PauseOverlay } from "../components/PauseOverlay";
 import { GameOverOverlay } from "../components/GameOverOverlay";
-import { LeaderboardModal } from "../components/LeaderboardModal";
+
 import { useGame } from "../../hooks/useGame";
 
 export const Game: React.FC = memo(() => {
@@ -32,11 +32,7 @@ export const Game: React.FC = memo(() => {
     handleBladeStart,
     handleAddBladePoint,
     handleBladeEnd,
-    isLeaderboardOpen,
-    openLeaderboard,
-    closeLeaderboard,
-    leaderboardEntries,
-    isLeaderboardLoading,
+
     isSavingGame,
   } = useGame();
 
@@ -93,7 +89,6 @@ export const Game: React.FC = memo(() => {
             fruitsSliced={fruitsSliced}
             maxCombo={maxCombo}
             onPlayAgain={restartGame}
-            onOpenLeaderboard={openLeaderboard}
             onMainMenu={exitToHome}
           />
         )}
@@ -109,13 +104,7 @@ export const Game: React.FC = memo(() => {
         )}
       </main>
 
-      {/* Leaderboard Modal backed by live TanStack Query server data */}
-      <LeaderboardModal
-        isOpen={isLeaderboardOpen}
-        onClose={closeLeaderboard}
-        entries={leaderboardEntries}
-        isLoading={isLeaderboardLoading}
-      />
+
     </div>
   );
 });

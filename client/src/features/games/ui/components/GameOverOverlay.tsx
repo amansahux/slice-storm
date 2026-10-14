@@ -6,7 +6,7 @@ interface GameOverOverlayProps {
   fruitsSliced: number;
   maxCombo: number;
   onPlayAgain: () => void;
-  onOpenLeaderboard: () => void;
+
   onMainMenu: () => void;
 }
 
@@ -15,7 +15,7 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
   fruitsSliced,
   maxCombo,
   onPlayAgain,
-  onOpenLeaderboard,
+
   onMainMenu,
 }) => {
   return (
@@ -64,13 +64,7 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
           >
             PLAY AGAIN
           </button>
-          <button
-            type="button"
-            onClick={onOpenLeaderboard}
-            className="cursor-pointer w-full bg-[#ffe07e] hover:bg-[#ffd84d] text-[#231b00] border-3 border-[#1b1c1c] py-2.5 rounded-lg shadow-[4px_4px_0px_#1b1c1c] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-['Rubik',sans-serif] text-sm uppercase font-bold transition-all"
-          >
-            VIEW LEADERBOARD
-          </button>
+
           <MainMenuButton onClick={onMainMenu} />
         </div>
       </div>
