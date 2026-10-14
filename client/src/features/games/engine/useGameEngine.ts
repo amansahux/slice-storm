@@ -39,6 +39,8 @@ export const useGameEngine = () => {
   const [score, setScore] = useState<number>(0);
   const [lives, setLives] = useState<number>(GAME_CONSTANTS.MAX_LIVES);
   const [fruitsSliced, setFruitsSliced] = useState<number>(0);
+  const [fruitsMissed, setFruitsMissed] = useState<number>(0);
+  const [bombsHit, setBombsHit] = useState<number>(0);
   const [combo, setCombo] = useState<number>(0);
   const [maxCombo, setMaxCombo] = useState<number>(0);
   const [timeRemaining, setTimeRemaining] = useState<number>(GAME_CONSTANTS.ARCADE_DURATION);
@@ -229,6 +231,7 @@ export const useGameEngine = () => {
     (bomb: FlyingEntity) => {
       arcadeAudioEngine.playBomb();
       screenShakeRef.current = 18;
+      setBombsHit((prev) => prev + 1);
 
       // Create 1-second dynamic cartoon explosion effect (no juice particles)
       const sparkColors = ["#FFD84D", "#FF8A3D", "#FF3B30", "#FFFFFF", "#1b1c1c"];
@@ -481,6 +484,8 @@ export const useGameEngine = () => {
     setScore(0);
     setLives(GAME_CONSTANTS.MAX_LIVES);
     setFruitsSliced(0);
+    setFruitsMissed(0);
+    setBombsHit(0);
     setCombo(0);
     setMaxCombo(0);
     setTimeRemaining(GAME_CONSTANTS.ARCADE_DURATION);
@@ -595,7 +600,10 @@ export const useGameEngine = () => {
 
           // Drop below viewport
           if (ent.y > height + 60) {
-            if (!ent.sliced && ent.type === "fruit" && modeRef.current === "classic") {
+            if (!ent.sliced && ent.type === "fruit") {
+              setFruitsMissed((prev) => prev + 1);
+
+              if (modeRef.current === "classic") {
               setLives((prevLives) => {
                 const next = Math.max(0, prevLives - 1);
                 if (next <= 0) {
@@ -613,6 +621,7 @@ export const useGameEngine = () => {
                 vy: -1.5,
                 life: 0.8,
               });
+            }
             }
             flyingEntitiesRef.current.splice(i, 1);
           }
@@ -722,6 +731,8 @@ export const useGameEngine = () => {
     lives,
     maxLives: GAME_CONSTANTS.MAX_LIVES,
     fruitsSliced,
+    fruitsMissed,
+    bombsHit,
     combo,
     maxCombo,
     survivalSeconds,

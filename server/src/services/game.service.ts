@@ -13,7 +13,6 @@ export interface CreateGameInput {
   fruitsMissed?: number;
   bombsHit?: number;
   maxCombo?: number;
-  accuracy?: number;
   duration: number;
   status?: GameStatus;
 }
@@ -35,10 +34,15 @@ export const createGame = async (data: CreateGameInput) => {
     fruitsMissed = 0,
     bombsHit = 0,
     maxCombo = 0,
-    accuracy = 0,
     duration,
     status = "completed",
   } = data;
+
+  // Server-side accuracy calculation: (fruitsSliced / (fruitsSliced + fruitsMissed)) * 100
+  const totalFruitAttempts = fruitsSliced + fruitsMissed;
+  const accuracy = totalFruitAttempts > 0
+    ? Math.round((fruitsSliced / totalFruitAttempts) * 100)
+    : 0;
 
   if (!userId) {
     throw new AppError("Unauthorized: User ID is required", 401);
@@ -111,7 +115,6 @@ export const createGame = async (data: CreateGameInput) => {
     maxCombo: newGame.maxCombo,
     accuracy: newGame.accuracy,
     duration: newGame.duration,
-    level: newGame.level,
     status: newGame.status,
     createdAt: newGame.createdAt,
   };
@@ -137,7 +140,7 @@ export const getGameHistory = async (
 
   const [games, total] = await Promise.all([
     Game.find({ userId })
-      .select("sessionId mode score fruitsSliced fruitsMissed bombsHit maxCombo accuracy duration level status createdAt")
+      .select("sessionId mode score fruitsSliced fruitsMissed bombsHit maxCombo accuracy duration status createdAt")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(safeLimit)
