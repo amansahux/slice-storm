@@ -1,12 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../app/store";
 import {
   createSessionAPI,
   updateSessionStatusAPI,
   createGameAPI,
-  getGameHistoryAPI,
 
   type CreateGamePayload,
   type GameMode,
@@ -17,7 +16,6 @@ import { useGameEngine } from "../engine/useGameEngine";
 
 export const GAME_QUERY_KEYS = {
   history: (page = 1) => ["games", "history", page] as const,
-
 };
 
 /**
@@ -95,23 +93,6 @@ export const useGame = () => {
     },
   });
 
-  // ── 2. TANSTACK QUERIES (SERVER STATE) ──
-
-
-
-  // User Game History Query (Only when authenticated)
-  const {
-    data: gameHistoryData,
-    isLoading: isHistoryLoading,
-  } = useQuery({
-    queryKey: GAME_QUERY_KEYS.history(1),
-    queryFn: async ({ signal }) => {
-      const response = await getGameHistoryAPI({ page: 1, limit: 10 }, { signal });
-      return response.data.data;
-    },
-    enabled: isAuthenticated,
-    staleTime: 30 * 1000,
-  });
 
   // ── 3. GAME LIFECYCLE & BUSINESS LOGIC ──
 
@@ -230,8 +211,6 @@ export const useGame = () => {
     currentSessionId,
     isSavingGame: saveGameMutation.isPending,
     isStartingSession: createSessionMutation.isPending,
-    gameHistory: gameHistoryData?.games || [],
-    isHistoryLoading,
     isAuthenticated,
     user,
   };
