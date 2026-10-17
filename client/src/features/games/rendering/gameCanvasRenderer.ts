@@ -1512,17 +1512,77 @@ export function drawJuiceParticles(
   ctx: CanvasRenderingContext2D,
   particles: JuiceParticle[]
 ) {
-  particles.forEach((p) => {
-    ctx.save();
+  if (!particles.length) return;
+
+  ctx.save();
+
+  // First pass: subtle soft ambient juice glow
+  ctx.save();
+  ctx.globalCompositeOperation = "source-over";
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    const lifeRatio = Math.max(0, Math.min(1, p.life));
+    const currentRadius = p.size * lifeRatio;
+    if (currentRadius <= 0.5) continue;
+
+    ctx.globalAlpha = lifeRatio * 0.22;
     ctx.fillStyle = p.color;
-    ctx.strokeStyle = "#1b1c1c";
-    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, Math.max(1, p.size * p.life), 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, currentRadius * 2.2, 0, Math.PI * 2);
     ctx.fill();
+  }
+  ctx.restore();
+
+  // Second pass: Droplets with velocity elongation, ink outline, and glossy shine
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    const lifeRatio = Math.max(0, Math.min(1, p.life));
+    const radius = Math.max(1, p.size * lifeRatio);
+
+    const speed = Math.hypot(p.vx, p.vy);
+    const angle = Math.atan2(p.vy, p.vx);
+
+    // Stretch droplet slightly along velocity for fluid juice motion
+    const stretch = Math.min(2.4, 1 + speed * 0.12);
+    const radX = radius * stretch;
+    const radY = Math.max(0.8, radius / Math.sqrt(stretch));
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(angle);
+    ctx.globalAlpha = Math.min(1, lifeRatio * 1.2);
+
+    // 1. Droplet body
+    ctx.beginPath();
+    ctx.ellipse(0, 0, radX, radY, 0, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+
+    // 2. Crisp cartoon outline (scaled with particle size)
+    ctx.strokeStyle = "#1b1c1c";
+    ctx.lineWidth = Math.max(1, radius * 0.28);
     ctx.stroke();
+
+    // 3. Juicy specular gloss highlight (curved liquid gleam)
+    if (radius >= 2.5) {
+      ctx.beginPath();
+      ctx.ellipse(-radX * 0.28, -radY * 0.32, radX * 0.45, Math.max(0.6, radY * 0.35), -0.2, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.82)";
+      ctx.fill();
+
+      // Tiny secondary pin-point gleam
+      if (radius >= 4.5) {
+        ctx.beginPath();
+        ctx.arc(radX * 0.35, radY * 0.2, Math.max(0.5, radius * 0.18), 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+        ctx.fill();
+      }
+    }
+
     ctx.restore();
-  });
+  }
+
+  ctx.restore();
 }
 
 export function drawTextPopups(
