@@ -1465,6 +1465,7 @@ export function drawCartoonBomb(ctx: CanvasRenderingContext2D, r: number) {
   ctx.fillText("☠", 0, 6);
 }
 
+
 export function drawBladeTrail(
   ctx: CanvasRenderingContext2D,
   bladePoints: BladePoint[],
@@ -1472,41 +1473,133 @@ export function drawBladeTrail(
 ) {
   if (bladePoints.length < 2) return;
 
+  const points = bladePoints;
+  const total = points.length;
+
   ctx.save();
-  for (let i = 1; i < bladePoints.length; i++) {
-    const pt1 = bladePoints[i - 1];
-    const pt2 = bladePoints[i];
-    const widthRatio = i / bladePoints.length;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
 
-    // Hard black edge shadow
+  // Draw a smooth path through the blade points.
+  const drawSmoothPath = () => {
     ctx.beginPath();
-    ctx.moveTo(pt1.x + 2, pt1.y + 2);
-    ctx.lineTo(pt2.x + 2, pt2.y + 2);
-    ctx.strokeStyle = "#1b1c1c";
-    ctx.lineWidth = widthRatio * 12 + 2;
-    ctx.lineCap = "round";
-    ctx.stroke();
+    ctx.moveTo(points[0].x, points[0].y);
 
-    // Vibrant blade core
-    ctx.beginPath();
-    ctx.moveTo(pt1.x, pt1.y);
-    ctx.lineTo(pt2.x, pt2.y);
-    ctx.strokeStyle = i % 2 === 0 ? bladeTheme.primary : bladeTheme.accent;
-    ctx.lineWidth = widthRatio * 10;
-    ctx.lineCap = "round";
-    ctx.stroke();
+    for (let i = 1; i < total - 1; i++) {
+      const current = points[i];
+      const next = points[i + 1];
 
-    // White cutting shine center
+      const midX = (current.x + next.x) / 2;
+      const midY = (current.y + next.y) / 2;
+
+      ctx.quadraticCurveTo(
+        current.x,
+        current.y,
+        midX,
+        midY
+      );
+    }
+
+    ctx.lineTo(
+      points[total - 1].x,
+      points[total - 1].y
+    );
+  };
+
+  // Recent points are brighter and wider.
+  const progress = (i: number) => i / (total - 1);
+
+  // 1. Soft atmospheric glow.
+  ctx.save();
+  drawSmoothPath();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.strokeStyle = bladeTheme.primary;
+  ctx.globalAlpha = 0.22;
+  ctx.lineWidth = 25;
+  ctx.shadowColor = bladeTheme.primary;
+  ctx.shadowBlur = 24;
+  ctx.stroke();
+  ctx.restore();
+
+  // 2. Secondary colored energy aura.
+  ctx.save();
+  drawSmoothPath();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.strokeStyle = bladeTheme.accent;
+  ctx.globalAlpha = 0.35;
+  ctx.lineWidth = 12;
+  ctx.shadowColor = bladeTheme.accent;
+  ctx.shadowBlur = 12;
+  ctx.stroke();
+  ctx.restore();
+
+  // 3. Tapered dark outer silhouette.
+  for (let i = 1; i < total; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const t = progress(i);
+
     ctx.beginPath();
-    ctx.moveTo(pt1.x, pt1.y);
-    ctx.lineTo(pt2.x, pt2.y);
-    ctx.strokeStyle = "#FFFFFF";
-    ctx.lineWidth = widthRatio * 4;
-    ctx.lineCap = "round";
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.strokeStyle = "#15232D";
+    ctx.globalAlpha = 0.25 + t * 0.65;
+    ctx.lineWidth = 1.5 + t * 8;
     ctx.stroke();
   }
+
+  // 4. Metallic silver blade body.
+  drawSmoothPath();
+
+  const metal = ctx.createLinearGradient(
+    points[0].x,
+    points[0].y,
+    points[total - 1].x,
+    points[total - 1].y
+  );
+
+  metal.addColorStop(0, "rgba(170, 225, 255, 0.05)");
+  metal.addColorStop(0.25, "#A8DFFF");
+  metal.addColorStop(0.48, "#FFFFFF");
+  metal.addColorStop(0.7, "#D6F5FF");
+  metal.addColorStop(1, "#FFFFFF");
+
+  ctx.globalAlpha = 0.95;
+  ctx.strokeStyle = metal;
+  ctx.lineWidth = 4.5;
+  ctx.shadowColor = "#A8E8FF";
+  ctx.shadowBlur = 8;
+  ctx.stroke();
+
+  // 5. Razor-sharp white cutting edge.
+  ctx.save();
+  drawSmoothPath();
+  ctx.globalAlpha = 0.95;
+  ctx.strokeStyle = "#FFFFFF";
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = "#FFFFFF";
+  ctx.shadowBlur = 5;
+  ctx.stroke();
+  ctx.restore();
+
+  // 6. Bright leading edge.
+  const tip = points[total - 1];
+
+  ctx.save();
+  ctx.globalCompositeOperation = "lighter";
+  ctx.globalAlpha = 0.9;
+  ctx.fillStyle = "#FFFFFF";
+  ctx.shadowColor = bladeTheme.primary;
+  ctx.shadowBlur = 18;
+
+  ctx.beginPath();
+  ctx.arc(tip.x, tip.y, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
   ctx.restore();
 }
+
 
 export function drawJuiceParticles(
   ctx: CanvasRenderingContext2D,
