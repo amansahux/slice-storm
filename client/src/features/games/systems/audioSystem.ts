@@ -9,6 +9,7 @@ import {
   playSplat,
   playCombo,
   playBombExplosion,
+  playGameOverSound,
 } from "../../../shared/utils/arcadeAudio";
 
 /** Drop-in replacement for the old ArcadeAudioEngine class API */
@@ -25,5 +26,6 @@ export const arcadeAudioEngine = {
   playSplat,
   playCombo,
   playBomb: playBombExplosion,
+  playGameOver: playGameOverSound,
 };
 
