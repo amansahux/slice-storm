@@ -21,6 +21,19 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
   return (
     <div className="absolute z-20 inset-0 flex items-center justify-center p-3 sm:p-4 bg-[#1b1c1c]/65 backdrop-blur-[2px] animate-fadeIn overflow-y-auto">
       <div className="bg-[#FFF4D6] border-4 border-[#1b1c1c] rounded-xl p-5 sm:p-8 max-w-md w-full shadow-[8px_8px_0px_#1b1c1c] transform -rotate-1 relative outline outline-4 outline-white text-center my-auto">
+        {/* Header Ribbon with Logo Asset */}
+        <div className="w-full flex justify-center -mt-10 sm:-mt-14 mb-2">
+          <img
+            src="/logo.png"
+            alt="SLICE STORM Logo"
+            className="w-44 sm:w-56 object-contain drop-shadow-[0_4px_0_#1b1c1c] hover:scale-105 transition-transform"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src =
+                "https://lh3.googleusercontent.com/aida/AEtjO1W_Ds8rOEhWI7qhd71xYfwcBqc58O_C8-io-tJ77q7XXevtydGqBT9qB3zKMTi_Jv7GNRKqG6jd4pyoWWs7PIVeUlM6_xruRO0VYLHFGVQwcWXUGNxL2Om3tiDwzntF9-oC2K0rQ5YnxyzHRyBUg8g48Vo3cdtjLQ-8iQqsS_8veMqa388NNoCVRuq2LaiNvLiXRceJLc32O4V01TNG4b9nCVqf5ffB3ie4rSZND4cZnrT9R2nllE_hoyg";
+            }}
+          />
+        </div>
+
         <div className="bg-[#b61929] text-white border-2 border-[#1b1c1c] py-1 px-4 rounded-md inline-block uppercase font-['Rubik',sans-serif] text-xs font-black mb-2 animate-bounce shadow-[2px_2px_0px_#1b1c1c]">
           RUN TERMINATED
         </div>
