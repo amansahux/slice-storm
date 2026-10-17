@@ -1,6 +1,8 @@
 import React, { memo, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { MainMenuButton } from "./MainMenuButton";
 import { playGameOverSound } from "../../../../shared/utils/arcadeAudio";
+import type { RootState } from "../../../../app/store";
 
 interface GameOverOverlayProps {
   score: number;
@@ -19,6 +21,11 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
 
   onMainMenu,
 }) => {
+  const authUser = useSelector((state: RootState) => state.auth.user);
+  const userHighestScore = authUser?.highestScore ?? 0;
+  const isNewRecord = score > userHighestScore && userHighestScore > 0;
+  const displayHighestScore = Math.max(userHighestScore, score);
+
   useEffect(() => {
     playGameOverSound();
   }, []);
@@ -52,8 +59,23 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
             <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
               TOTAL SCORE:
             </span>
-            <span className="font-['Bricolage_Grotesque',sans-serif] text-2xl font-black text-[#b61929]">
-              {score}
+            <div className="flex items-center gap-2">
+              {isNewRecord && (
+                <span className="bg-[#34C759] text-white text-[10px] font-black px-1.5 py-0.5 rounded border border-[#1b1c1c] uppercase animate-pulse">
+                  NEW RECORD!
+                </span>
+              )}
+              <span className="font-['Bricolage_Grotesque',sans-serif] text-2xl font-black text-[#b61929]">
+                {score}
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
+            <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase flex items-center gap-1">
+               HIGHEST SCORE:
+            </span>
+            <span className="font-['Bricolage_Grotesque',sans-serif] text-xl font-black text-[#9a4600]">
+              {displayHighestScore}
             </span>
           </div>
           <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
