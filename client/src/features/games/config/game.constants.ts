@@ -28,7 +28,7 @@ export const GAME_CONSTANTS = {
   GRAVITY: 0.20,
   MAX_BLADE_POINTS: 16,
   BOMB_CHANCE: 0.10,
-  MAX_BOMB_CHANCE: 0.20, // Bomb chance gradually rises with score
+  MAX_BOMB_CHANCE: 0.15, // Bomb chance gradually rises with score
   BASE_SPAWN_INTERVAL: 100,
   MIN_SPAWN_INTERVAL: 80, // Wave spawn speed quickens as score grows
   MAX_LIVES: 3,

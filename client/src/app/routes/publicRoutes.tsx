@@ -12,7 +12,7 @@ const PublicRoute = () => {
     if (isInitializing) return null; // wait for initial auth check
 
     if (isAuthenticated) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/arcade" replace />;
     }
 
     return <Outlet />;
