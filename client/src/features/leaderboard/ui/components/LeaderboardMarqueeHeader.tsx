@@ -10,7 +10,7 @@ export const LeaderboardMarqueeHeader: React.FC<LeaderboardMarqueeHeaderProps> =
     return (
       <section className="relative mb-10 select-none">
         {/* Season Live Ribbon & Countdown Ticker */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        {/* <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div className="inline-flex items-center gap-2 bg-[#fe893c] text-[#672c00] border-3 border-[#1b1c1c] px-4 py-1.5 rounded-lg shadow-[3px_3px_0px_#1b1c1c] -rotate-[0.8deg]">
             <Flame className="w-4 h-4 text-[#b61929] animate-pulse" />
             <span className="font-['Rubik',sans-serif] text-sm font-black tracking-wide uppercase">
@@ -31,7 +31,7 @@ export const LeaderboardMarqueeHeader: React.FC<LeaderboardMarqueeHeaderProps> =
               4D 12H 31M
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Marquee Title Arcade Card */}
         <div className="relative bg-[#FFF4D6] border-4 border-[#1b1c1c] p-6 sm:p-8 rounded-2xl shadow-[8px_8px_0px_#1b1c1c] overflow-hidden">
