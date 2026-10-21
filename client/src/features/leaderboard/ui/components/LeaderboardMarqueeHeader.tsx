@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Trophy, Flame, Timer, Sparkles } from "lucide-react";
+import { Trophy, Sparkles } from "lucide-react";
 
 interface LeaderboardMarqueeHeaderProps {
   peakScore: number;
@@ -9,30 +9,6 @@ export const LeaderboardMarqueeHeader: React.FC<LeaderboardMarqueeHeaderProps> =
   memo(({ peakScore }) => {
     return (
       <section className="relative mb-10 select-none">
-        {/* Season Live Ribbon & Countdown Ticker */}
-        {/* <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="inline-flex items-center gap-2 bg-[#fe893c] text-[#672c00] border-3 border-[#1b1c1c] px-4 py-1.5 rounded-lg shadow-[3px_3px_0px_#1b1c1c] -rotate-[0.8deg]">
-            <Flame className="w-4 h-4 text-[#b61929] animate-pulse" />
-            <span className="font-['Rubik',sans-serif] text-sm font-black tracking-wide uppercase">
-              SEASON 04 LIVE
-            </span>
-            <span className="text-[#1b1c1c]/40 font-black">•</span>
-            <span className="font-['Rubik',sans-serif] text-xs font-bold">
-              14,892 BLADES CLASHING
-            </span>
-          </div>
-
-          <div className="inline-flex items-center gap-2 bg-[#FFF4D6] border-3 border-[#1b1c1c] px-3.5 py-1.5 rounded-lg shadow-[3px_3px_0px_#1b1c1c] rotate-[0.6deg]">
-            <Timer className="w-4 h-4 text-[#b61929]" />
-            <span className="font-['Rubik',sans-serif] text-xs font-bold uppercase text-[#1b1c1c]">
-              CYCLE RESETS IN:
-            </span>
-            <span className="font-['Bricolage_Grotesque',sans-serif] text-sm text-[#b61929] tracking-tight font-black">
-              4D 12H 31M
-            </span>
-          </div>
-        </div> */}
-
         {/* Marquee Title Arcade Card */}
         <div className="relative bg-[#FFF4D6] border-4 border-[#1b1c1c] p-6 sm:p-8 rounded-2xl shadow-[8px_8px_0px_#1b1c1c] overflow-hidden">
           {/* Background diagonal decorative blobs */}
