@@ -7,6 +7,7 @@ import type { AxiosRequestConfig } from "axios";
 export interface LeaderboardUserEntry {
     rank: number;
     id: string;
+    userId?: string;
     name: string;
     avatar: string | null;
     score: number;
@@ -17,7 +18,8 @@ export interface LeaderboardUserEntry {
 }
 
 export type GameMode = "classic" | "arcade" | "zen";
-/**D
+
+/**
  * Leaderboard APIs
  */
 export const getGlobalLeaderboardAPI = (config?: AxiosRequestConfig) => {
