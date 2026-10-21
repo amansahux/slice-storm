@@ -18,7 +18,7 @@ export const StartOverlay: React.FC<StartOverlayProps> = memo(({
   onStartGame,
 }) => {
   return (
-    <div className="absolute z-20 inset-0 flex items-center justify-center p-3 sm:p-4 bg-[#1b1c1c]/45 backdrop-blur-[2px] animate-fadeIn overflow-y-auto">
+    <div className="absolute z-20 inset-0 flex items-center justify-center p-3 sm:p-4 animate-fadeIn overflow-y-auto">
       <div className="bg-[#FFF4D6] border-4 border-[#1b1c1c] rounded-xl p-5 sm:p-8 max-w-lg w-full shadow-[8px_8px_0px_#1b1c1c] transform -rotate-1 relative outline outline-4 outline-white my-auto">
         {/* Header Ribbon with Logo Asset */}
         <div className="w-full flex justify-center -mt-10 sm:-mt-14 mb-2 sm:mb-3">
