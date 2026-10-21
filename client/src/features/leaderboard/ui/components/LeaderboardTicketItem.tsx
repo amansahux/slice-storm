@@ -94,11 +94,6 @@ export const LeaderboardTicketItem: React.FC<LeaderboardTicketItemProps> = memo(
                   CHAMP
                 </span>
               )}
-              {isCurrentUser && (
-                <span className="bg-[#b61929] text-white font-['Rubik',sans-serif] text-[9px] font-black px-2 py-0.5 rounded-full border border-[#1b1c1c]">
-                  ★ YOU
-                </span>
-              )}
             </div>
             <span className="font-['Rubik',sans-serif] text-[11px] font-bold text-[#5b403f] uppercase block">
               {entry.mode} MASTER • VERIFIED RUN
