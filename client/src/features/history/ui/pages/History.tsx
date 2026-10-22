@@ -44,7 +44,7 @@ export const History: React.FC = () => {
   } = useHistory();
 
   const handlePlayAgain = useCallback(() => {
-    navigate("/play");
+    navigate("/arcade");
   }, [navigate]);
 
   const handlePrevPage = useCallback(() => {

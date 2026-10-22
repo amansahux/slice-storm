@@ -7,6 +7,15 @@ import {
   toggleSound,
   playArcadeSound,
 } from "../utils/arcadeAudio";
+import {
+  Gamepad2,
+  LayoutDashboard,
+  Trophy,
+  History as HistoryIcon,
+  Volume2,
+  VolumeX,
+  Settings,
+} from "lucide-react";
 import Logo from "/logo.png";
 
 interface NavbarProps {
@@ -23,14 +32,14 @@ interface NavItemConfig {
   id: string;
   label: string;
   path: string;
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const NAV_LINKS: readonly NavItemConfig[] = [
-  { id: "ARCADE", label: "ARCADE", path: "/arcade", icon: "sports_esports" },
-  { id: "DASHBOARD", label: "DASHBOARD", path: "/dashboard", icon: "dashboard" },
-  { id: "LEADERBOARDS", label: "LEADERBOARDS", path: "/leaderboard", icon: "leaderboard" },
-  { id: "HISTORY", label: "HISTORY", path: "/history", icon: "history" },
+  { id: "ARCADE", label: "ARCADE", path: "/arcade", icon: Gamepad2 },
+  { id: "DASHBOARD", label: "DASHBOARD", path: "/dashboard", icon: LayoutDashboard },
+  { id: "LEADERBOARDS", label: "LEADERBOARDS", path: "/leaderboard", icon: Trophy },
+  { id: "HISTORY", label: "HISTORY", path: "/history", icon: HistoryIcon },
 ] as const;
 
 export const Navbar: React.FC<NavbarProps> = memo(
@@ -157,9 +166,11 @@ export const Navbar: React.FC<NavbarProps> = memo(
               className="cursor-pointer bg-[#eae7e7] hover:bg-[#e4e2e1] text-[#1b1c1c] p-1.5 sm:px-3 sm:py-1.5 rounded-lg border-2 border-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] flex items-center gap-1.5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
               title="Toggle Sound"
             >
-              <span className="material-symbols-outlined text-[18px]">
-                {currentSoundOn ? "volume_up" : "volume_off"}
-              </span>
+              {currentSoundOn ? (
+                <Volume2 className="w-[18px] h-[18px]" />
+              ) : (
+                <VolumeX className="w-[18px] h-[18px]" />
+              )}
               <span className="hidden sm:inline font-['Rubik',sans-serif] text-xs font-black uppercase">
                 {currentSoundOn ? "SFX: ON" : "SFX: OFF"}
               </span>
@@ -267,13 +278,11 @@ export const Navbar: React.FC<NavbarProps> = memo(
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span
-                          className={`material-symbols-outlined text-[22px] ${
+                        <link.icon
+                          className={`w-[22px] h-[22px] ${
                             isActive ? "text-white" : "text-[#b61929]"
                           }`}
-                        >
-                          {link.icon}
-                        </span>
+                        />
                         <span className="text-base font-black uppercase tracking-wide">
                           {link.label}
                         </span>
@@ -306,13 +315,11 @@ export const Navbar: React.FC<NavbarProps> = memo(
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`material-symbols-outlined text-[22px] ${
+                    <Settings
+                      className={`w-[22px] h-[22px] ${
                         currentActiveNav === "SETTING" ? "text-white" : "text-[#b61929]"
                       }`}
-                    >
-                      settings
-                    </span>
+                    />
                     <span className="text-base font-black uppercase tracking-wide">
                       SETTINGS
                     </span>

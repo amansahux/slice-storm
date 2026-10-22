@@ -6,6 +6,27 @@ import {
   toggleSound,
   isSoundEnabled,
 } from "../../../../shared/utils/arcadeAudio";
+import {
+  Volume2,
+  VolumeX,
+  Gamepad2,
+  Swords,
+  Zap,
+  Gift,
+  Gauge,
+  Flame,
+  AlertCircle,
+  Dices,
+  BadgeCheck,
+  Mail,
+  CheckCircle,
+  Lock,
+  Eye,
+  EyeOff,
+  ShieldCheck,
+  Key,
+  Timer,
+} from "lucide-react";
 import Logo from "/logo.png"
 
 const Register: React.FC = () => {
@@ -109,9 +130,11 @@ const Register: React.FC = () => {
               className="px-3 py-1.5 rounded-xl bg-[#FFF4D6] hover:bg-white comic-border shadow-pop-sm flex items-center gap-2 font-display font-bold text-xs text-[#252525] transition-transform active:translate-y-0.5 cursor-pointer"
               type="button"
             >
-              <span className="material-symbols-outlined text-[18px]">
-                {soundOn ? "volume_up" : "volume_off"}
-              </span>
+              {soundOn ? (
+                <Volume2 className="w-[18px] h-[18px]" />
+              ) : (
+                <VolumeX className="w-[18px] h-[18px]" />
+              )}
               <span className="hidden sm:inline">
                 {soundOn ? "FX: ON" : "FX: OFF"}
               </span>
@@ -146,9 +169,7 @@ const Register: React.FC = () => {
                 src={Logo}
               />
               <div className="inline-flex items-center gap-2 px-5 py-2 bg-[#FF8A3D] text-white border-[3px] border-[#252525] shadow-[4px_4px_0_0_#252525] rounded-md font-display font-black text-lg tracking-wide uppercase rotate-[-1.5deg]">
-                <span className="material-symbols-outlined text-[24px]">
-                  sports_esports
-                </span>
+                <Gamepad2 className="w-[24px] h-[24px]" />
                 <span>SLICE • COMBO • SURVIVE</span>
               </div>
             </div>
@@ -311,9 +332,7 @@ const Register: React.FC = () => {
               </svg>
 
               <div className="absolute bottom-2 right-3 bg-white/95 px-2.5 py-1 rounded border-2 border-[#252525] shadow-[2px_2px_0_0_#252525] text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                <span className="material-symbols-outlined text-[16px] text-[#D9363E]">
-                  swords
-                </span>{" "}
+                <Swords className="w-[16px] h-[16px] text-[#D9363E]" />{" "}
                 CLICK TO SLICE!
               </div>
             </div>
@@ -321,21 +340,15 @@ const Register: React.FC = () => {
             {/* Badges */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
               <div className="px-3.5 py-1.5 bg-[#FFD84D] text-[#252525] border-[3px] border-[#252525] shadow-[3px_3px_0_0_#252525] rounded font-bold text-xs uppercase flex items-center gap-1.5 rotate-[-1deg]">
-                <span className="material-symbols-outlined text-[18px]">
-                  bolt
-                </span>
+                <Zap className="w-[18px] h-[18px]" />
                 <span>5X COMBO BONUS</span>
               </div>
               <div className="px-3.5 py-1.5 bg-[#5CB85C] text-white border-[3px] border-[#252525] shadow-[3px_3px_0_0_#252525] rounded font-bold text-xs uppercase flex items-center gap-1.5 rotate-[1.5deg]">
-                <span className="material-symbols-outlined text-[18px]">
-                  redeem
-                </span>
+                <Gift className="w-[18px] h-[18px]" />
                 <span>DAILY BLADE REWARD</span>
               </div>
               <div className="px-3.5 py-1.5 bg-[#FF8A3D] text-white border-[3px] border-[#252525] shadow-[3px_3px_0_0_#252525] rounded font-bold text-xs uppercase flex items-center gap-1.5 rotate-[-2deg]">
-                <span className="material-symbols-outlined text-[18px]">
-                  speed
-                </span>
+                <Gauge className="w-[18px] h-[18px]" />
                 <span>INSTANT MATCHMAKING</span>
               </div>
             </div>
@@ -368,9 +381,7 @@ const Register: React.FC = () => {
               <div className="text-left mb-6">
                 <h1 className="text-2xl sm:text-3xl font-display font-black text-[#252525] uppercase tracking-tight flex items-center gap-2">
                   <span>CREATE YOUR PLAYER</span>
-                  <span className="material-symbols-outlined text-[#D9363E] text-3xl">
-                    sports_martial_arts
-                  </span>
+                  <Flame className="w-8 h-8 text-[#D9363E] fill-[#D9363E]" />
                 </h1>
                 <p className="text-sm text-[#524B40] mt-1 font-medium">
                   Step into the storm, carve your gamer legacy, and start slicing.
@@ -383,7 +394,7 @@ const Register: React.FC = () => {
                   className="mb-4 p-3 rounded-xl bg-red-100 border-2 border-[#D9363E] text-[#D9363E] flex items-start gap-2.5 text-xs font-bold"
                   role="alert"
                 >
-                  <span className="material-symbols-outlined text-lg">error</span>
+                  <AlertCircle className="w-5 h-5 shrink-0" />
                   <span>{formError}</span>
                 </div>
               )}
@@ -404,17 +415,12 @@ const Register: React.FC = () => {
                       onClick={generateRandomCallsign}
                       className="font-bold text-xs text-[#D9363E] hover:underline flex items-center gap-0.5 cursor-pointer"
                     >
-                      <span className="material-symbols-outlined text-[14px]">
-                        casino
-                      </span>{" "}
-                      RANDOMIZE
+                      <Dices className="w-[14px] h-[14px]" /> RANDOMIZE
                     </button>
                   </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#252525]">
-                      <span className="material-symbols-outlined text-xl">
-                        badge
-                      </span>
+                      <BadgeCheck className="w-5 h-5" />
                     </div>
                     <input
                       id="playerName"
@@ -444,9 +450,7 @@ const Register: React.FC = () => {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#252525]">
-                      <span className="material-symbols-outlined text-xl">
-                        mail
-                      </span>
+                      <Mail className="w-5 h-5" />
                     </div>
                     <input
                       id="playerEmail"
@@ -457,9 +461,7 @@ const Register: React.FC = () => {
                     />
                     {isEmailValid && (
                       <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                        <span className="material-symbols-outlined text-[#5CB85C] font-bold text-xl">
-                          check_circle
-                        </span>
+                        <CheckCircle className="w-5 h-5 text-[#5CB85C]" />
                       </div>
                     )}
                   </div>
@@ -480,9 +482,7 @@ const Register: React.FC = () => {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#252525]">
-                      <span className="material-symbols-outlined text-xl">
-                        lock
-                      </span>
+                      <Lock className="w-5 h-5" />
                     </div>
                     <input
                       id="playerPassword"
@@ -500,9 +500,11 @@ const Register: React.FC = () => {
                       aria-label="Toggle password view"
                       className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#252525] hover:text-[#D9363E] transition-colors cursor-pointer"
                     >
-                      <span className="material-symbols-outlined text-xl">
-                        {showPassword ? "visibility_off" : "visibility"}
-                      </span>
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                   {errors.password && (
@@ -546,9 +548,7 @@ const Register: React.FC = () => {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#252525]">
-                      <span className="material-symbols-outlined text-xl">
-                        verified_user
-                      </span>
+                      <ShieldCheck className="w-5 h-5" />
                     </div>
                     <input
                       id="confirmPassword"
@@ -566,9 +566,11 @@ const Register: React.FC = () => {
                       aria-label="Toggle confirm password view"
                       className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#252525] hover:text-[#D9363E] transition-colors cursor-pointer"
                     >
-                      <span className="material-symbols-outlined text-xl">
-                        {showConfirmPassword ? "visibility_off" : "visibility"}
-                      </span>
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                   {errors.confirmPassword && (
@@ -589,20 +591,14 @@ const Register: React.FC = () => {
                     <div className="absolute inset-0 w-1/3 bg-white/25 skew-x-[-30deg] animate-shimmer pointer-events-none"></div>
                     {isSubmitting ? (
                       <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined animate-spin-blade text-2xl">
-                          swords
-                        </span>
+                        <Swords className="w-6 h-6 animate-spin-blade" />
                         <span>FORGING BLADE...</span>
                       </div>
                     ) : (
                       <>
-                        <span className="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">
-                          bolt
-                        </span>
+                        <Zap className="w-6 h-6 group-hover:rotate-12 transition-transform" />
                         <span>JOIN THE STORM</span>
-                        <span className="material-symbols-outlined text-2xl group-hover:-rotate-12 transition-transform">
-                          swords
-                        </span>
+                        <Swords className="w-6 h-6 group-hover:-rotate-12 transition-transform" />
                       </>
                     )}
                   </button>
@@ -619,9 +615,7 @@ const Register: React.FC = () => {
                   onClick={() => playArcadeSound("click")}
                   className="px-4 py-1.5 bg-[#FFD84D] text-[#252525] border-2 border-[#252525] shadow-[2px_2px_0_0_#252525] rounded font-bold text-xs uppercase tracking-wider hover:-translate-y-0.5 active:translate-y-0.5 transition-all inline-flex items-center gap-1.5"
                 >
-                  <span className="material-symbols-outlined text-[16px]">
-                    key
-                  </span>
+                  <Key className="w-4 h-4" />
                   <span>[ LOGIN ]</span>
                 </Link>
               </div>
@@ -647,9 +641,7 @@ const Register: React.FC = () => {
             <div className="relative w-24 h-24 mx-auto mb-4 flex items-center justify-center">
               <div className="absolute inset-0 bg-[#FFD84D] rounded-full border-4 border-[#252525] shadow-[4px_4px_0_0_#252525] animate-ping opacity-30"></div>
               <div className="w-20 h-20 bg-[#5CB85C] rounded-full border-4 border-[#252525] shadow-[4px_4px_0_0_#252525] flex items-center justify-center text-white text-4xl animate-spin-blade">
-                <span className="material-symbols-outlined text-[44px]">
-                  sports_martial_arts
-                </span>
+                <Swords className="w-10 h-10" />
               </div>
             </div>
 
@@ -662,9 +654,7 @@ const Register: React.FC = () => {
             </p>
 
             <div className="p-3 bg-[#FFF4D6] border-2 border-[#252525] rounded-xl font-bold text-xs text-[#252525] mb-6 flex items-center justify-center gap-2">
-              <span className="material-symbols-outlined text-[#D9363E]">
-                timer
-              </span>
+              <Timer className="w-4 h-4 text-[#D9363E]" />
               <span>
                 REDIRECTING TO LOGIN IN{" "}
                 <span className="text-[#D9363E] font-black text-base">

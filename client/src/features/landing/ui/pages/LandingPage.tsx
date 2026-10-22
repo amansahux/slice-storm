@@ -5,6 +5,21 @@ import {
   toggleSound,
   isSoundEnabled,
 } from "../../../../shared/utils/arcadeAudio";
+import {
+  Volume2,
+  VolumeX,
+  Swords,
+  Flame,
+  HelpCircle,
+  CheckCircle,
+  Zap,
+  Touchpad,
+  Skull,
+  Timer,
+  Smile,
+  Award,
+  ShieldCheck,
+} from "lucide-react";
 import Logo from "/logo.png"
 
 const NAV_ITEMS = [
@@ -145,9 +160,11 @@ export const LandingPage: React.FC = () => {
               title="Toggle Sound FX"
               type="button"
             >
-              <span className="material-symbols-outlined text-[18px]">
-                {soundOn ? "volume_up" : "volume_off"}
-              </span>
+              {soundOn ? (
+                <Volume2 className="w-[18px] h-[18px]" />
+              ) : (
+                <VolumeX className="w-[18px] h-[18px]" />
+              )}
               <span className="hidden sm:inline">
                 {soundOn ? "SFX: ON" : "SFX: OFF"}
               </span>
@@ -168,9 +185,7 @@ export const LandingPage: React.FC = () => {
               onClick={() => playArcadeSound("slash")}
               className="hidden sm:inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#D9363E] text-white border-2 border-[#1b1c1c] rounded font-bold text-sm shadow-paper-4 arcade-btn-slam"
             >
-              <span className="material-symbols-outlined text-[18px]">
-                swords
-              </span>
+              <Swords className="w-[18px] h-[18px]" />
               <span>PLAY NOW</span>
             </Link>
           </div>
@@ -188,9 +203,7 @@ export const LandingPage: React.FC = () => {
             <span>SLICE • COMBO • SURVIVE</span>
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-[#b61929] font-bold text-xs border-2 border-[#1b1c1c] shadow-paper-2 rotate-1">
-            <span className="material-symbols-outlined text-[18px]">
-              local_fire_department
-            </span>
+            <Flame className="w-[18px] h-[18px] fill-current" />
             <span>HOW HIGH CAN YOU SCORE?</span>
           </div>
         </div>
@@ -228,9 +241,7 @@ export const LandingPage: React.FC = () => {
                 onClick={() => playArcadeSound("slash")}
                 className="inline-flex items-center gap-3 px-7 py-4 bg-[#D9363E] text-white border-4 border-[#1b1c1c] rounded-lg font-display font-black text-lg uppercase tracking-wide shadow-paper-6 arcade-btn-slam"
               >
-                <span className="material-symbols-outlined text-[28px]">
-                  sports_kabaddi
-                </span>
+                <Swords className="w-[28px] h-[28px]" />
                 <span>[ ⚔️ PLAY NOW ]</span>
               </Link>
               <a
@@ -238,9 +249,7 @@ export const LandingPage: React.FC = () => {
                 onClick={() => playArcadeSound("blip")}
                 className="inline-flex items-center gap-2 px-6 py-4 bg-[#FFE07E] text-[#231B00] border-4 border-[#1b1c1c] rounded-lg font-display font-black text-lg uppercase shadow-paper-4 arcade-btn-secondary"
               >
-                <span className="material-symbols-outlined text-[24px]">
-                  help
-                </span>
+                <HelpCircle className="w-[24px] h-[24px]" />
                 <span>HOW TO PLAY</span>
               </a>
             </div>
@@ -248,15 +257,11 @@ export const LandingPage: React.FC = () => {
             {/* Quick Player Stats Micro-Bar */}
             <div className="mt-6 flex flex-wrap items-center gap-3 text-[#1b1c1c] font-bold text-xs">
               <span className="flex items-center gap-1 bg-white px-2.5 py-1 border-2 border-[#1b1c1c] shadow-paper-2 rounded">
-                <span className="material-symbols-outlined text-[#b61929] text-[18px]">
-                  verified
-                </span>{" "}
+                <CheckCircle className="w-[18px] h-[18px] text-[#b61929]" />{" "}
                 4.8M FRUITS SLICED TODAY
               </span>
               <span className="flex items-center gap-1 bg-white px-2.5 py-1 border-2 border-[#1b1c1c] shadow-paper-2 rounded">
-                <span className="material-symbols-outlined text-[#725c00] text-[18px]">
-                  electric_bolt
-                </span>{" "}
+                <Zap className="w-[18px] h-[18px] text-[#725c00]" />{" "}
                 ZERO LATENCY ARCADE
               </span>
             </div>
@@ -433,9 +438,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="h-44 bg-white border-3 border-[#1b1c1c] rounded-lg mb-5 flex flex-col items-center justify-center relative overflow-hidden p-4">
               <div className="relative z-10 flex items-center justify-center">
-                <span className="material-symbols-outlined text-[64px] text-[#b61929]">
-                  touch_app
-                </span>
+                <Touchpad className="w-16 h-16 text-[#b61929]" />
                 <div className="w-24 h-1 border-t-4 border-dashed border-[#1b1c1c] -rotate-12 absolute -right-6"></div>
               </div>
               <span className="mt-3 px-3 py-1 bg-[#ffdbc9] text-[#763300] border border-[#1b1c1c] rounded font-bold text-xs">
@@ -491,9 +494,7 @@ export const LandingPage: React.FC = () => {
             <div className="h-44 bg-white border-3 border-[#1b1c1c] rounded-lg mb-5 flex flex-col items-center justify-center relative overflow-hidden p-4">
               <div className="relative animate-bounce">
                 <div className="w-14 h-14 bg-[#1b1c1c] text-white rounded-full border-3 border-[#1b1c1c] flex items-center justify-center shadow-paper-4">
-                  <span className="material-symbols-outlined text-[28px] text-[#ba1a1a]">
-                    skull
-                  </span>
+                  <Skull className="w-7 h-7 text-[#ba1a1a]" />
                 </div>
                 <div className="absolute -top-3 right-1 w-2 h-4 border-r-2 border-t-2 border-[#1b1c1c]"></div>
                 <div className="absolute -top-5 right-3 w-3 h-3 bg-[#FFE07E] rounded-full animate-ping"></div>
@@ -710,9 +711,7 @@ export const LandingPage: React.FC = () => {
                 <span className="font-display font-black text-lg uppercase">
                   CLASSIC MODE
                 </span>
-                <span className="material-symbols-outlined text-2xl">
-                  swords
-                </span>
+                <Swords className="w-6 h-6" />
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-4">
@@ -730,21 +729,15 @@ export const LandingPage: React.FC = () => {
                 </p>
                 <ul className="space-y-2 text-[#1b1c1c] font-bold text-xs">
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#b61929] text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-[#b61929]" />{" "}
                     Unlimited run duration
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#b61929] text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-[#b61929]" />{" "}
                     Escalating spawn velocity
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#b61929] text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-[#b61929]" />{" "}
                     Hall of Fame rank qualification
                   </li>
                 </ul>
@@ -768,9 +761,7 @@ export const LandingPage: React.FC = () => {
                 <span className="font-display font-black text-lg uppercase">
                   ARCADE BLITZ
                 </span>
-                <span className="material-symbols-outlined text-2xl">
-                  timer
-                </span>
+                <Timer className="w-6 h-6" />
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-4">
@@ -788,21 +779,15 @@ export const LandingPage: React.FC = () => {
                 </p>
                 <ul className="space-y-2 text-[#1b1c1c] font-bold text-xs">
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#FE893C] text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-[#FE893C]" />{" "}
                     60-Second Blitz clock
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#FE893C] text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-[#FE893C]" />{" "}
                     Special elemental fruits
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#FE893C] text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-[#FE893C]" />{" "}
                     Explosive end-of-match bonus
                   </li>
                 </ul>
@@ -829,9 +814,7 @@ export const LandingPage: React.FC = () => {
                 <span className="font-display font-black text-lg uppercase">
                   ZEN TRANQUILITY
                 </span>
-                <span className="material-symbols-outlined text-2xl">
-                  self_improvement
-                </span>
+                <Smile className="w-6 h-6" />
               </div>
               <div className="p-6 opacity-75">
                 <div className="flex items-center gap-2 mb-4">
@@ -849,21 +832,15 @@ export const LandingPage: React.FC = () => {
                 </p>
                 <ul className="space-y-2 text-[#1b1c1c] font-bold text-xs">
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-gray-500 text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-gray-500" />{" "}
                     Meditative slice flow
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-gray-500 text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-gray-500" />{" "}
                     Infinite relaxed replay
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-gray-500 text-[18px]">
-                      check_circle
-                    </span>{" "}
+                    <CheckCircle className="w-[18px] h-[18px] text-gray-500" />{" "}
                     Dojo warmup mode
                   </li>
                 </ul>
@@ -1001,9 +978,7 @@ export const LandingPage: React.FC = () => {
             </p>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3 p-3 bg-white border-3 border-[#1b1c1c] rounded-lg shadow-paper-2">
-                <span className="material-symbols-outlined text-[#b61929] text-3xl">
-                  military_tech
-                </span>
+                <Award className="w-8 h-8 text-[#b61929]" />
                 <div>
                   <div className="font-bold text-sm text-[#1b1c1c]">
                     WEEKLY LEADER REWARD
@@ -1014,9 +989,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white border-3 border-[#1b1c1c] rounded-lg shadow-paper-2">
-                <span className="material-symbols-outlined text-[#725c00] text-3xl">
-                  verified_user
-                </span>
+                <ShieldCheck className="w-8 h-8 text-[#725c00]" />
                 <div>
                   <div className="font-bold text-sm text-[#1b1c1c]">
                     ANTI-CHEAT ENGINE

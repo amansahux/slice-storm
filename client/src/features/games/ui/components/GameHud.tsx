@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { Flame, Timer, Heart, Play, Pause } from "lucide-react";
 import type { GameMode, GameState } from "../../config/game.types";
 
 interface GameHudProps {
@@ -56,12 +57,7 @@ export const GameHud: React.FC<GameHudProps> = memo(({
             }`}
           >
             <div className="flex items-center gap-1">
-              <span
-                className="material-symbols-outlined text-[14px] sm:text-[16px] text-[#b61929]"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                local_fire_department
-              </span>
+              <Flame className="w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] text-[#b61929] fill-[#b61929]" />
               <span className="text-[11px] sm:text-xs md:text-sm font-black font-['Rubik',sans-serif] tracking-wide uppercase whitespace-nowrap">
                 COMBO ×{Math.max(1, combo)}
               </span>
@@ -70,9 +66,7 @@ export const GameHud: React.FC<GameHudProps> = memo(({
 
           {/* Blitz / Mode indicator & In-Game Clock */}
           <div className="mt-0.5 sm:mt-1 flex items-center gap-1 text-[9px] sm:text-[11px] font-['Rubik',sans-serif] bg-white/95 px-2 py-0.5 rounded border border-[#1b1c1c] font-extrabold uppercase text-[#9a4600] shadow-[1px_1px_0px_#1b1c1c] whitespace-nowrap">
-            <span className="material-symbols-outlined text-[11px] sm:text-[13px] text-[#9a4600]">
-              timer
-            </span>
+            <Timer className="w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] text-[#9a4600]" />
             <span>{timeRemainingText}</span>
             <span className="text-[#5b403f] font-normal hidden xs:inline">|</span>
             <span className="hidden xs:inline">
@@ -93,17 +87,14 @@ export const GameHud: React.FC<GameHudProps> = memo(({
                 {Array.from({ length: maxLives }).map((_, idx) => {
                   const isAlive = idx < lives;
                   return (
-                    <span
+                    <Heart
                       key={idx}
-                      className={`material-symbols-outlined text-[16px] sm:text-[20px] md:text-[24px] transition-all ${
+                      className={`w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] md:w-[24px] md:h-[24px] transition-all ${
                         isAlive
-                          ? "text-[#b61929] scale-100"
-                          : "text-gray-400 opacity-20 grayscale scale-90"
+                          ? "text-[#b61929] fill-[#b61929] scale-100"
+                          : "text-gray-400 fill-transparent opacity-20 grayscale scale-90"
                       }`}
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      favorite
-                    </span>
+                    />
                   );
                 })}
               </div>
@@ -118,9 +109,11 @@ export const GameHud: React.FC<GameHudProps> = memo(({
               className="cursor-pointer bg-[#fe893c] text-[#672c00] px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg border-2 border-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] sm:shadow-[4px_4px_0px_#1b1c1c] active:translate-x-[1px] active:translate-y-[1px] sm:active:translate-x-[2px] sm:active:translate-y-[2px] active:shadow-none flex items-center gap-1 font-['Bricolage_Grotesque',sans-serif] uppercase text-xs sm:text-sm font-black transition-all"
               title="Pause Gameplay"
             >
-              <span className="material-symbols-outlined text-[16px] sm:text-[18px] md:text-[20px]">
-                {isPaused ? "play_arrow" : "pause"}
-              </span>
+              {isPaused ? (
+                <Play className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] md:w-[20px] md:h-[20px] fill-current" />
+              ) : (
+                <Pause className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] md:w-[20px] md:h-[20px] fill-current" />
+              )}
               <span className="font-['Rubik',sans-serif] font-black tracking-wider hidden sm:inline text-xs">
                 {isPaused ? "RESUME" : "PAUSE"}
               </span>

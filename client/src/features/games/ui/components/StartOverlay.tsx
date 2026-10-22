@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { Play } from "lucide-react";
 import type { GameMode, BladeTheme } from "../../config/game.types";
 import { BLADE_THEMES } from "../../config/game.constants";
 
@@ -112,12 +113,7 @@ export const StartOverlay: React.FC<StartOverlayProps> = memo(({
           onClick={onStartGame}
           className="cursor-pointer w-full bg-[#d9363e] hover:bg-[#b61929] text-white border-4 border-[#1b1c1c] py-3 sm:py-3.5 rounded-lg shadow-[6px_6px_0px_#1b1c1c] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none flex items-center justify-center gap-2 transition-all group"
         >
-          <span
-            className="material-symbols-outlined text-[24px] sm:text-[28px] group-hover:scale-110 transition-transform"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            play_arrow
-          </span>
+          <Play className="w-[24px] h-[24px] sm:w-[28px] sm:h-[28px] fill-white group-hover:scale-110 transition-transform" />
           <span className="font-['Bricolage_Grotesque',sans-serif] text-lg sm:text-2xl font-black uppercase tracking-tight text-white">
             INSERT COIN &amp; SLICE
           </span>
