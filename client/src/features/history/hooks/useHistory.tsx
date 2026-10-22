@@ -13,6 +13,7 @@ export type HistorySortOption = "newest" | "highest_score" | "max_combo" | "dura
 export type HistoryTimeframe = "all" | "today" | "week" | "month";
 
 export const HISTORY_QUERY_KEY = ["gameHistory"] as const;
+export const HISTORY_PAGE_QUERY_KEY = ["gameHistoryPage"] as const;
 
 export const useHistory = () => {
   const [filterMode, setFilterMode] = useState<HistoryFilterMode>("all");
@@ -24,19 +25,13 @@ export const useHistory = () => {
   const authUser = useSelector((state: RootState) => state.auth.user);
   const pageSize = 10;
 
-  // TanStack Query for remote server state (Rule 06: Data Fetching)
+  // 1. Overall Profile / Telemetry Query (fetches top 50 recent games to derive metrics, personal best & telemetry chart)
   const {
-    data: historyData,
-    isLoading,
-    isFetching,
-    isError,
-    error,
-    refetch,
+    data: allRunsData,
   } = useQuery({
     queryKey: [...HISTORY_QUERY_KEY, authUser?._id],
     queryFn: async ({ signal }) => {
-      // Fetch up to 100 runs for rich analytics, telemetry chart, and client filtering
-      const res = await getGameHistoryAPI({ page: 1, limit: 100 }, { signal });
+      const res = await getGameHistoryAPI({ page: 1, limit: 50 }, { signal });
       return res.data.data;
     },
     enabled: Boolean(authUser),
@@ -45,9 +40,29 @@ export const useHistory = () => {
     refetchOnWindowFocus: false,
   });
 
+  // 2. Dedicated Backend Paginated Query (Requirement 3: Backend-based pagination)
+  const {
+    data: paginatedData,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: [...HISTORY_PAGE_QUERY_KEY, authUser?._id, currentPage, pageSize],
+    queryFn: async ({ signal }) => {
+      const res = await getGameHistoryAPI({ page: currentPage, limit: pageSize }, { signal });
+      return res.data.data;
+    },
+    enabled: Boolean(authUser),
+    staleTime: 1000 * 60 * 1, // 1 minute
+    gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  });
+
   const allRuns: GameRunRecord[] = useMemo(() => {
-    return historyData?.games || [];
-  }, [historyData]);
+    return allRunsData?.games || [];
+  }, [allRunsData]);
 
   // Overall Performance Summary Metrics
   const summaryMetrics = useMemo(() => {
@@ -98,29 +113,26 @@ export const useHistory = () => {
     return {
       bestScore: Math.max(maxScore, authUser?.highestScore || 0),
       bestCombo: Math.max(maxCombo, authUser?.highestCombo || 0),
-      totalRuns: Math.max(runsCount, authUser?.totalGames || 0),
+      totalRuns: paginatedData?.pagination?.total || authUser?.totalGames || runsCount,
       totalFruitsSliced: Math.max(totalFruits, authUser?.totalFruitsSliced || 0),
-      avgScore: Math.round(totalScore / (runsCount || 1)),
-      avgAccuracy: Math.round(totalAccuracy / (runsCount || 1)),
+      avgScore: authUser?.averageScore || (runsCount > 0 ? Math.round(totalScore / runsCount) : 0),
+      avgAccuracy: runsCount > 0 ? Math.round(totalAccuracy / runsCount) : 0,
       classicRuns: classicCount,
       blitzRuns: blitzCount,
       zenRuns: zenCount,
-      bestRunDate: bestDate
-        ? new Date(bestDate).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          })
-        : "N/A",
+      bestRunDate: bestDate ? new Date(bestDate).toLocaleDateString() : "RECENT",
     };
-  }, [allRuns, authUser]);
+  }, [allRuns, authUser, paginatedData]);
 
-  // Golden Run / Personal Best Record Run
-  const goldenRun = useMemo(() => {
+  // Golden Run Ticket (Personal All-Time High)
+  const goldenRun: GameRunRecord | null = useMemo(() => {
     if (!allRuns.length) return null;
-    return [...allRuns].sort((a, b) => b.score - a.score)[0] || null;
+    return allRuns.reduce((prev, current) =>
+      current.score > prev.score ? current : prev
+    );
   }, [allRuns]);
 
-  // Top 5 Runs Mini Hall-of-Fame
+  // Top 5 Runs Mini Leaderboard
   const topFiveRuns = useMemo(() => {
     if (!allRuns.length) return [];
     return [...allRuns]
@@ -128,16 +140,24 @@ export const useHistory = () => {
       .slice(0, 5);
   }, [allRuns]);
 
-  // Telemetry Chart Data (Last 10 runs in chronological order)
+  // Telemetry Progression Data (Chronological order)
   const telemetryData = useMemo(() => {
     if (!allRuns.length) return [];
-    // slice newest 10 runs, then reverse to chronological sequence (oldest -> newest)
-    return [...allRuns].slice(0, 10).reverse();
+    return [...allRuns]
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      )
+      .slice(-10); // Last 10 matches trend curve
   }, [allRuns]);
 
-  // Filtered and Sorted runs list (Rule 12: memoize expensive transformations)
-  const filteredRuns = useMemo(() => {
-    let result = [...allRuns];
+  // Backend Paginated Runs with active filters/sorting
+  const rawPageRuns = useMemo(() => {
+    return paginatedData?.games || [];
+  }, [paginatedData]);
+
+  const paginatedRuns = useMemo(() => {
+    let result = [...rawPageRuns];
 
     // 1. Mode filter
     if (filterMode !== "all") {
@@ -168,30 +188,22 @@ export const useHistory = () => {
     });
 
     return result;
-  }, [allRuns, filterMode, timeframe, sortOption]);
+  }, [rawPageRuns, filterMode, timeframe, sortOption]);
 
-  // Pagination calculation
-  const totalPages = Math.max(1, Math.ceil(filteredRuns.length / pageSize));
-
-  const paginatedRuns = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    return filteredRuns.slice(start, start + pageSize);
-  }, [filteredRuns, currentPage, pageSize]);
+  const totalPages = Math.max(1, paginatedData?.pagination?.totalPages || 1);
+  const totalCount = paginatedData?.pagination?.total || 0;
 
   // Stable handlers (Rule 01)
   const handleFilterModeChange = useCallback((mode: HistoryFilterMode) => {
     setFilterMode(mode);
-    setCurrentPage(1);
   }, []);
 
   const handleSortChange = useCallback((sort: HistorySortOption) => {
     setSortOption(sort);
-    setCurrentPage(1);
   }, []);
 
   const handleTimeframeChange = useCallback((time: HistoryTimeframe) => {
     setTimeframe(time);
-    setCurrentPage(1);
   }, []);
 
   const handlePageChange = useCallback((page: number) => {
@@ -212,7 +224,7 @@ export const useHistory = () => {
     timeframe,
     currentPage,
     totalPages,
-    totalCount: filteredRuns.length,
+    totalCount,
     allRunsCount: allRuns.length,
     paginatedRuns,
     summaryMetrics,

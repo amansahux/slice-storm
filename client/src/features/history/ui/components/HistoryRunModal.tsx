@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X, Play, Bomb, Target, Zap, Clock, Calendar } from "lucide-react";
 import type { GameRunRecord } from "../../api/history.api";
 
@@ -10,6 +10,16 @@ interface HistoryRunModalProps {
 
 export const HistoryRunModal: React.FC<HistoryRunModalProps> = React.memo(
   ({ run, onClose, onPlayAgain }) => {
+    // Lock background scroll while modal is open (Requirement 1)
+    useEffect(() => {
+      if (!run) return;
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }, [run]);
+
     if (!run) return null;
 
     const formattedDate = new Date(run.createdAt).toLocaleString(undefined, {
