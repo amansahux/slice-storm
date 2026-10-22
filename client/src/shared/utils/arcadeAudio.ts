@@ -14,22 +14,76 @@ let soundEnabled =
 let bgMusicMasterGain: GainNode | null = null;
 let bgMusicIntervalId: number | null = null;
 let isBgMusicRunning = false;
+let userHasInteracted = false;
+let autoUnlockAttached = false;
 
-// ── Shared AudioContext (lazy) ────────────────────────────────────────────────
+// ── Unlock Audio Context on ANY user interaction ─────────────────────────────
+const unlockAudio = (): void => {
+  if (userHasInteracted && audioCtx && audioCtx.state === "running") return;
+  userHasInteracted = true;
+
+  if (audioCtx && audioCtx.state === "suspended") {
+    audioCtx.resume().catch(() => {});
+  } else if (!audioCtx && typeof window !== "undefined") {
+    getAudioContext();
+  }
+};
+
+const attachAutoUnlockListeners = (): void => {
+  if (typeof window === "undefined" || autoUnlockAttached) return;
+  autoUnlockAttached = true;
+
+  const events: (keyof WindowEventMap)[] = [
+    "pointerdown",
+    "touchstart",
+    "mousedown",
+    "keydown",
+    "click",
+    "pointermove",
+  ];
+
+  const handler = () => {
+    unlockAudio();
+    // Once resumed, we can detach the listeners
+    if (audioCtx && audioCtx.state === "running") {
+      events.forEach((evt) => window.removeEventListener(evt, handler, { capture: true }));
+    }
+  };
+
+  events.forEach((evt) => {
+    window.addEventListener(evt, handler, { capture: true, passive: true });
+  });
+};
+
+// Initialize listeners immediately if in browser
+if (typeof window !== "undefined") {
+  attachAutoUnlockListeners();
+}
+
+// ── Shared AudioContext (lazy & safe) ────────────────────────────────────────
 const getAudioContext = (): AudioContext | null => {
   if (typeof window === "undefined") return null;
+
   if (!audioCtx) {
     const AudioContextClass =
       window.AudioContext ||
       (window as unknown as { webkitAudioContext: typeof AudioContext })
         .webkitAudioContext;
     if (AudioContextClass) {
-      audioCtx = new AudioContextClass();
+      try {
+        audioCtx = new AudioContextClass();
+      } catch {
+        return null;
+      }
     }
   }
-  if (audioCtx && audioCtx.state === "suspended") {
+
+  // Only try to resume if the user has already performed a gesture
+  // to avoid spamming browser warnings
+  if (audioCtx && audioCtx.state === "suspended" && userHasInteracted) {
     audioCtx.resume().catch(() => {});
   }
+
   return audioCtx;
 };
 
@@ -44,27 +98,32 @@ export const toggleSound = (): boolean => {
   }
   if (soundEnabled) {
     playArcadeSound("click");
-    if (bgMusicMasterGain && audioCtx) {
-      bgMusicMasterGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    if (bgMusicMasterGain && audioCtx && audioCtx.state === "running") {
+      try {
+        bgMusicMasterGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      } catch {}
     }
   } else {
-    if (bgMusicMasterGain && audioCtx) {
-      bgMusicMasterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    if (bgMusicMasterGain && audioCtx && audioCtx.state === "running") {
+      try {
+        bgMusicMasterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      } catch {}
     }
   }
   return soundEnabled;
 };
 
 /**
- * Resume / create the AudioContext on user gesture (browser autoplay policy).
+ * Resume / create the AudioContext on user gesture.
  */
 export const initAudio = (): void => {
-  getAudioContext();
+  unlockAudio();
 };
 
 // ── Background Music (Groovy Arcade Chiptune Loop) ───────────────────────────
 export const startBackgroundMusic = (): void => {
   if (isBgMusicRunning) return;
+
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -72,15 +131,22 @@ export const startBackgroundMusic = (): void => {
 
   // Master Gain for background music
   if (!bgMusicMasterGain) {
-    bgMusicMasterGain = ctx.createGain();
-    bgMusicMasterGain.connect(ctx.destination);
+    try {
+      bgMusicMasterGain = ctx.createGain();
+      bgMusicMasterGain.connect(ctx.destination);
+    } catch {
+      return;
+    }
   }
 
-  // Set gain according to mute preference
-  bgMusicMasterGain.gain.setValueAtTime(soundEnabled ? 0.15 : 0, ctx.currentTime);
+  // Set gain according to mute preference if context is active
+  if (ctx.state === "running") {
+    try {
+      bgMusicMasterGain.gain.setValueAtTime(soundEnabled ? 0.15 : 0, ctx.currentTime);
+    } catch {}
+  }
 
   // Catchy arcade pentatonic bassline & melody steps (BPM: ~124, 16 steps)
-  // Notes in Hz: C3 (130.81), Eb3 (155.56), F3 (174.61), G3 (196.00), Bb3 (233.08), C4 (261.63), Eb4 (311.13)
   const bassNotes = [130.81, 130.81, 155.56, 174.61, 130.81, 130.81, 196.00, 174.61, 116.54, 116.54, 130.81, 155.56, 174.61, 196.00, 233.08, 196.00];
   const leadNotes = [523.25, 0, 622.25, 0, 523.25, 587.33, 0, 659.25, 783.99, 0, 698.46, 0, 622.25, 523.25, 587.33, 0];
 
@@ -89,12 +155,22 @@ export const startBackgroundMusic = (): void => {
 
   const scheduleStep = () => {
     if (!isBgMusicRunning) return;
+
+    // If context is still suspended, do not schedule audio nodes (prevents console warnings)
+    if (!ctx || ctx.state !== "running" || !bgMusicMasterGain) {
+      step = (step + 1) % 16;
+      return;
+    }
+
     try {
       const now = ctx.currentTime;
 
+      // Ensure gain matches sound preference
+      bgMusicMasterGain.gain.setValueAtTime(soundEnabled ? 0.15 : 0, now);
+
       // 1. Bass synth voice
       const bassFreq = bassNotes[step % bassNotes.length];
-      if (bassFreq > 0 && bgMusicMasterGain) {
+      if (bassFreq > 0) {
         const bassOsc = ctx.createOscillator();
         const bassGain = ctx.createGain();
         bassOsc.type = "triangle";
@@ -112,7 +188,7 @@ export const startBackgroundMusic = (): void => {
 
       // 2. Lead chiptune voice (square wave with lowpass)
       const leadFreq = leadNotes[step % leadNotes.length];
-      if (leadFreq > 0 && bgMusicMasterGain) {
+      if (leadFreq > 0) {
         const leadOsc = ctx.createOscillator();
         const leadGain = ctx.createGain();
         const leadFilter = ctx.createBiquadFilter();
@@ -135,7 +211,7 @@ export const startBackgroundMusic = (): void => {
       }
 
       // 3. Subtle hi-hat / kick rhythm on 4 beats
-      if (step % 4 === 0 && bgMusicMasterGain) {
+      if (step % 4 === 0) {
         // Kick
         const kickOsc = ctx.createOscillator();
         const kickGain = ctx.createGain();
@@ -148,7 +224,7 @@ export const startBackgroundMusic = (): void => {
         kickGain.connect(bgMusicMasterGain);
         kickOsc.start(now);
         kickOsc.stop(now + 0.09);
-      } else if (step % 2 === 1 && bgMusicMasterGain) {
+      } else if (step % 2 === 1) {
         // Hi-hat noise tap
         const hatBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.03), ctx.sampleRate);
         const data = hatBuffer.getChannelData(0);
@@ -180,7 +256,7 @@ export const stopBackgroundMusic = (): void => {
     clearInterval(bgMusicIntervalId);
     bgMusicIntervalId = null;
   }
-  if (bgMusicMasterGain && audioCtx) {
+  if (bgMusicMasterGain && audioCtx && audioCtx.state === "running") {
     try {
       bgMusicMasterGain.gain.setValueAtTime(0, audioCtx.currentTime);
     } catch {}
@@ -194,7 +270,7 @@ export const playArcadeSound = (
   if (!soundEnabled) return;
   try {
     const ctx = getAudioContext();
-    if (!ctx) return;
+    if (!ctx || ctx.state !== "running") return;
     const now = ctx.currentTime;
 
     if (type === "click" || type === "blip") {
@@ -275,7 +351,6 @@ export const playArcadeSound = (
       playNote(783.99, 0.24, 0.3); // G5
     }
   } catch (err) {
-    // Graceful fallback if audio is blocked by autoplay policy
     console.debug("Arcade audio playback suppressed:", err);
   }
 };
@@ -287,7 +362,7 @@ export const playSwoosh = (): void => {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioContext();
-    if (!ctx) return;
+    if (!ctx || ctx.state !== "running") return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = "sine";
@@ -307,7 +382,7 @@ export const playSplat = (): void => {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioContext();
-    if (!ctx) return;
+    if (!ctx || ctx.state !== "running") return;
     const bufferSize = ctx.sampleRate * 0.1;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -333,10 +408,10 @@ export const playCombo = (): void => {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioContext();
-    if (!ctx) return;
+    if (!ctx || ctx.state !== "running") return;
     const notes = [440, 554.37, 659.25, 880];
     notes.forEach((freq, idx) => {
-      if (!ctx) return;
+      if (!ctx || ctx.state !== "running") return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = "triangle";
@@ -359,7 +434,7 @@ export const playBombExplosion = (): void => {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioContext();
-    if (!ctx) return;
+    if (!ctx || ctx.state !== "running") return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = "sawtooth";
@@ -379,10 +454,9 @@ export const playGameOverSound = (): void => {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioContext();
-    if (!ctx) return;
+    if (!ctx || ctx.state !== "running") return;
     const now = ctx.currentTime;
 
-    // Classic arcade descending sad flourish (Eb4 -> D4 -> Db4 -> C4)
     const notes = [
       { f: 311.13, delay: 0, dur: 0.22 },
       { f: 293.66, delay: 0.2, dur: 0.22 },
@@ -391,6 +465,7 @@ export const playGameOverSound = (): void => {
     ];
 
     notes.forEach(({ f, delay, dur }) => {
+      if (!ctx || ctx.state !== "running") return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
