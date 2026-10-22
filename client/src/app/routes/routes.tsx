@@ -21,8 +21,6 @@ const Register = lazy(() => import("../../features/auth/ui/pages/Register"));
 const Dashboard = lazy(() => import("../../features/dashboard/ui/pages/Dashboard"));
 const Leaderboard = lazy(() => import("../../features/leaderboard/ui/pages/Leaderboard"));
 const History = lazy(() => import("../../features/history/ui/pages/History"));
-const Setting = lazy(() => import("../../features/setting/ui/pages/Setting"));
-const Profile = lazy(() => import("../../features/profile/ui/pages/Profile"));
 import { Game } from "../../features/games/ui/pages/Game";
 
 // Public policy & support pages (wrapped in GameLayout for consistent Navbar & Footer)
@@ -82,8 +80,6 @@ const router = createBrowserRouter([
           { path: "/dashboard", element: <Dashboard /> },
           { path: "/leaderboard", element: <Leaderboard /> },
           { path: "/history", element: <History /> },
-          { path: "/setting", element: <Setting /> },
-          { path: "/profile", element: <Profile /> },
         ],
       },
     ],
