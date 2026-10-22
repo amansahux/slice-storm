@@ -167,8 +167,8 @@ export const History: React.FC = () => {
             )}
           </div>
 
-          {/* Right Analytics Sidebar */}
-          <div className="lg:col-span-4 w-full">
+          {/* Right Analytics Sidebar (Sticky until all history items scrolled - Requirement 2) */}
+          <div className="lg:col-span-4 w-full lg:sticky lg:top-6 self-start">
             <HistoryAnalyticsSidebar
               summaryMetrics={summaryMetrics}
               telemetryData={telemetryData}
