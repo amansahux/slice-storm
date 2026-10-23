@@ -320,283 +320,230 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            {/* CARTOON FRUIT & BLADE COMPOSITION */}
-            <div
-              onClick={handleSliceClick}
-              className="relative w-full max-w-[460px] h-[290px] sm:h-[320px] my-2 select-none cursor-pointer group"
-              title="Click to slice!"
-            >
-              {/* Comic burst backdrop */}
-              <svg
-                className="absolute inset-0 w-full h-full text-[#EBD4A6]/60 filter drop-shadow-[4px_5px_0px_#252525]"
-                viewBox="0 0 460 320"
-                fill="none"
-              >
-                <path
-                  d="M 40,160 L 15,90 L 85,75 L 75,15 L 150,30 L 180,5 L 235,28 L 305,10 L 360,35 L 430,20 L 415,80 L 450,140 L 410,190 L 445,250 L 380,265 L 350,305 L 285,280 L 225,310 L 160,285 L 100,308 L 65,260 L 20,230 Z"
-                  fill="#FFE5A3"
-                  stroke="#252525"
-                  strokeWidth="4"
-                  strokeLinejoin="round"
-                />
-              </svg>
+{/* CARTOON FRUIT & BLADE COMPOSITION */}
+<div
+  onClick={handleSliceClick}
+  className="relative w-full max-w-[460px] h-[290px] sm:h-[320px] my-2 select-none cursor-pointer group"
+  title="Click to slice!"
+>
+  {/* Smooth animations: movement lives on an INNER group, position lives on
+      an OUTER group, so CSS animation never overrides the placement. */}
+  <style>{`
+    .fx-float-a, .fx-float-b, .fx-blade {
+      transform-box: fill-box;
+      transform-origin: center;
+      will-change: transform;
+    }
+    .fx-float-a { animation: fx-float-a 4.2s ease-in-out infinite; }
+    .fx-float-b { animation: fx-float-b 5s ease-in-out infinite; }
+    .fx-blade   { animation: fx-blade 3.6s ease-in-out infinite; }
 
-              <svg
-                className="absolute inset-0 w-full h-full overflow-visible"
-                viewBox="0 0 460 320"
-                fill="none"
-              >
-                <defs>
-                  <linearGradient
-                    id="blade-shine-login"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="#FFFFFF" />
-                    <stop offset="45%" stopColor="#F1F5F9" />
-                    <stop offset="70%" stopColor="#94A3B8" />
-                    <stop offset="100%" stopColor="#475569" />
-                  </linearGradient>
-                  <linearGradient
-                    id="watermelon-grad-login"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="0%"
-                  >
-                    <stop offset="0%" stopColor="#FF5A65" />
-                    <stop offset="100%" stopColor="#D9363E" />
-                  </linearGradient>
-                  <linearGradient
-                    id="orange-grad-login"
-                    x1="0%"
-                    y1="0%"
-                    x2="0%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="#FFB347" />
-                    <stop offset="100%" stopColor="#FF8A3D" />
-                  </linearGradient>
-                </defs>
+    @keyframes fx-float-a {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-7px) rotate(2.5deg); }
+    }
+    @keyframes fx-float-b {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(6px) rotate(-3deg); }
+    }
+    @keyframes fx-blade {
+      0%, 100% { transform: translate(0, 0); }
+      50%      { transform: translate(-10px, 4px); }
+    }
+    .group:hover .fx-blade { animation-duration: 1.6s; }
 
-                {/* Sliced Watermelon */}
-                <g
-                  className="animate-float-1"
-                  transform="translate(45, 175) rotate(-8)"
-                >
-                  <path
-                    d="M 10,70 Q 75,135 140,70 Z"
-                    fill="#489948"
-                    stroke="#252525"
-                    strokeWidth="4.5"
-                    strokeLinejoin="round"
-                  />
-                  <path d="M 16,68 Q 75,124 134,68 Z" fill="#F4FCE3" />
-                  <path
-                    d="M 22,66 Q 75,116 128,66 Z"
-                    fill="url(#watermelon-grad-login)"
-                  />
-                  <ellipse
-                    cx="50"
-                    cy="80"
-                    rx="3.5"
-                    ry="5.5"
-                    fill="#252525"
-                    transform="rotate(-15 50 80)"
-                  />
-                  <ellipse cx="75" cy="94" rx="3.5" ry="5.5" fill="#252525" />
-                  <ellipse
-                    cx="100"
-                    cy="80"
-                    rx="3.5"
-                    ry="5.5"
-                    fill="#252525"
-                    transform="rotate(15 100 80)"
-                  />
-                  <circle
-                    cx="138"
-                    cy="55"
-                    r="4.5"
-                    fill="#D9363E"
-                    stroke="#252525"
-                    strokeWidth="2"
-                  />
-                  <circle
-                    cx="152"
-                    cy="72"
-                    r="3"
-                    fill="#FF8A3D"
-                    stroke="#252525"
-                    strokeWidth="1.5"
-                  />
-                </g>
+    @media (prefers-reduced-motion: reduce) {
+      .fx-float-a, .fx-float-b, .fx-blade { animation: none; }
+    }
+  `}</style>
 
-                {/* Fresh Orange */}
-                <g
-                  className="animate-float-2"
-                  transform="translate(290, 40) rotate(12)"
-                >
-                  <circle
-                    cx="55"
-                    cy="55"
-                    r="46"
-                    fill="url(#orange-grad-login)"
-                    stroke="#252525"
-                    strokeWidth="4.5"
-                  />
-                  <path
-                    d="M 55,9 Q 70,-8 90,0 Q 75,18 55,9 Z"
-                    fill="#5CB85C"
-                    stroke="#252525"
-                    strokeWidth="3"
-                  />
-                  <path
-                    d="M 55,14 L 55,5"
-                    stroke="#7A4F23"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M 32,32 A 32 32 0 0 1 78 30"
-                    fill="none"
-                    stroke="#FFE7BA"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="28" cy="46" r="3" fill="#FFF" />
-                </g>
+  {/* Comic burst backdrop (unchanged) */}
+  <svg
+    className="absolute inset-0 w-full h-full text-[#EBD4A6]/60 filter drop-shadow-[4px_5px_0px_#252525]"
+    viewBox="0 0 460 320"
+    fill="none"
+  >
+    <path
+      d="M 40,160 L 15,90 L 85,75 L 75,15 L 150,30 L 180,5 L 235,28 L 305,10 L 360,35 L 430,20 L 415,80 L 450,140 L 410,190 L 445,250 L 380,265 L 350,305 L 285,280 L 225,310 L 160,285 L 100,308 L 65,260 L 20,230 Z"
+      fill="#FFE5A3"
+      stroke="#252525"
+      strokeWidth="4"
+      strokeLinejoin="round"
+    />
+  </svg>
 
-                {/* Apple */}
-                <g
-                  className="animate-float-1"
-                  transform="translate(75, 45) rotate(-14)"
-                >
-                  <path
-                    d="M 45,25 C 20,20 10,45 10,65 C 10,95 32,105 45,105 C 58,105 80,95 80,65 C 80,45 70,20 45,25 Z"
-                    fill="#FF4757"
-                    stroke="#252525"
-                    strokeWidth="4.5"
-                  />
-                  <path
-                    d="M 45,34 C 28,30 20,48 20,65 C 20,88 36,96 45,96 C 54,96 70,88 70,65 C 70,48 62,30 45,34 Z"
-                    fill="#FFFDEB"
-                  />
-                  <ellipse
-                    cx="40"
-                    cy="65"
-                    rx="3"
-                    ry="5"
-                    fill="#4A2810"
-                    transform="rotate(-10 40 65)"
-                  />
-                  <ellipse
-                    cx="50"
-                    cy="65"
-                    rx="3"
-                    ry="5"
-                    fill="#4A2810"
-                    transform="rotate(10 50 65)"
-                  />
-                </g>
+  <svg
+    className="absolute inset-0 w-full h-full overflow-visible"
+    viewBox="0 0 460 320"
+    fill="none"
+  >
+    <defs>
+      <linearGradient id="blade-shine-login" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FFFFFF" />
+        <stop offset="45%" stopColor="#F1F5F9" />
+        <stop offset="70%" stopColor="#94A3B8" />
+        <stop offset="100%" stopColor="#475569" />
+      </linearGradient>
+      <linearGradient id="watermelon-grad-login" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#FF5A65" />
+        <stop offset="100%" stopColor="#D9363E" />
+      </linearGradient>
+      <linearGradient id="orange-grad-login" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#FFB347" />
+        <stop offset="100%" stopColor="#FF8A3D" />
+      </linearGradient>
+    </defs>
 
-                {/* Banana */}
-                <g
-                  className="animate-float-2"
-                  transform="translate(280, 175) rotate(18)"
-                >
-                  <path
-                    d="M 15,20 Q 95,30 115,100 Q 60,65 15,20 Z"
-                    fill="#FFD84D"
-                    stroke="#252525"
-                    strokeWidth="4.5"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M 15,20 L 5,12"
-                    stroke="#5CB85C"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="115" cy="100" r="4" fill="#6B4E23" />
-                </g>
+    {/* ===== Slash trail (behind fruits' lower half, in front of backdrop) ===== */}
+    <path d="M 50,235 Q 220,170 400,135" stroke="#252525" strokeWidth="14" strokeLinecap="round" />
+    <path d="M 50,235 Q 220,170 400,135" stroke="#FFE066" strokeWidth="9" strokeLinecap="round" />
+    <path d="M 60,231 Q 220,172 390,138" stroke="#FFFFFF" strokeWidth="3.5" strokeLinecap="round" />
 
-                {/* Slash trail */}
-                <path
-                  d="M 35,260 Q 220,130 410,95"
-                  fill="none"
-                  stroke="#252525"
-                  strokeWidth="14"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M 35,260 Q 220,130 410,95"
-                  fill="none"
-                  stroke="#FFE066"
-                  strokeWidth="9"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M 45,255 Q 220,132 400,97"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                />
+    {/* ===== Apple — top left (centre ≈ 120,92) ===== */}
+    <g transform="translate(120, 92) rotate(-12) translate(-45, -65)">
+      <g className="fx-float-a">
+        <path
+          d="M 45,25 C 20,20 10,45 10,65 C 10,95 32,105 45,105 C 58,105 80,95 80,65 C 80,45 70,20 45,25 Z"
+          fill="#FF4757" stroke="#252525" strokeWidth="4.5"
+        />
+        <path
+          d="M 45,34 C 28,30 20,48 20,65 C 20,88 36,96 45,96 C 54,96 70,88 70,65 C 70,48 62,30 45,34 Z"
+          fill="#FFFDEB"
+        />
+        <ellipse cx="40" cy="65" rx="3" ry="5" fill="#4A2810" transform="rotate(-10 40 65)" />
+        <ellipse cx="50" cy="65" rx="3" ry="5" fill="#4A2810" transform="rotate(10 50 65)" />
+      </g>
+    </g>
 
-                {/* Katana Blade */}
-                <g
-                  className="animate-blade"
-                  transform="translate(350, 110) rotate(-16)"
-                >
-                  <path
-                    d="M -90,-8 L 30,-5 L 55,0 L 30,5 L -90,4 Z"
-                    fill="url(#blade-shine-login)"
-                    stroke="#252525"
-                    strokeWidth="3.5"
-                    strokeLinejoin="round"
-                  />
-                  <rect
-                    x="30"
-                    y="-12"
-                    width="6"
-                    height="24"
-                    rx="3"
-                    fill="#D9363E"
-                    stroke="#252525"
-                    strokeWidth="2.5"
-                  />
-                  <rect
-                    x="36"
-                    y="-7"
-                    width="46"
-                    height="14"
-                    rx="2"
-                    fill="#252525"
-                  />
-                  <path
-                    d="M 44,-7 L 49,7 M 55,-7 L 60,7 M 66,-7 L 71,7"
-                    stroke="#FF8A3D"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle
-                    cx="82"
-                    cy="0"
-                    r="4.5"
-                    fill="#FFD84D"
-                    stroke="#252525"
-                    strokeWidth="2"
-                  />
-                </g>
-              </svg>
+    {/* ===== Orange — top right (centre ≈ 345,82) ===== */}
+    <g transform="translate(345, 82) rotate(12) translate(-55, -55)">
+      <g className="fx-float-b">
+        <circle cx="55" cy="55" r="46" fill="url(#orange-grad-login)" stroke="#252525" strokeWidth="4.5" />
+        <path d="M 55,9 Q 70,-8 90,0 Q 75,18 55,9 Z" fill="#5CB85C" stroke="#252525" strokeWidth="3" />
+        <path d="M 55,14 L 55,5" stroke="#7A4F23" strokeWidth="4" strokeLinecap="round" />
+        <path d="M 32,32 A 32 32 0 0 1 78 30" stroke="#FFE7BA" strokeWidth="6" strokeLinecap="round" />
+        <circle cx="28" cy="46" r="3" fill="#FFF" />
+      </g>
+    </g>
 
-              {/* Click to slice tooltip */}
-              <div className="absolute bottom-2 right-3 bg-white/95 px-2.5 py-1 rounded border-2 border-[#252525] shadow-pop-sm text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                ⚔️ CLICK TO SLICE!
-              </div>
-            </div>
+    {/* ===== Watermelon slice — bottom left (centre ≈ 125,232) ===== */}
+    <g transform="translate(125, 232) rotate(-8) translate(-75, -42)">
+      <g className="fx-float-b">
+        <defs>
+          <radialGradient id="melon-flesh-login" cx="50%" cy="0%" r="100%">
+            <stop offset="0%" stopColor="#FF8A92" />
+            <stop offset="55%" stopColor="#F2414F" />
+            <stop offset="100%" stopColor="#D12A38" />
+          </radialGradient>
+          <linearGradient id="melon-rind-login" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#2F8A3A" />
+            <stop offset="50%" stopColor="#4DB35A" />
+            <stop offset="100%" stopColor="#2F8A3A" />
+          </linearGradient>
+        </defs>
+
+        {/* rind (outer half-disc) */}
+        <path d="M 10,10 A 65 65 0 0 0 140,10 Z" fill="url(#melon-rind-login)" stroke="#252525" strokeWidth="4.5" strokeLinejoin="round" />
+        {/* rind stripes */}
+        <path d="M 15,16 A 60 60 0 0 0 135,16" stroke="#1F6B2C" strokeWidth="3" strokeDasharray="12 8" strokeLinecap="round" opacity="0.65" />
+        {/* white pith */}
+        <path d="M 17,10 A 58 58 0 0 0 133,10 Z" fill="#F4FCE3" />
+        {/* red flesh */}
+        <path d="M 22,10 A 53 53 0 0 0 128,10 Z" fill="url(#melon-flesh-login)" />
+        {/* flesh sheen */}
+        <path d="M 30,18 Q 44,44 70,52" stroke="#FFC2C7" strokeWidth="4" strokeLinecap="round" opacity="0.7" />
+        {/* flat cut edge */}
+        <path d="M 10,10 L 140,10" stroke="#252525" strokeWidth="4.5" strokeLinecap="round" />
+
+        {/* teardrop seeds */}
+        <g fill="#252525">
+          <path d="M 0,-7 C 5,-2 5,4 0,7 C -5,4 -5,-2 0,-7 Z" transform="translate(42,26) rotate(35)" />
+          <path d="M 0,-7 C 5,-2 5,4 0,7 C -5,4 -5,-2 0,-7 Z" transform="translate(60,40) rotate(15)" />
+          <path d="M 0,-7 C 5,-2 5,4 0,7 C -5,4 -5,-2 0,-7 Z" transform="translate(90,40) rotate(-15)" />
+          <path d="M 0,-7 C 5,-2 5,4 0,7 C -5,4 -5,-2 0,-7 Z" transform="translate(108,26) rotate(-35)" />
+          <path d="M 0,-7 C 5,-2 5,4 0,7 C -5,4 -5,-2 0,-7 Z" transform="translate(75,26)" />
+        </g>
+        {/* seed highlights */}
+        <g fill="#FFFFFF" opacity="0.75">
+          <ellipse cx="41" cy="24" rx="1.2" ry="2.2" />
+          <ellipse cx="59" cy="38" rx="1.2" ry="2.2" />
+          <ellipse cx="89" cy="38" rx="1.2" ry="2.2" />
+          <ellipse cx="107" cy="24" rx="1.2" ry="2.2" />
+          <ellipse cx="74" cy="24" rx="1.2" ry="2.2" />
+        </g>
+
+        {/* juice droplets */}
+        <path d="M 126,-4 C 131,2 131,8 126,10 C 121,8 121,2 126,-4 Z" fill="#F2414F" stroke="#252525" strokeWidth="2" />
+        <path d="M 144,22 C 147,26 147,30 144,32 C 141,30 141,26 144,22 Z" fill="#F2414F" stroke="#252525" strokeWidth="1.5" />
+      </g>
+    </g>
+
+    {/* ===== Banana — bottom centre-right (centre ≈ 292,222) ===== */}
+    <g transform="translate(292, 222) rotate(8) translate(-66, -45)">
+      <g className="fx-float-a">
+        <defs>
+          <linearGradient id="banana-grad-login" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFF08A" />
+            <stop offset="50%" stopColor="#FFD93D" />
+            <stop offset="100%" stopColor="#F2A81D" />
+          </linearGradient>
+          <clipPath id="banana-clip-login">
+            <path d="M 20,20 C 30,86 80,112 118,76 C 86,76 48,58 32,16 Z" />
+          </clipPath>
+        </defs>
+
+        {/* stem */}
+        <path d="M 20,22 L 15,6 Q 21,1 28,5 L 33,18 Z" fill="#8A9A3B" stroke="#252525" strokeWidth="3.5" strokeLinejoin="round" />
+        <path d="M 16,8 L 27,6" stroke="#252525" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+
+        {/* body */}
+        <path
+          d="M 20,20 C 30,86 80,112 118,76 C 86,76 48,58 32,16 Z"
+          fill="url(#banana-grad-login)" stroke="#252525" strokeWidth="4.5" strokeLinejoin="round"
+        />
+
+        {/* ridges, shading and sheen — clipped inside the body */}
+        <g clipPath="url(#banana-clip-login)" fill="none" strokeLinecap="round">
+          <path d="M 28,28 C 42,72 84,96 114,78" stroke="#D99A12" strokeWidth="2" opacity="0.8" />
+          <path d="M 26,40 C 40,82 84,104 116,80" stroke="#C98A0E" strokeWidth="2.5" opacity="0.55" />
+          <path d="M 36,24 C 52,58 86,72 112,72" stroke="#FFF6B8" strokeWidth="4" opacity="0.8" />
+        </g>
+
+        {/* brown ripeness specks */}
+        <g fill="#8A5A1E" opacity="0.8">
+          <circle cx="58" cy="62" r="1.6" />
+          <circle cx="76" cy="76" r="1.3" />
+          <circle cx="46" cy="46" r="1.2" />
+        </g>
+
+        {/* dark tip */}
+        <path d="M 112,72 Q 122,70 121,80 Q 117,82 112,78 Z" fill="#5A3A1A" stroke="#252525" strokeWidth="2.5" strokeLinejoin="round" />
+      </g>
+    </g>
+
+    {/* ===== Katana — rides the slash trail, drawn last so it sits on top ===== */}
+    <g transform="translate(325, 150) rotate(-11)">
+      <g className="fx-blade">
+        <path
+          d="M -90,-8 L 30,-5 L 55,0 L 30,5 L -90,4 Z"
+          fill="url(#blade-shine-login)" stroke="#252525" strokeWidth="3.5" strokeLinejoin="round"
+        />
+        <rect x="30" y="-12" width="6" height="24" rx="3" fill="#D9363E" stroke="#252525" strokeWidth="2.5" />
+        <rect x="36" y="-7" width="46" height="14" rx="2" fill="#252525" />
+        <path
+          d="M 44,-7 L 49,7 M 55,-7 L 60,7 M 66,-7 L 71,7"
+          stroke="#FF8A3D" strokeWidth="2.5" strokeLinecap="round"
+        />
+        <circle cx="82" cy="0" r="4.5" fill="#FFD84D" stroke="#252525" strokeWidth="2" />
+      </g>
+    </g>
+  </svg>
+
+  {/* Click to slice tooltip */}
+  <div className="absolute bottom-2 right-3 bg-white/95 px-2.5 py-1 rounded border-2 border-[#252525] shadow-pop-sm text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+    ⚔️ CLICK TO SLICE!
+  </div>
+</div>
 
             {/* Flavor Text */}
             <div className="mt-2 text-center lg:text-left">
