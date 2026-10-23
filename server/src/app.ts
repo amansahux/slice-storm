@@ -1,38 +1,91 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import path from "path";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { AppError } from "./utils/AppError";
+import { NODE_ENV } from "./config/config";
 import userRoutes from "./routes/user.routes";
 import gameRoutes from "./routes/game.routes";
 import gameSessionRoutes from "./routes/gameSession.routes";
 import leaderboardRoutes from "./routes/leaderboard.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use(express.urlencoded({extended:true}));
-app.use(morgan('dev'));
+
+// 1. Trust proxy headers in production (reverse proxy / load balancer support)
+if (NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
+// 2. Security Headers
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// 3. Global Rate Limiter
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: "fail",
+    message: "Too many requests from this IP, please try again after 15 minutes.",
+  },
+});
+app.use(globalLimiter);
+
+// 4. Stricter Rate Limiter for Authentication Routes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: "fail",
+    message: "Too many authentication attempts, please try again after 15 minutes.",
+  },
+});
+
+// 5. Request Parsers & Body Size Limits
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 
-// Routes
-app.use("/api/auth", userRoutes);
+// 6. Request Logging
+if (NODE_ENV === "development") {
+  app.use(morgan("dev"));
+} else {
+  app.use(morgan("combined"));
+}
+
+// 7. Static Files
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+// 8. Application Routes
+app.use("/api/auth", authLimiter, userRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/sessions", gameSessionRoutes);
 app.use("/api/leaderboards", leaderboardRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
-// 5. Public Frontend SPA fallback
-app.get('{*splat}', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+// 9. Centralized 404 Handler for Unhandled API Routes
+app.all("/api/*splat", (req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
 });
 
-// Global Error Handler
+// 10. Public Frontend SPA Fallback
+app.get("{*splat}", (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
+
+// 11. Centralized Global Error Handler
 app.use(errorHandler);
 
 export default app;
