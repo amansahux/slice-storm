@@ -7,6 +7,7 @@ import userRoutes from "./routes/user.routes";
 import gameRoutes from "./routes/game.routes";
 import gameSessionRoutes from "./routes/gameSession.routes";
 import leaderboardRoutes from "./routes/leaderboard.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/sessions", gameSessionRoutes);
 app.use("/api/leaderboards", leaderboardRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Global Error Handler
 app.use(errorHandler);
