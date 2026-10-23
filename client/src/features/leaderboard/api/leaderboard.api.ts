@@ -17,7 +17,7 @@ export interface LeaderboardUserEntry {
     createdAt: string;
 }
 
-export type GameMode = "classic" | "arcade" | "zen";
+export type GameMode = "classic" | "arcade";
 
 /**
  * Leaderboard APIs

@@ -129,8 +129,6 @@ export const LeaderboardTicketItem: React.FC<LeaderboardTicketItemProps> = memo(
             className={`font-['Rubik',sans-serif] text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-[#1b1c1c] uppercase ${
               entry.mode === "arcade"
                 ? "bg-[#ffdbc9] text-[#763300]"
-                : entry.mode === "zen"
-                ? "bg-emerald-100 text-emerald-800"
                 : "bg-[#eae7e7] text-[#1b1c1c]"
             }`}
           >
