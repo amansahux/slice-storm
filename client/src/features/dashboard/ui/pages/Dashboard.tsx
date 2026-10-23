@@ -1,13 +1,9 @@
 import React from "react";
-import { Navbar } from "../../../../shared/components/Navbar";
-import { Footer } from "../../../../shared/components/Footer";
 import { useDashboard } from "../../hooks/useDashboard";
 import { DashboardHeroMarquee } from "../components/DashboardHeroMarquee";
 import { DashboardScoreboard } from "../components/DashboardScoreboard";
 import { DashboardRecentRuns } from "../components/DashboardRecentRuns";
 import { DashboardRivalsWall } from "../components/DashboardRivalsWall";
-import { DashboardBounties } from "../components/DashboardBounties";
-import { DashboardTrophies } from "../components/DashboardTrophies";
 import { DashboardArcadeCallout } from "../components/DashboardArcadeCallout";
 import {
   DashboardLoadingSkeleton,
@@ -21,10 +17,6 @@ const Dashboard: React.FC = () => {
     stats,
     recentRuns,
     leaderboardPreview,
-    dailyBounties,
-    trophies,
-    unlockedTrophiesCount,
-    resetsInHours,
     isLoading,
     isError,
     isEmpty,
@@ -86,18 +78,6 @@ const Dashboard: React.FC = () => {
                 />
               </div>
             </div>
-
-            {/* DAILY BOUNTIES */}
-            {/* <DashboardBounties
-              bounties={dailyBounties}
-              resetsInHours={resetsInHours}
-            /> */}
-
-            {/* TROPHIES STICKER ALBUM */}
-            {/* <DashboardTrophies
-              trophies={trophies}
-              unlockedCount={unlockedTrophiesCount}
-            /> */}
 
             {/* FINAL INSERT COIN CTA */}
             <DashboardArcadeCallout

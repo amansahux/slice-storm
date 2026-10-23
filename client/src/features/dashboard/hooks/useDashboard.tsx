@@ -6,8 +6,6 @@ import type { RootState } from "../../../app/store";
 import {
   getDashboardSummaryAPI,
   type DashboardSummaryData,
-  type DashboardBounty,
-  type DashboardTrophy,
   type DashboardRecentRun,
   type DashboardLeaderboardEntry,
 } from "../api/dashboard.api";
@@ -49,24 +47,6 @@ export const useDashboard = () => {
   const leaderboardPreview: DashboardLeaderboardEntry[] = useMemo(
     () => summaryData?.leaderboardPreview ?? [],
     [summaryData?.leaderboardPreview]
-  );
-  const dailyBounties: DashboardBounty[] = useMemo(
-    () => summaryData?.dailyBounties ?? [],
-    [summaryData?.dailyBounties]
-  );
-  const trophies: DashboardTrophy[] = useMemo(
-    () => summaryData?.trophies ?? [],
-    [summaryData?.trophies]
-  );
-
-  const unlockedTrophiesCount = useMemo(
-    () => trophies.filter((t) => t.unlocked).length,
-    [trophies]
-  );
-
-  const completedBountiesCount = useMemo(
-    () => dailyBounties.filter((b) => b.completed).length,
-    [dailyBounties]
   );
 
   const isEmpty = useMemo(() => {
@@ -115,11 +95,6 @@ export const useDashboard = () => {
     stats,
     recentRuns,
     leaderboardPreview,
-    dailyBounties,
-    trophies,
-    unlockedTrophiesCount,
-    completedBountiesCount,
-    resetsInHours: summaryData?.resetsInHours ?? 8,
 
     // Status flags
     isLoading,
