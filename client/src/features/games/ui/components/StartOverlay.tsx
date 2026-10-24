@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { Play } from "lucide-react";
 import type { GameMode, BladeTheme } from "../../config/game.types";
 import { BLADE_THEMES } from "../../config/game.constants";
+import { AudioVolumeControls } from "./AudioVolumeControls";
 
 interface StartOverlayProps {
   gameMode: GameMode;
@@ -37,52 +38,78 @@ export const StartOverlay: React.FC<StartOverlayProps> = memo(({
 
         <div className="text-center space-y-1 mb-4 sm:mb-5">
           <p className="font-['Rubik',sans-serif] text-sm sm:text-lg text-[#b61929] uppercase font-extrabold tracking-wider">
-            SLICE • COMBO • SURVIVE
+            {gameMode === "zen"
+              ? "🌸 TRANQUIL BLADE FLOW 🌸"
+              : gameMode === "arcade"
+              ? "⚡ 60-SECOND FRENZY ⚡"
+              : "SLICE • COMBO • SURVIVE"}
           </p>
           <p className="font-['Rubik',sans-serif] text-xs sm:text-sm text-[#5b403f] max-w-xs mx-auto">
-            Swipe fast across ripe fruits to build mega combos. Dodge spiky bombs at all costs!
+            {gameMode === "zen"
+              ? "90s of pure relaxing flow. No bombs, no lives lost, zero pressure—just smooth floating fruits and gentle chimes."
+              : gameMode === "arcade"
+              ? "Slice fast against the 60s blitz timer. Multi-fruit combos yield huge multipliers. Dodge bombs!"
+              : "Swipe fast across ripe fruits to build mega combos. Dodge spiky bombs and don't let 3 fruits drop!"}
           </p>
         </div>
 
         {/* Mode Selectors */}
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-4 sm:mb-5">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3.5 sm:mb-4">
           <button
             type="button"
             onClick={() => onSelectGameMode("classic")}
-            className={`cursor-pointer p-2.5 sm:p-3 rounded-lg border-3 border-[#1b1c1c] flex flex-col items-center transition-all ${
+            className={`cursor-pointer p-2 sm:p-2.5 rounded-lg border-2 sm:border-3 border-[#1b1c1c] flex flex-col items-center transition-all ${
               gameMode === "classic"
-                ? "bg-[#ffe07e] text-[#231b00] shadow-[4px_4px_0px_#1b1c1c] -translate-y-0.5"
+                ? "bg-[#ffe07e] text-[#231b00] shadow-[3px_3px_0px_#1b1c1c] -translate-y-0.5"
                 : "bg-white text-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] opacity-85 hover:opacity-100"
             }`}
           >
-            <span className="font-['Rubik',sans-serif] text-xs sm:text-sm font-black uppercase">
+            <span className="font-['Rubik',sans-serif] text-[11px] sm:text-xs font-black uppercase">
               CLASSIC
             </span>
-            <span className="text-[10px] sm:text-[11px] font-['Rubik',sans-serif] font-bold opacity-80">
-              3 Hearts • Endless
+            <span className="text-[9px] sm:text-[10px] font-['Rubik',sans-serif] font-bold opacity-80 leading-tight">
+              3 Hearts
             </span>
           </button>
 
           <button
             type="button"
             onClick={() => onSelectGameMode("arcade")}
-            className={`cursor-pointer p-2.5 sm:p-3 rounded-lg border-3 border-[#1b1c1c] flex flex-col items-center transition-all ${
+            className={`cursor-pointer p-2 sm:p-2.5 rounded-lg border-2 sm:border-3 border-[#1b1c1c] flex flex-col items-center transition-all ${
               gameMode === "arcade"
-                ? "bg-[#ffe07e] text-[#231b00] shadow-[4px_4px_0px_#1b1c1c] -translate-y-0.5"
+                ? "bg-[#ffe07e] text-[#231b00] shadow-[3px_3px_0px_#1b1c1c] -translate-y-0.5"
                 : "bg-white text-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] opacity-85 hover:opacity-100"
             }`}
           >
-            <span className="font-['Rubik',sans-serif] text-xs sm:text-sm font-black uppercase">
-              ARCADE 60s
+            <span className="font-['Rubik',sans-serif] text-[11px] sm:text-xs font-black uppercase">
+              ARCADE
             </span>
-            <span className="text-[10px] sm:text-[11px] font-['Rubik',sans-serif] font-bold opacity-80">
-              Frenzy Timer • No Drop Loss
+            <span className="text-[9px] sm:text-[10px] font-['Rubik',sans-serif] font-bold opacity-80 leading-tight">
+              60s Frenzy
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onSelectGameMode("zen")}
+            className={`cursor-pointer p-2 sm:p-2.5 rounded-lg border-2 sm:border-3 border-[#1b1c1c] flex flex-col items-center transition-all ${
+              gameMode === "zen"
+                ? "bg-[#9ce2bb] text-[#0d3f23] shadow-[3px_3px_0px_#1b1c1c] -translate-y-0.5"
+                : "bg-white text-[#1b1c1c] shadow-[2px_2px_0px_#1b1c1c] opacity-85 hover:opacity-100"
+            }`}
+          >
+            <span className="font-['Rubik',sans-serif] text-[11px] sm:text-xs font-black uppercase flex items-center gap-0.5">
+              <span>ZEN</span>
+              <span className="text-[9px]">🌸</span>
+            </span>
+            <span className="text-[9px] sm:text-[10px] font-['Rubik',sans-serif] font-bold opacity-80 leading-tight">
+              90s No Bombs
             </span>
           </button>
         </div>
 
         {/* Blade Style Selector Mini Ribbon */}
-        <div className="bg-white border-2 border-[#1b1c1c] p-2 sm:p-2.5 rounded-lg flex items-center justify-between mb-4 sm:mb-5 shadow-[2px_2px_0px_#1b1c1c]">
+        <div className="bg-white border-2 border-[#1b1c1c] p-2 sm:p-2.5 rounded-lg flex items-center justify-between mb-3 sm:mb-4 shadow-[2px_2px_0px_#1b1c1c]">
           <span className="font-['Rubik',sans-serif] text-[11px] sm:text-xs font-black uppercase text-[#1b1c1c] pl-1">
             Blade Trail:
           </span>
@@ -107,6 +134,11 @@ export const StartOverlay: React.FC<StartOverlayProps> = memo(({
           </div>
         </div>
 
+        {/* Audio Volume Controls (Music & SFX) */}
+        <div className="mb-4">
+          <AudioVolumeControls compact />
+        </div>
+
         {/* SLAM ACTION BUTTON */}
         <button
           type="button"
@@ -115,7 +147,7 @@ export const StartOverlay: React.FC<StartOverlayProps> = memo(({
         >
           <Play className="w-[24px] h-[24px] sm:w-[28px] sm:h-[28px] fill-white group-hover:scale-110 transition-transform" />
           <span className="font-['Bricolage_Grotesque',sans-serif] text-lg sm:text-2xl font-black uppercase tracking-tight text-white">
-            INSERT COIN &amp; SLICE
+            {gameMode === "zen" ? "ENTER TRANQUIL FLOW" : "INSERT COIN & SLICE"}
           </span>
         </button>
 

@@ -36,11 +36,21 @@ export const Game: React.FC = memo(() => {
     isSavingGame,
   } = useGame();
 
+  const battlefieldClass =
+    gameMode === "zen"
+      ? "bg-[#F0F7F2] zen-pastel-pattern"
+      : gameMode === "arcade"
+      ? "bg-[#FFF2C6] arcade-pattern"
+      : "bg-[#F7E8C3] classic-pattern paper-pattern";
+
   return (
-    <div className="relative w-full h-[calc(100vh-120px)] min-h-[580px] bg-[#F7E8C3] paper-pattern text-[#1b1c1c] font-['Rubik',sans-serif] overflow-hidden flex flex-col justify-between select-none">
+    <div
+      className={`relative w-full h-[calc(100vh-120px)] min-h-[580px] text-[#1b1c1c] font-['Rubik',sans-serif] overflow-hidden flex flex-col justify-between select-none transition-colors duration-500 ${battlefieldClass}`}
+    >
       {/* GAME HUD DOCK (Floats right under marquee header) */}
       <GameHud
         score={score}
+        fruitsSliced={fruitsSliced}
         combo={combo}
         lives={lives}
         maxLives={maxLives}
@@ -88,6 +98,7 @@ export const Game: React.FC = memo(() => {
             score={score}
             fruitsSliced={fruitsSliced}
             maxCombo={maxCombo}
+            gameMode={gameMode}
             onPlayAgain={restartGame}
             onMainMenu={exitToHome}
           />

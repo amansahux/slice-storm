@@ -3,13 +3,14 @@ import { useSelector } from "react-redux";
 import { MainMenuButton } from "./MainMenuButton";
 import { playGameOverSound } from "../../../../shared/utils/arcadeAudio";
 import type { RootState } from "../../../../app/store";
+import type { GameMode } from "../../config/game.types";
 
 interface GameOverOverlayProps {
   score: number;
   fruitsSliced: number;
   maxCombo: number;
+  gameMode?: GameMode;
   onPlayAgain: () => void;
-
   onMainMenu: () => void;
 }
 
@@ -17,18 +18,19 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
   score,
   fruitsSliced,
   maxCombo,
+  gameMode = "classic",
   onPlayAgain,
-
   onMainMenu,
 }) => {
   const authUser = useSelector((state: RootState) => state.auth.user);
   const userHighestScore = authUser?.highestScore ?? 0;
-  const isNewRecord = score > userHighestScore && userHighestScore > 0;
+  const isZen = gameMode === "zen";
+  const isNewRecord = !isZen && score > userHighestScore && userHighestScore > 0;
   const displayHighestScore = Math.max(userHighestScore, score);
 
   useEffect(() => {
-    playGameOverSound();
-  }, []);
+    playGameOverSound(isZen);
+  }, [isZen]);
 
   return (
     <div className="absolute z-20 inset-0 flex items-center justify-center p-3 sm:p-4 bg-[#1b1c1c]/65 backdrop-blur-[2px] animate-fadeIn overflow-y-auto">
@@ -46,63 +48,109 @@ export const GameOverOverlay: React.FC<GameOverOverlayProps> = memo(({
           />
         </div>
 
-        <div className="bg-[#b61929] text-white border-2 border-[#1b1c1c] py-1 px-4 rounded-md inline-block uppercase font-['Rubik',sans-serif] text-xs font-black mb-2 animate-bounce shadow-[2px_2px_0px_#1b1c1c]">
-          RUN TERMINATED
-        </div>
-        <h2 className="font-['Titan_One','Bricolage_Grotesque',sans-serif] text-3xl sm:text-4xl text-[#b61929] uppercase tracking-tight mb-4 drop-shadow-[1px_1px_0_#1b1c1c]">
-          GAME OVER!
-        </h2>
-
-        {/* Score & Stats Card */}
-        <div className="bg-white border-3 border-[#1b1c1c] p-4 rounded-lg shadow-[4px_4px_0px_#1b1c1c] mb-6 text-left space-y-2 border-2">
-          <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
-            <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
-              TOTAL SCORE:
-            </span>
-            <div className="flex items-center gap-2">
-              {isNewRecord && (
-                <span className="bg-[#34C759] text-white text-[10px] font-black px-1.5 py-0.5 rounded border border-[#1b1c1c] uppercase animate-pulse">
-                  NEW RECORD!
-                </span>
-              )}
-              <span className="font-['Bricolage_Grotesque',sans-serif] text-2xl font-black text-[#b61929]">
-                {score}
-              </span>
+        {isZen ? (
+          <>
+            <div className="bg-[#2e7d32] text-white border-2 border-[#1b1c1c] py-1 px-4 rounded-md inline-block uppercase font-['Rubik',sans-serif] text-xs font-black mb-2 animate-bounce shadow-[2px_2px_0px_#1b1c1c]">
+              🌸 TRANQUILITY ACHIEVED
             </div>
-          </div>
-          <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
-            <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase flex items-center gap-1">
-               HIGHEST SCORE:
-            </span>
-            <span className="font-['Bricolage_Grotesque',sans-serif] text-xl font-black text-[#9a4600]">
-              {displayHighestScore}
-            </span>
-          </div>
-          <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
-            <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
-              FRUITS SLICED:
-            </span>
-            <span className="font-['Rubik',sans-serif] text-lg font-extrabold text-[#1b1c1c]">
-              {fruitsSliced}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
-              MAX COMBO:
-            </span>
-            <span className="font-['Rubik',sans-serif] text-lg font-extrabold text-[#9a4600]">
-              ×{maxCombo}
-            </span>
-          </div>
-        </div>
+            <h2 className="font-['Titan_One','Bricolage_Grotesque',sans-serif] text-3xl sm:text-4xl text-[#1b5e20] uppercase tracking-tight mb-4 drop-shadow-[1px_1px_0_#1b1c1c]">
+              ZEN COMPLETE!
+            </h2>
+
+            {/* Zen Stats Card */}
+            <div className="bg-white border-3 border-[#1b1c1c] p-4 rounded-lg shadow-[4px_4px_0px_#1b1c1c] mb-6 text-left space-y-2 border-2">
+              <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
+                <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#1b5e20] uppercase flex items-center gap-1">
+                  <span>🌸</span>
+                  <span>TOTAL FRUITS SLICED:</span>
+                </span>
+                <span className="font-['Bricolage_Grotesque',sans-serif] text-2xl font-black text-[#2e7d32]">
+                  {fruitsSliced}
+                </span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
+                <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
+                  MAX FLOW COMBO:
+                </span>
+                <span className="font-['Bricolage_Grotesque',sans-serif] text-xl font-black text-[#0d9488]">
+                  ×{maxCombo}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
+                  SESSION DURATION:
+                </span>
+                <span className="font-['Rubik',sans-serif] text-base font-extrabold text-[#1b1c1c]">
+                  90 SECONDS
+                </span>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="bg-[#b61929] text-white border-2 border-[#1b1c1c] py-1 px-4 rounded-md inline-block uppercase font-['Rubik',sans-serif] text-xs font-black mb-2 animate-bounce shadow-[2px_2px_0px_#1b1c1c]">
+              RUN TERMINATED
+            </div>
+            <h2 className="font-['Titan_One','Bricolage_Grotesque',sans-serif] text-3xl sm:text-4xl text-[#b61929] uppercase tracking-tight mb-4 drop-shadow-[1px_1px_0_#1b1c1c]">
+              GAME OVER!
+            </h2>
+
+            {/* Score & Stats Card */}
+            <div className="bg-white border-3 border-[#1b1c1c] p-4 rounded-lg shadow-[4px_4px_0px_#1b1c1c] mb-6 text-left space-y-2 border-2">
+              <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
+                <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
+                  TOTAL SCORE:
+                </span>
+                <div className="flex items-center gap-2">
+                  {isNewRecord && (
+                    <span className="bg-[#34C759] text-white text-[10px] font-black px-1.5 py-0.5 rounded border border-[#1b1c1c] uppercase animate-pulse">
+                      NEW RECORD!
+                    </span>
+                  )}
+                  <span className="font-['Bricolage_Grotesque',sans-serif] text-2xl font-black text-[#b61929]">
+                    {score}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
+                <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase flex items-center gap-1">
+                  HIGHEST SCORE:
+                </span>
+                <span className="font-['Bricolage_Grotesque',sans-serif] text-xl font-black text-[#9a4600]">
+                  {displayHighestScore}
+                </span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b-2 border-[#1b1c1c]/20">
+                <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
+                  FRUITS SLICED:
+                </span>
+                <span className="font-['Rubik',sans-serif] text-lg font-extrabold text-[#1b1c1c]">
+                  {fruitsSliced}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#5b403f] uppercase">
+                  MAX COMBO:
+                </span>
+                <span className="font-['Rubik',sans-serif] text-lg font-extrabold text-[#9a4600]">
+                  ×{maxCombo}
+                </span>
+              </div>
+            </div>
+          </>
+        )}
 
         <div className="space-y-3">
           <button
             type="button"
             onClick={onPlayAgain}
-            className="cursor-pointer w-full bg-[#d9363e] hover:bg-[#b61929] text-white border-3 border-[#1b1c1c] py-3.5 rounded-lg shadow-[6px_6px_0px_#1b1c1c] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-['Bricolage_Grotesque',sans-serif] text-xl uppercase font-black transition-all"
+            className={`cursor-pointer w-full text-white border-3 border-[#1b1c1c] py-3.5 rounded-lg shadow-[6px_6px_0px_#1b1c1c] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-['Bricolage_Grotesque',sans-serif] text-xl uppercase font-black transition-all ${
+              isZen
+                ? "bg-[#2e7d32] hover:bg-[#1b5e20]"
+                : "bg-[#d9363e] hover:bg-[#b61929]"
+            }`}
           >
-            PLAY AGAIN
+            {isZen ? "FLOW AGAIN" : "PLAY AGAIN"}
           </button>
 
           <MainMenuButton onClick={onMainMenu} />
