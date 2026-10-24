@@ -36,6 +36,9 @@ const ArcadeSafety = lazy(
 const CustomerSupport = lazy(
   () => import("../../features/legal/ui/pages/CustomerSupport")
 );
+const Errorpage = lazy(
+  () => import("../../shared/components/Errorpage")
+);
 
 const router = createBrowserRouter([
   // ── Public routes ──
@@ -83,6 +86,12 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+
+  // ── 404 Catch-all Route ──
+  {
+    path: "*",
+    element: <Errorpage />,
   },
 ]);
 
