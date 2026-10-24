@@ -164,6 +164,8 @@ export const useGame = () => {
         const duration =
           engine.gameMode === "arcade"
             ? 60 - engine.timeRemaining
+            : engine.gameMode === "zen"
+            ? 90 - engine.timeRemaining
             : engine.survivalSeconds;
 
         saveGameMutation.mutate({

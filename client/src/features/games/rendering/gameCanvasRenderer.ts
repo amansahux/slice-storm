@@ -1469,7 +1469,8 @@ export function drawCartoonBomb(ctx: CanvasRenderingContext2D, r: number) {
 export function drawBladeTrail(
   ctx: CanvasRenderingContext2D,
   bladePoints: BladePoint[],
-  bladeTheme: BladeTheme
+  bladeTheme: BladeTheme,
+  isZen = false
 ) {
   if (bladePoints.length < 2) return;
 
@@ -1505,6 +1506,57 @@ export function drawBladeTrail(
       points[total - 1].y
     );
   };
+
+  if (isZen) {
+    // Ethereal Zen glowing pastel aura & smooth blade ribbon
+    ctx.save();
+    drawSmoothPath();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = "#A7F3D0";
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 30;
+    ctx.shadowColor = "#6EE7B7";
+    ctx.shadowBlur = 28;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    drawSmoothPath();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = bladeTheme.primary;
+    ctx.globalAlpha = 0.45;
+    ctx.lineWidth = 18;
+    ctx.shadowColor = bladeTheme.primary;
+    ctx.shadowBlur = 18;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    drawSmoothPath();
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.globalAlpha = 0.95;
+    ctx.lineWidth = 4;
+    ctx.shadowColor = "#FFFFFF";
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.restore();
+
+    // Leading glowing tip
+    const tip = points[total - 1];
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.95;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.shadowColor = "#A7F3D0";
+    ctx.shadowBlur = 22;
+    ctx.beginPath();
+    ctx.arc(tip.x, tip.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.restore();
+    return;
+  }
 
   // Recent points are brighter and wider.
   const progress = (i: number) => i / (total - 1);
@@ -1832,4 +1884,40 @@ export function drawExplosions(
     ctx.restore();
   });
 }
+
+/**
+ * Renders calm ambient floating sakura petals & light orbs for Zen Mode
+ */
+export function drawZenAmbientAtmosphere(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  tick: number
+) {
+  ctx.save();
+  const count = 16;
+  for (let i = 0; i < count; i++) {
+    const seed = i * 137.5;
+    const speed = 0.35 + (i % 3) * 0.18;
+    const y = (height + 50) - ((tick * speed + seed * 8) % (height + 100));
+    const sway = Math.sin(tick * 0.015 + i) * 30;
+    const x = ((seed * 5.3 + sway) % (width - 40)) + 20;
+    const size = 5 + (i % 4) * 2.5;
+    const alpha = 0.22 + Math.sin(tick * 0.025 + i) * 0.1;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(tick * 0.008 + i);
+    ctx.fillStyle =
+      i % 2 === 0
+        ? `rgba(244, 143, 177, ${alpha})`
+        : `rgba(167, 243, 208, ${alpha})`;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size, size * 0.52, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
 

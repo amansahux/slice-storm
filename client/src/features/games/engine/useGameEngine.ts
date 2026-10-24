@@ -25,6 +25,7 @@ import {
   drawJuiceParticles,
   drawTextPopups,
   drawExplosions,
+  drawZenAmbientAtmosphere,
 } from "../rendering/gameCanvasRenderer";
 
 export const useGameEngine = () => {
@@ -57,6 +58,7 @@ export const useGameEngine = () => {
   const textPopupsRef = useRef<TextPopup[]>([]);
   const bladePointsRef = useRef<BladePoint[]>([]);
   const entityIdCounter = useRef(0);
+  const animTickRef = useRef(0);
 
   const screenShakeRef = useRef<number>(0);
   const spawnTimerRef = useRef<number>(0);
@@ -91,28 +93,65 @@ export const useGameEngine = () => {
   }, []);
 
   const timeRemainingText =
-    gameMode === "arcade" ? formatTime(timeRemaining) : formatTime(survivalSeconds);
+    gameMode === "arcade" || gameMode === "zen"
+      ? formatTime(timeRemaining)
+      : formatTime(survivalSeconds);
 
-  // Spawning logic: difficulty increases as score and combo increase
+  // Spawning logic: mode-aware physics and pacing
   const spawnWave = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
 
-    // Difficulty scaling factor based on current score (0 to 1 scaling up to 1000 score)
+    if (modeRef.current === "zen") {
+      // ── ZEN MODE SPAWNING: Slower, continuous, smoother movement, NO BOMBS! ──
+      // Spawn 2 to 4 juicy fruits in a gentle arc allowing single-swipe slicing
+      const count = Math.floor(Math.random() * 3) + 2;
+
+      for (let i = 0; i < count; i++) {
+        entityIdCounter.current++;
+        const fruitType = FRUIT_TYPES[Math.floor(Math.random() * FRUIT_TYPES.length)];
+        const startX = Math.random() * (rect.width * 0.7) + rect.width * 0.15;
+        const startY = rect.height + 40;
+
+        const targetX = rect.width / 2 + (Math.random() * 360 - 180);
+        // Slower horizontal velocity for relaxed tracking
+        const vx = (targetX - startX) * 0.007 + (Math.random() * 1.4 - 0.7);
+
+        // Zen smooth float height: peaks inside canvas between 66% and 86% of height
+        const targetLaunchHeight = (rect.height + 40) * (0.66 + Math.random() * 0.20);
+        const vy = -Math.sqrt(2 * GAME_CONSTANTS.ZEN_GRAVITY * targetLaunchHeight);
+
+        flyingEntitiesRef.current.push({
+          id: entityIdCounter.current,
+          type: "fruit",
+          sub: fruitType,
+          x: startX,
+          y: startY,
+          vx,
+          vy,
+          rotation: Math.random() * Math.PI,
+          vRot: Math.random() * 0.04 - 0.02, // Gentle graceful rotation
+          radius: fruitType.radius,
+          sliced: false,
+        });
+      }
+      return;
+    }
+
+    // ── CLASSIC & ARCADE SPAWNING ──
     const currentScore = scoreRef.current;
     const currentCombo = comboRef.current;
     const scoreFactor = Math.min(1, currentScore / 1000);
     const comboFactor = Math.min(0.4, currentCombo * 0.04);
     const difficultyLevel = Math.min(1.2, scoreFactor + comboFactor);
 
-    // 1. Bomb Probability increases a little with score & combo (making game tougher)
+    // Bomb Probability increases a little with score & combo
     const dynamicBombChance = Math.min(
       GAME_CONSTANTS.MAX_BOMB_CHANCE,
       GAME_CONSTANTS.BOMB_CHANCE + difficultyLevel * (GAME_CONSTANTS.MAX_BOMB_CHANCE - GAME_CONSTANTS.BOMB_CHANCE)
     );
 
-    // 2. Wave count: 1-3 items initially, occasionally up to 4 at higher scores
     const maxItems = difficultyLevel > 0.6 ? 4 : 3;
     const count = Math.floor(Math.random() * (maxItems - 1 + 1)) + 1;
 
@@ -125,7 +164,6 @@ export const useGameEngine = () => {
       const targetX = rect.width / 2 + (Math.random() * 300 - 150);
       const vx = (targetX - startX) * 0.012 + (Math.random() * 2 - 1);
 
-      // Canvas-responsive launch velocity: guarantees fruits peak inside the canvas (68% - 85% of height)
       const targetLaunchHeight = (rect.height + 40) * (0.65 + Math.random() * 0.18);
       const vy = -Math.sqrt(2 * GAME_CONSTANTS.GRAVITY * targetLaunchHeight);
 
@@ -163,46 +201,73 @@ export const useGameEngine = () => {
     }
   }, []);
 
-  // Combo calculation
+  // Combo calculation (zen subtle cues vs arcade score multipliers)
   const triggerComboIncrement = useCallback((hits: number) => {
+    const isZen = modeRef.current === "zen";
+
     setCombo((prevCombo) => {
       const nextCombo = prevCombo + hits;
       comboRef.current = nextCombo;
       setMaxCombo((prevMax) => Math.max(prevMax, nextCombo));
 
-      if (nextCombo >= 3) {
-        arcadeAudioEngine.playCombo();
+      if (nextCombo >= 2) {
+        arcadeAudioEngine.playCombo(isZen);
         if (canvasRef.current) {
           const rect = canvasRef.current.getBoundingClientRect();
-          let comboTitle = `+${hits} COMBO!`;
-          let comboColor = "#FF8A3D";
-          let comboScale = 1.6;
+          let comboTitle = isZen ? `🌸 ${nextCombo}× SLICE` : `+${hits} COMBO!`;
+          let comboColor = isZen ? "#34D399" : "#FF8A3D";
+          let comboScale = isZen ? 1.4 : 1.6;
 
-          if (nextCombo >= 10) {
-            comboTitle = "⚡ GODLIKE BLADE! ⚡";
-            comboColor = "#FFD84D";
-            comboScale = 2.4;
-          } else if (nextCombo >= 7) {
-            comboTitle = "🔥 UNSTOPPABLE! 🔥";
-            comboColor = "#FF3B30";
-            comboScale = 2.1;
-          } else if (nextCombo >= 5) {
-            comboTitle = "💥 MEGA SLICE! 💥";
-            comboColor = "#fe893c";
-            comboScale = 1.9;
-          } else if (nextCombo >= 3) {
-            comboTitle = "★ COMBO SLICE! ★";
-            comboColor = "#5CB85C";
-            comboScale = 1.7;
+          if (isZen) {
+            // Serene Zen combo titles without points
+            if (nextCombo >= 8) {
+              comboTitle = "🧘 ZEN MASTER 🧘";
+              comboColor = "#FBBF24";
+              comboScale = 1.85;
+            } else if (nextCombo >= 6) {
+              comboTitle = "🌊 HARMONY STRIKE 🌊";
+              comboColor = "#38BDF8";
+              comboScale = 1.7;
+            } else if (nextCombo >= 4) {
+              comboTitle = "🍃 TRANQUIL FLOW 🍃";
+              comboColor = "#10B981";
+              comboScale = 1.6;
+            } else if (nextCombo >= 2) {
+              comboTitle = "✨ SERENE COMBO ✨";
+              comboColor = "#34D399";
+              comboScale = 1.45;
+            }
+          } else {
+            if (nextCombo >= 10) {
+              comboTitle = "⚡ GODLIKE BLADE! ⚡";
+              comboColor = "#FFD84D";
+              comboScale = 2.4;
+            } else if (nextCombo >= 7) {
+              comboTitle = "🔥 UNSTOPPABLE! 🔥";
+              comboColor = "#FF3B30";
+              comboScale = 2.1;
+            } else if (nextCombo >= 5) {
+              comboTitle = "💥 MEGA SLICE! 💥";
+              comboColor = "#fe893c";
+              comboScale = 1.9;
+            } else if (nextCombo >= 3) {
+              comboTitle = "★ COMBO SLICE! ★";
+              comboColor = "#5CB85C";
+              comboScale = 1.7;
+            }
           }
 
-          // Remove previous combo popup so only one shows at a time
+          // Remove previous combo popups
           textPopupsRef.current = textPopupsRef.current.filter(
             (tp) =>
               !tp.text.includes("COMBO") &&
               !tp.text.includes("UNSTOPPABLE") &&
               !tp.text.includes("GODLIKE") &&
-              !tp.text.includes("MEGA SLICE")
+              !tp.text.includes("MEGA SLICE") &&
+              !tp.text.includes("ZEN") &&
+              !tp.text.includes("FLOW") &&
+              !tp.text.includes("HARMONY") &&
+              !tp.text.includes("SLICE")
           );
 
           textPopupsRef.current.push({
@@ -211,8 +276,8 @@ export const useGameEngine = () => {
             y: rect.height * 0.35,
             color: comboColor,
             scale: comboScale,
-            vy: -1.6,
-            life: 1.2,
+            vy: isZen ? -1.0 : -1.6,
+            life: isZen ? 1.4 : 1.2,
           });
         }
       }
@@ -220,20 +285,23 @@ export const useGameEngine = () => {
     });
 
     if (comboTimerRef.current) clearTimeout(comboTimerRef.current);
+    const timeoutMs = isZen
+      ? GAME_CONSTANTS.ZEN_COMBO_TIMEOUT_MS
+      : GAME_CONSTANTS.COMBO_TIMEOUT_MS;
+
     comboTimerRef.current = setTimeout(() => {
       setCombo(0);
       comboRef.current = 0;
-    }, GAME_CONSTANTS.COMBO_TIMEOUT_MS);
+    }, timeoutMs);
   }, []);
 
-  // Bomb exploded
+  // Bomb exploded (Classic / Arcade only)
   const handleBombExplosion = useCallback(
     (bomb: FlyingEntity) => {
       arcadeAudioEngine.playBomb();
       screenShakeRef.current = 18;
       setBombsHit((prev) => prev + 1);
 
-      // Create 1-second dynamic cartoon explosion effect (no juice particles)
       const sparkColors = ["#FFD84D", "#FF8A3D", "#FF3B30", "#FFFFFF", "#1b1c1c"];
       const sparks = Array.from({ length: 24 }).map(() => {
         const angle = Math.random() * Math.PI * 2;
@@ -269,14 +337,12 @@ export const useGameEngine = () => {
         smoke,
       });
 
-      // Remove the exploded bomb immediately
       const bombIndex = flyingEntitiesRef.current.indexOf(bomb);
       if (bombIndex !== -1) {
         flyingEntitiesRef.current.splice(bombIndex, 1);
       }
 
       if (modeRef.current === "arcade") {
-        // Arcade Mode: No lives lost. Deduct 100 points with clear visual feedback
         setScore((prevScore) => {
           const nextScore = Math.max(0, prevScore - 100);
           scoreRef.current = nextScore;
@@ -292,8 +358,7 @@ export const useGameEngine = () => {
           vy: -2,
           life: 1.1,
         });
-      } else {
-        // Classic Survival Mode: Deduct 1 life
+      } else if (modeRef.current === "classic") {
         textPopupsRef.current.push({
           text: "BOOM! -1 HEART",
           x: bomb.x,
@@ -307,6 +372,7 @@ export const useGameEngine = () => {
         setLives((prevLives) => {
           const next = Math.max(0, prevLives - 1);
           if (next <= 0) {
+            arcadeAudioEngine.stopBackgroundMusic();
             setGameState("GAMEOVER");
           }
           return next;
@@ -316,45 +382,49 @@ export const useGameEngine = () => {
     []
   );
 
-  // Fruit sliced
+  // Fruit sliced handler
   const handleFruitSlice = useCallback(
     (fruit: FlyingEntity, p1: BladePoint, p2: BladePoint) => {
       if (!fruit.sub) return;
       const fruitSub = fruit.sub;
+      const isZen = modeRef.current === "zen";
 
       setFruitsSliced((prev) => prev + 1);
 
-      setCombo((current) => {
-        const pts = Math.min(50, fruitSub.points * Math.max(1, current + 1));
-        setScore((prevScore) => {
-          const nextScore = prevScore + pts;
-          scoreRef.current = nextScore;
-          return nextScore;
-        });
+      // Only scored modes award score and show point popups
+      if (!isZen) {
+        setCombo((current) => {
+          const pts = Math.min(50, fruitSub.points * Math.max(1, current + 1));
+          setScore((prevScore) => {
+            const nextScore = prevScore + pts;
+            scoreRef.current = nextScore;
+            return nextScore;
+          });
 
-        // Comic popup
-        textPopupsRef.current.push({
-          text: `+${pts}`,
-          x: fruit.x,
-          y: fruit.y - 15,
-          color: fruitSub.skin,
-          scale: 1.2,
-          vy: -2.5,
-          life: 1.0,
+          textPopupsRef.current.push({
+            text: `+${pts}`,
+            x: fruit.x,
+            y: fruit.y - 15,
+            color: fruitSub.skin,
+            scale: 1.2,
+            vy: -2.5,
+            life: 1.0,
+          });
+          return current;
         });
-        return current;
-      });
+      }
 
-      // Remove the original sliced whole fruit
+      // Remove the original sliced fruit
       const fruitIndex = flyingEntitiesRef.current.indexOf(fruit);
       if (fruitIndex !== -1) {
         flyingEntitiesRef.current.splice(fruitIndex, 1);
       }
 
-      // Spawn two halves
+      // Spawn two halves with smooth physical arc
       const sliceAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-      const splitVx = Math.cos(sliceAngle + Math.PI / 2) * 4;
-      const splitVy = Math.sin(sliceAngle + Math.PI / 2) * 4;
+      const splitSpeed = isZen ? 2.6 : 4;
+      const splitVx = Math.cos(sliceAngle + Math.PI / 2) * splitSpeed;
+      const splitVy = Math.sin(sliceAngle + Math.PI / 2) * splitSpeed;
 
       entityIdCounter.current++;
       flyingEntitiesRef.current.push({
@@ -365,9 +435,9 @@ export const useGameEngine = () => {
         x: fruit.x - 5,
         y: fruit.y,
         vx: fruit.vx - splitVx,
-        vy: fruit.vy - splitVy - 2,
+        vy: fruit.vy - splitVy - (isZen ? 1.2 : 2),
         rotation: fruit.rotation,
-        vRot: -0.1,
+        vRot: isZen ? -0.05 : -0.1,
         radius: fruit.radius,
         sliceAngle,
         sliced: true,
@@ -382,34 +452,36 @@ export const useGameEngine = () => {
         x: fruit.x + 5,
         y: fruit.y,
         vx: fruit.vx + splitVx,
-        vy: fruit.vy + splitVy - 2,
+        vy: fruit.vy - splitVy - (isZen ? 1.2 : 2),
         rotation: fruit.rotation,
-        vRot: 0.1,
+        vRot: isZen ? 0.05 : 0.1,
         radius: fruit.radius,
         sliceAngle,
         sliced: true,
       });
 
-      // Juice splash
-      for (let i = 0; i < 22; i++) {
+      // Juice splash (satisfying juicy splash particles)
+      const particleCount = isZen ? 24 : 22;
+      for (let i = 0; i < particleCount; i++) {
         juiceParticlesRef.current.push({
           x: fruit.x,
           y: fruit.y,
-          vx: (Math.random() - 0.5) * 10 + splitVx * 0.5,
-          vy: (Math.random() - 0.5) * 10 - 2,
+          vx: (Math.random() - 0.5) * (isZen ? 8 : 10) + splitVx * 0.4,
+          vy: (Math.random() - 0.5) * (isZen ? 8 : 10) - (isZen ? 1.5 : 2),
           color: fruitSub.flesh,
-          size: Math.random() * 6 + 3,
+          size: Math.random() * (isZen ? 6 : 6) + 3,
           life: 1.0,
-          decay: 0.025,
+          decay: isZen ? 0.016 : 0.025,
         });
       }
     },
     []
   );
 
-  // Check blade collision
+  // Check blade collision along stroke (supports multi-fruit slice in single swipe)
   const checkBladeCollisions = useCallback(
     (p1: BladePoint, p2: BladePoint) => {
+      const isZen = modeRef.current === "zen";
       let hitsThisStroke = 0;
 
       for (let i = flyingEntitiesRef.current.length - 1; i >= 0; i--) {
@@ -419,7 +491,9 @@ export const useGameEngine = () => {
         if (lineIntersectsCircle(p1, p2, ent)) {
           ent.sliced = true;
           if (ent.type === "bomb") {
-            handleBombExplosion(ent);
+            if (!isZen) {
+              handleBombExplosion(ent);
+            }
           } else if (ent.type === "fruit") {
             handleFruitSlice(ent, p1, p2);
             hitsThisStroke++;
@@ -428,8 +502,8 @@ export const useGameEngine = () => {
       }
 
       if (hitsThisStroke > 0) {
-        arcadeAudioEngine.playSwoosh();
-        arcadeAudioEngine.playSplat();
+        arcadeAudioEngine.playSwoosh(isZen);
+        arcadeAudioEngine.playSplat(isZen);
         triggerComboIncrement(hitsThisStroke);
       }
     },
@@ -480,6 +554,8 @@ export const useGameEngine = () => {
 
   // Start active play session
   const startActiveGame = useCallback(() => {
+    const isZen = modeRef.current === "zen";
+
     setGameState("PLAYING");
     setScore(0);
     setLives(GAME_CONSTANTS.MAX_LIVES);
@@ -488,7 +564,9 @@ export const useGameEngine = () => {
     setBombsHit(0);
     setCombo(0);
     setMaxCombo(0);
-    setTimeRemaining(GAME_CONSTANTS.ARCADE_DURATION);
+
+    const initialTime = isZen ? GAME_CONSTANTS.ZEN_DURATION : GAME_CONSTANTS.ARCADE_DURATION;
+    setTimeRemaining(initialTime);
     setSurvivalSeconds(0);
 
     flyingEntitiesRef.current = [];
@@ -498,13 +576,17 @@ export const useGameEngine = () => {
     bladePointsRef.current = [];
     spawnTimerRef.current = 0;
 
+    // Start mode-appropriate background music
+    arcadeAudioEngine.startBackgroundMusic(modeRef.current);
+
     if (gameClockIntervalRef.current) clearInterval(gameClockIntervalRef.current);
 
     gameClockIntervalRef.current = setInterval(() => {
       if (stateRef.current === "PLAYING") {
-        if (modeRef.current === "arcade") {
+        if (modeRef.current === "arcade" || modeRef.current === "zen") {
           setTimeRemaining((prev) => {
             if (prev <= 1) {
+              arcadeAudioEngine.stopBackgroundMusic();
               setGameState("GAMEOVER");
               return 0;
             }
@@ -538,7 +620,16 @@ export const useGameEngine = () => {
   }, [startActiveGame]);
 
   const togglePauseGame = useCallback(() => {
-    setGameState((prev) => (prev === "PLAYING" ? "PAUSED" : "PLAYING"));
+    setGameState((prev) => {
+      if (prev === "PLAYING") {
+        arcadeAudioEngine.stopBackgroundMusic();
+        return "PAUSED";
+      } else if (prev === "PAUSED") {
+        arcadeAudioEngine.startBackgroundMusic(modeRef.current);
+        return "PLAYING";
+      }
+      return prev;
+    });
   }, []);
 
   const restartGame = useCallback(() => {
@@ -546,6 +637,7 @@ export const useGameEngine = () => {
   }, [triggerCountdown]);
 
   const exitToHome = useCallback(() => {
+    arcadeAudioEngine.stopBackgroundMusic();
     setGameState("START");
     if (gameClockIntervalRef.current) clearInterval(gameClockIntervalRef.current);
   }, []);
@@ -582,10 +674,16 @@ export const useGameEngine = () => {
       const width = rect.width;
       const height = rect.height;
 
+      const isZen = modeRef.current === "zen";
+      const gravity = isZen ? GAME_CONSTANTS.ZEN_GRAVITY : GAME_CONSTANTS.GRAVITY;
+      const spawnInterval = isZen
+        ? GAME_CONSTANTS.ZEN_SPAWN_INTERVAL
+        : GAME_CONSTANTS.BASE_SPAWN_INTERVAL;
+
       // Update simulation if PLAYING
       if (stateRef.current === "PLAYING") {
         spawnTimerRef.current++;
-        if (spawnTimerRef.current >= GAME_CONSTANTS.BASE_SPAWN_INTERVAL) {
+        if (spawnTimerRef.current >= spawnInterval) {
           spawnWave();
           spawnTimerRef.current = 0;
         }
@@ -595,7 +693,7 @@ export const useGameEngine = () => {
           const ent = flyingEntitiesRef.current[i];
           ent.x += ent.vx;
           ent.y += ent.vy;
-          ent.vy += GAME_CONSTANTS.GRAVITY;
+          ent.vy += gravity;
           ent.rotation += ent.vRot;
 
           // Drop below viewport
@@ -604,24 +702,26 @@ export const useGameEngine = () => {
               setFruitsMissed((prev) => prev + 1);
 
               if (modeRef.current === "classic") {
-              setLives((prevLives) => {
-                const next = Math.max(0, prevLives - 1);
-                if (next <= 0) {
-                  setGameState("GAMEOVER");
-                }
-                return next;
-              });
+                setLives((prevLives) => {
+                  const next = Math.max(0, prevLives - 1);
+                  if (next <= 0) {
+                    arcadeAudioEngine.stopBackgroundMusic();
+                    setGameState("GAMEOVER");
+                  }
+                  return next;
+                });
 
-              textPopupsRef.current.push({
-                text: "MISSED!",
-                x: ent.x,
-                y: height - 40,
-                color: "#ba1a1a",
-                scale: 1.0,
-                vy: -1.5,
-                life: 0.8,
-              });
-            }
+                textPopupsRef.current.push({
+                  text: "MISSED!",
+                  x: ent.x,
+                  y: height - 40,
+                  color: "#ba1a1a",
+                  scale: 1.0,
+                  vy: -1.5,
+                  life: 0.8,
+                });
+              }
+              // Zen mode: No penalties, no lives lost, no popups for missed fruits!
             }
             flyingEntitiesRef.current.splice(i, 1);
           }
@@ -632,14 +732,14 @@ export const useGameEngine = () => {
           const p = juiceParticlesRef.current[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vy += 0.25;
+          p.vy += isZen ? 0.14 : 0.25;
           p.life -= p.decay;
           if (p.life <= 0) {
             juiceParticlesRef.current.splice(i, 1);
           }
         }
 
-        // Explosions update (1 whole second = 60 frames, so 1/60 per frame)
+        // Explosions update (only in classic/arcade)
         for (let i = explosionsRef.current.length - 1; i >= 0; i--) {
           const exp = explosionsRef.current[i];
           exp.progress += 1 / 60;
@@ -669,13 +769,19 @@ export const useGameEngine = () => {
       ctx.clearRect(0, 0, width, height);
       ctx.save();
 
-      // Screen shake
-      if (screenShakeRef.current > 0) {
+      // Screen shake (disabled in calm Zen mode)
+      if (screenShakeRef.current > 0 && !isZen) {
         const sx = (Math.random() - 0.5) * screenShakeRef.current;
         const sy = (Math.random() - 0.5) * screenShakeRef.current;
         ctx.translate(sx, sy);
         screenShakeRef.current *= 0.88;
         if (screenShakeRef.current < 0.5) screenShakeRef.current = 0;
+      }
+
+      // Subtle ambient Zen atmosphere (floating petals & luminous orbs)
+      if (isZen) {
+        animTickRef.current = (animTickRef.current || 0) + 1;
+        drawZenAmbientAtmosphere(ctx, width, height, animTickRef.current);
       }
 
       // Draw entities
@@ -694,14 +800,16 @@ export const useGameEngine = () => {
         ctx.restore();
       });
 
-      // Draw juices (from sliced fruits)
+      // Draw juices
       drawJuiceParticles(ctx, juiceParticlesRef.current);
 
-      // Draw explosion animations (shockwave, blast star, smoke, fiery sparks)
-      drawExplosions(ctx, explosionsRef.current);
+      // Draw explosions (bombs)
+      if (!isZen) {
+        drawExplosions(ctx, explosionsRef.current);
+      }
 
-      // Draw blade trail
-      drawBladeTrail(ctx, bladePointsRef.current, bladeThemeRef.current);
+      // Draw smooth blade trail (Zen mode passes true for radiant glowing pastel ribbon)
+      drawBladeTrail(ctx, bladePointsRef.current, bladeThemeRef.current, isZen);
 
       // Draw text popups
       drawTextPopups(ctx, textPopupsRef.current);
@@ -718,6 +826,7 @@ export const useGameEngine = () => {
       cancelAnimationFrame(animationFrameId);
       if (gameClockIntervalRef.current) clearInterval(gameClockIntervalRef.current);
       if (comboTimerRef.current) clearTimeout(comboTimerRef.current);
+      arcadeAudioEngine.stopBackgroundMusic();
     };
   }, [resizeCanvas, spawnWave]);
 
