@@ -15,6 +15,7 @@ export const BLADE_THEMES: readonly BladeTheme[] = [
   { name: "Juice Green", primary: "#34C759", accent: "#30D158" },
   { name: "Electric Lemon", primary: "#FFCC00", accent: "#FF9500" },
   { name: "Katana Frost", primary: "#007AFF", accent: "#5AC8FA" },
+  { name: "Zen Lotus", primary: "#EC4899", accent: "#A855F7" },
 ];
 
 export const INITIAL_LEADERBOARD: readonly LeaderboardEntry[] = [
@@ -26,12 +27,16 @@ export const INITIAL_LEADERBOARD: readonly LeaderboardEntry[] = [
 
 export const GAME_CONSTANTS = {
   GRAVITY: 0.20,
+  ZEN_GRAVITY: 0.30,
   MAX_BLADE_POINTS: 16,
   BOMB_CHANCE: 0.10,
   MAX_BOMB_CHANCE: 0.15, // Bomb chance gradually rises with score
   BASE_SPAWN_INTERVAL: 100,
+  ZEN_SPAWN_INTERVAL: 80, // Continuous smooth spawning for Zen
   MIN_SPAWN_INTERVAL: 80, // Wave spawn speed quickens as score grows
   MAX_LIVES: 3,
   ARCADE_DURATION: 60,
+  ZEN_DURATION: 90,
   COMBO_TIMEOUT_MS: 700,
+  ZEN_COMBO_TIMEOUT_MS: 1200,
 } as const;
