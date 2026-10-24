@@ -1,6 +1,6 @@
-// ─── audioSystem.ts — thin compatibility shim ─────────────────────────────────
-// All actual sound logic now lives in shared/utils/arcadeAudio.ts so that the
-// navbar mute toggle controls BOTH UI sounds AND in-game sounds via one flag.
+// ─── audioSystem.ts — Compatibility Shim ─────────────────────────────────────
+// All actual sound logic lives in shared/utils/arcadeAudio.ts
+// Exposes mode-aware playback, volume adjustments, and background music controls.
 // ─────────────────────────────────────────────────────────────────────────────
 import {
   isSoundEnabled,
@@ -10,22 +10,35 @@ import {
   playCombo,
   playBombExplosion,
   playGameOverSound,
+  startBackgroundMusic,
+  stopBackgroundMusic,
+  getMusicVolume,
+  setMusicVolume,
+  getSfxVolume,
+  setSfxVolume,
+  toggleSound,
+  setSoundEnabled,
 } from "../../../shared/utils/arcadeAudio";
 
-/** Drop-in replacement for the old ArcadeAudioEngine class API */
+/** Drop-in replacement for the ArcadeAudioEngine API */
 export const arcadeAudioEngine = {
   get enabled() {
     return isSoundEnabled();
   },
-  /** No-op setter — enable/disable via toggleSound() in arcadeAudio instead */
-  setEnabled(_val: boolean) {
-    // intentionally empty: state is managed by the unified module
+  setEnabled(val: boolean) {
+    setSoundEnabled(val);
   },
+  toggleSound,
   init: initAudio,
   playSwoosh,
   playSplat,
   playCombo,
   playBomb: playBombExplosion,
   playGameOver: playGameOverSound,
+  startBackgroundMusic,
+  stopBackgroundMusic,
+  getMusicVolume,
+  setMusicVolume,
+  getSfxVolume,
+  setSfxVolume,
 };
-
