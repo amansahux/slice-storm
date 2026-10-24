@@ -26,11 +26,11 @@ export const INITIAL_LEADERBOARD: readonly LeaderboardEntry[] = [
 ];
 
 export const GAME_CONSTANTS = {
-  GRAVITY: 0.20,
-  ZEN_GRAVITY: 0.30,
+  GRAVITY: 0.14,
+  ZEN_GRAVITY: 0.20,
   MAX_BLADE_POINTS: 16,
-  BOMB_CHANCE: 0.10,
-  MAX_BOMB_CHANCE: 0.15, // Bomb chance gradually rises with score
+  BOMB_CHANCE: 0.07,
+  MAX_BOMB_CHANCE: 0.12, // Bomb chance gradually rises with score
   BASE_SPAWN_INTERVAL: 100,
   ZEN_SPAWN_INTERVAL: 80, // Continuous smooth spawning for Zen
   MIN_SPAWN_INTERVAL: 80, // Wave spawn speed quickens as score grows
