@@ -76,12 +76,12 @@ app.use("/api/leaderboards", leaderboardRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 // 9. Centralized 404 Handler for Unhandled API Routes
-app.all("/api/*splat", (req: Request, res: Response, next: NextFunction) => {
+app.all("/api/*splat", (req: Request, _res: Response, next: NextFunction) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
 });
 
 // 10. Public Frontend SPA Fallback
-app.get("{*splat}", (req: Request, res: Response) => {
+app.get("{*splat}", (_req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 
