@@ -58,7 +58,9 @@ const Login: React.FC = () => {
 
       if (progress >= 100) {
         clearInterval(interval);
-        navigate("/dashboard");
+        const searchParams = new URLSearchParams(window.location.search);
+        const returnUrl = searchParams.get("from") || "/dashboard";
+        navigate(returnUrl, { replace: true });
       }
     }, 40);
 

@@ -145,7 +145,10 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.error = null;
       })
-      .addCase(getProfile.rejected, (state) => {
+      .addCase(getProfile.rejected, (state, action) => {
+        if (action.meta?.aborted) {
+          return;
+        }
         state.isInitializing = false;
         state.isAuthenticated = false;
         state.user = null;
