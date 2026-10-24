@@ -83,12 +83,19 @@ export const createGame = async (data: CreateGameInput) => {
   );
 
   if (user) {
+    const isZen = mode === "zen";
     const updatedTotalGames = (user.totalGames || 0) + 1;
-    const currentTotalScore = (user.averageScore || 0) * (user.totalGames || 0) + score;
-    const updatedAverageScore = Math.round(currentTotalScore / updatedTotalGames);
-    const updatedHighestScore = Math.max(user.highestScore || 0, score);
     const updatedHighestCombo = Math.max(user.highestCombo || 0, maxCombo);
     const updatedTotalFruits = (user.totalFruitsSliced || 0) + fruitsSliced;
+
+    let updatedAverageScore = user.averageScore || 0;
+    let updatedHighestScore = user.highestScore || 0;
+
+    if (!isZen) {
+      const currentTotalScore = (user.averageScore || 0) * (user.totalGames || 0) + score;
+      updatedAverageScore = Math.round(currentTotalScore / updatedTotalGames);
+      updatedHighestScore = Math.max(user.highestScore || 0, score);
+    }
 
     await User.updateOne(
       { _id: userId },

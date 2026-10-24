@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import * as gameService from "../services/game.service";
 import { AuthRequest } from "../middlewares/auth.middleware";

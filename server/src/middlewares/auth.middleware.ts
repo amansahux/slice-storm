@@ -11,7 +11,7 @@ export interface AuthRequest extends Request {
   refreshToken?: string;
 }
 
-export const authMiddleware = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = asyncHandler(async (req: AuthRequest, _res: Response, next: NextFunction) => {
   const token = req.cookies?.slicestorm_accesstoken || req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
