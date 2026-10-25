@@ -71,8 +71,10 @@ if (NODE_ENV === "development") {
   app.use(morgan("combined"));
 }
 
-// 7. Static Files
-app.use(express.static(path.join(__dirname, "..", "public")));
+/* 7. Static Files */
+const publicPath = path.resolve(__dirname, "../../public");
+
+app.use(express.static(publicPath));
 
 // 8. Application Routes
 app.use("/api/auth", authLimiter, userRoutes);
@@ -88,9 +90,8 @@ app.all("/api/*splat", (req: Request, _res: Response, next: NextFunction) => {
 
 // 10. Public Frontend SPA Fallback
 app.get("{*splat}", (_req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+  res.sendFile(path.join(publicPath, "index.html"));
 });
-
 // 11. Centralized Global Error Handler
 app.use(errorHandler);
 
