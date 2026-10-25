@@ -72,7 +72,7 @@ if (NODE_ENV === "development") {
 }
 
 /* 7. Static Files */
-const publicPath = path.resolve(__dirname, "../../public");
+const publicPath = path.resolve(process.cwd(), "public");
 
 app.use(express.static(publicPath));
 
