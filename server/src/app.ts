@@ -15,6 +15,12 @@ import dashboardRoutes from "./routes/dashboard.routes";
 
 const app = express();
 
+app.get("/api/health", (req: Request, res: Response) => {
+  res
+    .status(200)
+    .json({ status: "success", message: "Welcome to SLICE STORM Backend API" });
+});
+
 // 1. Trust proxy headers in production (reverse proxy / load balancer support)
 if (NODE_ENV === "production") {
   app.set("trust proxy", 1);
