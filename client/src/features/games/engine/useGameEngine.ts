@@ -648,12 +648,15 @@ export const useGameEngine = () => {
     if (!canvas) return;
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    if (!rect.width || !rect.height) return;
+    const pixelWidth = Math.round(rect.width * dpr);
+    const pixelHeight = Math.round(rect.height * dpr);
+    if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+    if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.resetTransform?.();
-      ctx.scale(dpr, dpr);
+      // Match the CSS-pixel game world exactly, including fractional CSS sizes.
+      ctx.setTransform(canvas.width / rect.width, 0, 0, canvas.height / rect.height, 0, 0);
     }
   }, []);
 
@@ -661,6 +664,11 @@ export const useGameEngine = () => {
   useEffect(() => {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    const canvas = canvasRef.current;
+    const resizeObserver = canvas && typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(resizeCanvas)
+      : null;
+    if (canvas) resizeObserver?.observe(canvas);
 
     let animationFrameId: number;
 
@@ -673,6 +681,10 @@ export const useGameEngine = () => {
       const rect = canvas.getBoundingClientRect();
       const width = rect.width;
       const height = rect.height;
+      if (!width || !height) {
+        animationFrameId = requestAnimationFrame(gameLoop);
+        return;
+      }
 
       const isZen = modeRef.current === "zen";
       const gravity = isZen ? GAME_CONSTANTS.ZEN_GRAVITY : GAME_CONSTANTS.GRAVITY;
@@ -697,7 +709,13 @@ export const useGameEngine = () => {
           ent.rotation += ent.vRot;
 
           // Drop below viewport
-          if (ent.y > height + 60) {
+          // Keep missed-fruit scoring intact, but remove objects once their full
+          // visible radius has passed the playfield edge.
+          if (
+            ent.y - ent.radius > height ||
+            ent.x + ent.radius < 0 ||
+            ent.x - ent.radius > width
+          ) {
             if (!ent.sliced && ent.type === "fruit") {
               setFruitsMissed((prev) => prev + 1);
 
@@ -734,7 +752,13 @@ export const useGameEngine = () => {
           p.y += p.vy;
           p.vy += isZen ? 0.14 : 0.25;
           p.life -= p.decay;
-          if (p.life <= 0) {
+          if (
+            p.life <= 0 ||
+            p.y + p.size < 0 ||
+            p.y - p.size > height ||
+            p.x + p.size < 0 ||
+            p.x - p.size > width
+          ) {
             juiceParticlesRef.current.splice(i, 1);
           }
         }
@@ -766,8 +790,13 @@ export const useGameEngine = () => {
       }
 
       // Render Canvas frame
+      ctx.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
       ctx.clearRect(0, 0, width, height);
       ctx.save();
+      // Protect the visible playfield even during screen shake or oversized effects.
+      ctx.beginPath();
+      ctx.rect(0, 0, width, height);
+      ctx.clip();
 
       // Screen shake (disabled in calm Zen mode)
       if (screenShakeRef.current > 0 && !isZen) {
@@ -823,6 +852,7 @@ export const useGameEngine = () => {
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      resizeObserver?.disconnect();
       cancelAnimationFrame(animationFrameId);
       if (gameClockIntervalRef.current) clearInterval(gameClockIntervalRef.current);
       if (comboTimerRef.current) clearTimeout(comboTimerRef.current);
