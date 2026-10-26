@@ -385,7 +385,18 @@ export const useGameEngine = () => {
   // Fruit sliced handler
   const handleFruitSlice = useCallback(
     (fruit: FlyingEntity, p1: BladePoint, p2: BladePoint) => {
-      if (!fruit.sub) return;
+      if (
+        fruit.type !== "fruit" ||
+        fruit.sliced ||
+        !fruit.sub ||
+        !flyingEntitiesRef.current.includes(fruit)
+      ) return;
+      // Claim and remove the source before creating effects so a repeated or
+      // stale collision callback cannot score or split this fruit twice.
+      fruit.sliced = true;
+      const fruitIndex = flyingEntitiesRef.current.indexOf(fruit);
+      flyingEntitiesRef.current.splice(fruitIndex, 1);
+
       const fruitSub = fruit.sub;
       const isZen = modeRef.current === "zen";
 
@@ -414,17 +425,16 @@ export const useGameEngine = () => {
         });
       }
 
-      // Remove the original sliced fruit
-      const fruitIndex = flyingEntitiesRef.current.indexOf(fruit);
-      if (fruitIndex !== -1) {
-        flyingEntitiesRef.current.splice(fruitIndex, 1);
-      }
-
-      // Spawn two halves with smooth physical arc
-      const sliceAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+      // Apply a bounded, opposite impulse perpendicular to the actual swipe.
+      // Both halves retain the fruit's current momentum and then share world gravity.
+      const swipeX = p2.x - p1.x;
+      const swipeY = p2.y - p1.y;
+      const swipeLength = Math.hypot(swipeX, swipeY);
+      const sliceAngle = Math.atan2(swipeY, swipeX);
+      const normalX = swipeLength > 0 ? -swipeY / swipeLength : 0;
+      const normalY = swipeLength > 0 ? swipeX / swipeLength : -1;
       const splitSpeed = isZen ? 2.6 : 4;
-      const splitVx = Math.cos(sliceAngle + Math.PI / 2) * splitSpeed;
-      const splitVy = Math.sin(sliceAngle + Math.PI / 2) * splitSpeed;
+      const splitOffset = Math.min(8, fruit.radius * 0.2);
 
       entityIdCounter.current++;
       flyingEntitiesRef.current.push({
@@ -432,10 +442,10 @@ export const useGameEngine = () => {
         type: "half",
         sub: fruitSub,
         side: -1,
-        x: fruit.x - 5,
-        y: fruit.y,
-        vx: fruit.vx - splitVx,
-        vy: fruit.vy - splitVy - (isZen ? 1.2 : 2),
+        x: fruit.x - normalX * splitOffset,
+        y: fruit.y - normalY * splitOffset,
+        vx: fruit.vx - normalX * splitSpeed,
+        vy: fruit.vy - normalY * splitSpeed,
         rotation: fruit.rotation,
         vRot: isZen ? -0.05 : -0.1,
         radius: fruit.radius,
@@ -449,10 +459,10 @@ export const useGameEngine = () => {
         type: "half",
         sub: fruitSub,
         side: 1,
-        x: fruit.x + 5,
-        y: fruit.y,
-        vx: fruit.vx + splitVx,
-        vy: fruit.vy - splitVy - (isZen ? 1.2 : 2),
+        x: fruit.x + normalX * splitOffset,
+        y: fruit.y + normalY * splitOffset,
+        vx: fruit.vx + normalX * splitSpeed,
+        vy: fruit.vy + normalY * splitSpeed,
         rotation: fruit.rotation,
         vRot: isZen ? 0.05 : 0.1,
         radius: fruit.radius,
@@ -466,7 +476,7 @@ export const useGameEngine = () => {
         juiceParticlesRef.current.push({
           x: fruit.x,
           y: fruit.y,
-          vx: (Math.random() - 0.5) * (isZen ? 8 : 10) + splitVx * 0.4,
+          vx: (Math.random() - 0.5) * (isZen ? 8 : 10) + normalX * splitSpeed * 0.4,
           vy: (Math.random() - 0.5) * (isZen ? 8 : 10) - (isZen ? 1.5 : 2),
           color: fruitSub.flesh,
           size: Math.random() * (isZen ? 6 : 6) + 3,
@@ -489,8 +499,8 @@ export const useGameEngine = () => {
         if (ent.sliced) continue;
 
         if (lineIntersectsCircle(p1, p2, ent)) {
-          ent.sliced = true;
           if (ent.type === "bomb") {
+            ent.sliced = true;
             if (!isZen) {
               handleBombExplosion(ent);
             }
@@ -712,6 +722,7 @@ export const useGameEngine = () => {
           // Keep missed-fruit scoring intact, but remove objects once their full
           // visible radius has passed the playfield edge.
           if (
+            ent.y + ent.radius < 0 ||
             ent.y - ent.radius > height ||
             ent.x + ent.radius < 0 ||
             ent.x - ent.radius > width
