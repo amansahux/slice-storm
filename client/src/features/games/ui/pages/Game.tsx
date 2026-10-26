@@ -47,19 +47,21 @@ export const Game: React.FC = memo(() => {
     <div
       className={`relative w-full h-[calc(100vh-120px)] min-h-[580px] text-[#1b1c1c] font-['Rubik',sans-serif] overflow-hidden flex flex-col justify-between select-none transition-colors duration-500 ${battlefieldClass}`}
     >
-      {/* GAME HUD DOCK (Floats right under marquee header) */}
-      <GameHud
-        score={score}
-        fruitsSliced={fruitsSliced}
-        combo={combo}
-        lives={lives}
-        maxLives={maxLives}
-        timeRemainingText={timeRemainingText}
-        gameMode={gameMode}
-        gameState={gameState}
-        isPaused={gameState === "PAUSED"}
-        onTogglePause={togglePauseGame}
-      />
+      {/* GAME HUD DOCK (Visible once game starts: COUNTDOWN, PLAYING, PAUSED, GAMEOVER) */}
+      {gameState !== "START" && (
+        <GameHud
+          score={score}
+          fruitsSliced={fruitsSliced}
+          combo={combo}
+          lives={lives}
+          maxLives={maxLives}
+          timeRemainingText={timeRemainingText}
+          gameMode={gameMode}
+          gameState={gameState}
+          isPaused={gameState === "PAUSED"}
+          onTogglePause={togglePauseGame}
+        />
+      )}
 
       {/* MAIN PLAYFIELD (HTML5 Game Canvas) */}
       <main className="relative flex-1 w-full h-full overflow-hidden flex items-center justify-center">

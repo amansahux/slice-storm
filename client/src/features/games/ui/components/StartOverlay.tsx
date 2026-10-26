@@ -20,14 +20,14 @@ export const StartOverlay: React.FC<StartOverlayProps> = memo(({
   onStartGame,
 }) => {
   return (
-    <div className="absolute z-20 inset-0 flex items-center justify-center p-3 sm:p-4 animate-fadeIn overflow-y-auto">
-      <div className="bg-[#FFF4D6] border-4 border-[#1b1c1c] rounded-xl p-5 sm:p-8 max-w-lg w-full shadow-[8px_8px_0px_#1b1c1c] transform -rotate-1 relative outline outline-4 outline-white my-auto">
+    <div className="absolute z-20 inset-0 flex items-center justify-center p-3 sm:p-4 pt-12 sm:pt-16 md:pt-20 animate-fadeIn overflow-y-auto">
+      <div className="bg-[#FFF4D6] border-4 border-[#1b1c1c] rounded-xl p-4 sm:p-6 md:p-8 max-w-lg w-full shadow-[8px_8px_0px_#1b1c1c] transform -rotate-1 relative outline outline-4 outline-white my-auto">
         {/* Header Ribbon with Logo Asset */}
-        <div className="w-full flex justify-center -mt-10 sm:-mt-14 mb-2 sm:mb-3">
+        <div className="w-full flex justify-center -mt-12 sm:-mt-16 mb-2">
           <img
             src="/logo.png"
             alt="SLICE STORM Logo"
-            className="w-52 sm:w-80 object-contain drop-shadow-[0_4px_0_#1b1c1c] animate-bounce hover:scale-105 transition-transform"
+            className="w-48 sm:w-64 md:w-72 max-h-24 sm:max-h-28 object-contain drop-shadow-[0_4px_0_#1b1c1c] animate-bounce hover:scale-105 transition-transform"
             onError={(e) => {
               // Fallback to Stitch image if local logo is missing
               (e.currentTarget as HTMLImageElement).src =
