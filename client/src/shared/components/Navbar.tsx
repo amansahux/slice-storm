@@ -6,6 +6,7 @@ import {
   isSoundEnabled,
   toggleSound,
   playArcadeSound,
+  AUDIO_CHANGE_EVENT,
 } from "../utils/arcadeAudio";
 import {
   Gamepad2,
@@ -53,6 +54,19 @@ export const Navbar: React.FC<NavbarProps> = memo(
     const authUser = useSelector((state: RootState) => state.auth.user);
     const [internalSound, setInternalSound] = useState(isSoundEnabled());
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    useEffect(() => {
+      const handleAudioUpdate = () => {
+        setInternalSound(isSoundEnabled());
+      };
+
+      window.addEventListener(AUDIO_CHANGE_EVENT, handleAudioUpdate);
+      window.addEventListener("storage", handleAudioUpdate);
+      return () => {
+        window.removeEventListener(AUDIO_CHANGE_EVENT, handleAudioUpdate);
+        window.removeEventListener("storage", handleAudioUpdate);
+      };
+    }, []);
 
     const currentSoundOn =
       propSoundOn !== undefined ? propSoundOn : internalSound;

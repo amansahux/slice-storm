@@ -112,12 +112,37 @@ const updateMusicMasterGain = (targetModeVolume = 0.15) => {
   }
 };
 
+export const AUDIO_CHANGE_EVENT = "slicestorm_audio_change";
+
+export interface AudioSettingsState {
+  soundEnabled: boolean;
+  musicVolume: number;
+  sfxVolume: number;
+}
+
+export const getAudioSettings = (): AudioSettingsState => ({
+  soundEnabled,
+  musicVolume,
+  sfxVolume,
+});
+
+const notifyAudioChange = () => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent(AUDIO_CHANGE_EVENT, {
+        detail: getAudioSettings(),
+      })
+    );
+  }
+};
+
 export const setMusicVolume = (vol: number): void => {
   musicVolume = Math.max(0, Math.min(1, vol));
   if (typeof window !== "undefined") {
     localStorage.setItem(MUSIC_VOL_KEY, String(musicVolume));
   }
   updateMusicMasterGain(currentBgMusicMode === "zen" ? 0.22 : 0.15);
+  notifyAudioChange();
 };
 
 export const setSfxVolume = (vol: number): void => {
@@ -125,6 +150,7 @@ export const setSfxVolume = (vol: number): void => {
   if (typeof window !== "undefined") {
     localStorage.setItem(SFX_VOL_KEY, String(sfxVolume));
   }
+  notifyAudioChange();
 };
 
 export const setSoundEnabled = (val: boolean): void => {
@@ -133,6 +159,7 @@ export const setSoundEnabled = (val: boolean): void => {
     localStorage.setItem(STORAGE_KEY, String(soundEnabled));
   }
   updateMusicMasterGain(currentBgMusicMode === "zen" ? 0.22 : 0.15);
+  notifyAudioChange();
 };
 
 /** Toggle master mute; returns the new state. */

@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useState, useCallback, useEffect } from "react";
 import { Volume2, VolumeX, Music, Zap } from "lucide-react";
 import {
   getMusicVolume,
@@ -7,6 +7,7 @@ import {
   setSfxVolume,
   isSoundEnabled,
   setSoundEnabled,
+  AUDIO_CHANGE_EVENT,
 } from "../../../../shared/utils/arcadeAudio";
 
 interface AudioVolumeControlsProps {
@@ -23,6 +24,22 @@ export const AudioVolumeControls: React.FC<AudioVolumeControlsProps> = memo(
     const [sfxVol, setSfxVolState] = useState<number>(() =>
       Math.round(getSfxVolume() * 100)
     );
+
+    // Keep state reactive and synchronized with Navbar and other controls
+    useEffect(() => {
+      const handleAudioUpdate = () => {
+        setEnabledState(isSoundEnabled());
+        setMusicVolState(Math.round(getMusicVolume() * 100));
+        setSfxVolState(Math.round(getSfxVolume() * 100));
+      };
+
+      window.addEventListener(AUDIO_CHANGE_EVENT, handleAudioUpdate);
+      window.addEventListener("storage", handleAudioUpdate);
+      return () => {
+        window.removeEventListener(AUDIO_CHANGE_EVENT, handleAudioUpdate);
+        window.removeEventListener("storage", handleAudioUpdate);
+      };
+    }, []);
 
     const handleToggleMute = useCallback(() => {
       const next = !enabled;

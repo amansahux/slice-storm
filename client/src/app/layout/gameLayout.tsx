@@ -6,7 +6,7 @@ const GameLayout = () => {
   return (
     <div className="min-h-screen bg-[#F7E8C3] paper-pattern text-[#1b1c1c] flex flex-col justify-between">
       <Navbar />
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col ">
         <Outlet />
       </main>
       <Footer />
