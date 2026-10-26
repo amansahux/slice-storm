@@ -14,7 +14,6 @@ import {
   History as HistoryIcon,
   Volume2,
   VolumeX,
-  Settings,
 } from "lucide-react";
 import Logo from "/logo.png";
 
@@ -66,8 +65,6 @@ export const Navbar: React.FC<NavbarProps> = memo(
       if (currentPath === "/dashboard") return "DASHBOARD";
       if (currentPath === "/leaderboard") return "LEADERBOARDS";
       if (currentPath === "/history") return "HISTORY";
-      if (currentPath === "/profile") return "PROFILE";
-      if (currentPath === "/setting") return "SETTING";
       return "";
     }, [propActiveNav, location.pathname]);
 
@@ -299,35 +296,6 @@ export const Navbar: React.FC<NavbarProps> = memo(
                     </button>
                   );
                 })}
-
-                {/* Additional Settings link in mobile menu */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    playArcadeSound("blip");
-                    setIsMobileMenuOpen(false);
-                    navigate("/setting");
-                  }}
-                  className={`cursor-pointer w-full flex items-center justify-between px-4 py-3 rounded-xl border-3 border-[#1b1c1c] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-['Rubik',sans-serif] ${
-                    currentActiveNav === "SETTING"
-                      ? "bg-[#b61929] text-white shadow-[4px_4px_0px_#1b1c1c]"
-                      : "bg-white text-[#1b1c1c] hover:bg-[#fff9e6] shadow-[3px_3px_0px_#1b1c1c]"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Settings
-                      className={`w-[22px] h-[22px] ${
-                        currentActiveNav === "SETTING" ? "text-white" : "text-[#b61929]"
-                      }`}
-                    />
-                    <span className="text-base font-black uppercase tracking-wide">
-                      SETTINGS
-                    </span>
-                  </div>
-                  <span className="text-xs font-extrabold px-2 py-0.5 rounded border border-[#1b1c1c] bg-[#eae7e7] text-[#5b403f]">
-                    05
-                  </span>
-                </button>
               </div>
 
               {/* Mobile Quick Action Footer */}
