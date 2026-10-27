@@ -188,8 +188,7 @@ export const Navbar: React.FC<NavbarProps> = memo(
             </button>
 
             {/* Authenticated Player Chip / Profile Link */}
-            <Link
-              to="/profile"
+            <button
               onClick={() => playArcadeSound("blip")}
               className={`flex items-center gap-1.5 border-2 border-[#1b1c1c] px-2 sm:px-2.5 py-1 rounded-lg shadow-[2px_2px_0px_#1b1c1c] active:translate-x-[1px] active:translate-y-[1px] transition-all ${
                 currentActiveNav === "PROFILE"
@@ -208,7 +207,7 @@ export const Navbar: React.FC<NavbarProps> = memo(
                   VIP
                 </span>
               </div>
-            </Link>
+            </button>
 
             {/* Crazy Neo-Brutalist Arcade Hamburger with Perfect Center Cross */}
             <button
