@@ -33,3 +33,28 @@ persistent player progression.
 -   [Deployment](#deployment)
 -   [Engineering Notes](#engineering-notes)
 -   [Roadmap](#roadmap)
+
+
+
+## Overview
+
+SLICE STORM pairs an arcade-style frontend with a backend for player
+accounts and persistent game records. React and TypeScript power the UI,
+while the Canvas API handles frame-by-frame gameplay. Redux Toolkit is
+intended for shared application state; fast-changing fruit positions,
+particles, and blade points should remain inside the game engine rather
+than being dispatched through Redux on every frame.
+
+The Express API is organized into routes, controllers, services,
+validators, middleware, and Mongoose models. Authenticated endpoints
+handle player-specific operations. In the supplied route configuration,
+leaderboard endpoints do not apply `authMiddleware`.
+
+### Goals
+
+-   Responsive mouse and touch slicing.
+-   Separate Canvas gameplay from ordinary React UI updates.
+-   Offer Classic, Arcade, and Zen modes with distinct rules.
+-   Persist completed results and player progression.
+-   Provide global and mode-specific leaderboard views.
+-   Support responsive desktop and mobile layouts.
