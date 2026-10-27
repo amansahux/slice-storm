@@ -115,3 +115,33 @@ rates, and difficulty curves should match the actual game configuration.
 -   Express route/controller/service separation.
 -   Zod request validation middleware.
 -   Mongoose persistence and centralized error-handling utilities.
+
+## Technology Stack
+
+### Frontend
+
+  -----------------------------------------------------------------------
+  Technology                          Responsibility
+  ----------------------------------- -----------------------------------
+  React                               UI and components
+
+  TypeScript                          Static typing
+
+  Redux Toolkit                       Shared client/application state
+
+  React Router                        Routing and route guards
+
+  Canvas API                          Real-time gameplay rendering
+
+  GSAP                                UI animations where used
+
+  Tailwind CSS / CSS                  Styling and responsive layout
+
+  Axios                               HTTP client through configured API
+                                      instance
+
+  TanStack Query                      Use where configured for
+                                      server-state fetching and caching;
+                                      verify current hooks before
+                                      assuming all features use it
+  -----------------------------------------------------------------------
