@@ -58,3 +58,29 @@ leaderboard endpoints do not apply `authMiddleware`.
 -   Persist completed results and player progression.
 -   Provide global and mode-specific leaderboard views.
 -   Support responsive desktop and mobile layouts.
+
+## Game Modes
+
+  -----------------------------------------------------------------------
+  Mode                    Experience              Rules
+  ----------------------- ----------------------- -----------------------
+  **Classic**             Survival arcade         Score points, manage
+                                                  lives, avoid bombs, and
+                                                  avoid missing too many
+                                                  fruits.
+
+  **Arcade**              Fast timed gameplay     Aim for the highest
+                                                  score before the
+                                                  countdown ends.
+
+  **Zen**                 Relaxed slicing         90-second timer, no
+                                                  lives, no score, no
+                                                  bombs, and no
+                                                  missed-fruit penalty.
+                                                  The result is the total
+                                                  fruits sliced.
+  -----------------------------------------------------------------------
+
+Keep mode-specific rules in configuration instead of scattering mode
+checks throughout rendering and physics code. Exact scoring, spawn
+rates, and difficulty curves should match the actual game configuration.
