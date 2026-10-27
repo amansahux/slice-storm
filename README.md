@@ -145,3 +145,27 @@ rates, and difficulty curves should match the actual game configuration.
                                       verify current hooks before
                                       assuming all features use it
   -----------------------------------------------------------------------
+
+  ### Backend
+
+  -----------------------------------------------------------------------
+  Technology                          Responsibility
+  ----------------------------------- -----------------------------------
+  Node.js                             Runtime
+
+  Express.js                          HTTP API
+
+  MongoDB                             Persistent storage
+
+  Mongoose                            Models and database queries
+
+  TypeScript                          Backend type safety
+
+  Zod                                 Request validation
+
+  JWT / cookie utilities              Authentication support, according
+                                      to the current implementation
+
+  Shared middleware                   Authentication, validation, async
+                                      handling, and errors
+  -----------------------------------------------------------------------
