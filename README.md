@@ -84,3 +84,34 @@ leaderboard endpoints do not apply `authMiddleware`.
 Keep mode-specific rules in configuration instead of scattering mode
 checks throughout rendering and physics code. Exact scoring, spawn
 rates, and difficulty curves should match the actual game configuration.
+
+
+## Features
+
+### Gameplay
+
+-   Mouse and touch swipe controls.
+-   Canvas-based fruit rendering and movement.
+-   Fruit slicing, split-half effects, and multi-fruit slicing.
+-   Blade trail, particles, combo feedback, and sound effects.
+-   Mode-specific timers, lives, penalties, and end conditions.
+-   Pause/resume and end-of-session flow where supported by the current
+    UI.
+
+### Player experience
+
+-   Registration, login, logout, and token refresh endpoints.
+-   Protected player pages.
+-   Dashboard summary and player statistics.
+-   Completed-game history.
+-   Global and mode-specific leaderboards.
+-   Audio and gameplay settings UI.
+
+### Engineering
+
+-   Lazy-loaded pages for code splitting.
+-   Redux Toolkit for shared client state.
+-   Feature-oriented frontend organization.
+-   Express route/controller/service separation.
+-   Zod request validation middleware.
+-   Mongoose persistence and centralized error-handling utilities.
