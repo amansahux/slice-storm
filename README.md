@@ -638,3 +638,48 @@ erDiagram
 A separate leaderboard collection is not required when rankings can be
 queried from completed game records. Choose indexes based on real query
 patterns and verify them with query plans.
+
+## Validation and Security
+
+The supplied backend structure includes validation middleware, Zod
+validators, an application error utility, and an async-handler utility.
+
+``` mermaid
+flowchart TD
+    Request["HTTP request"] --> Route["Express route"]
+    Route --> AuthCheck{"Authentication required?"}
+    AuthCheck -- Yes --> Auth["Authentication middleware"]
+    AuthCheck -- No --> Validate["Zod validation"]
+    Auth --> Validate
+    Validate --> Controller["Controller"]
+    Controller --> Service["Service / business rules"]
+    Service --> DB["Mongoose / MongoDB"]
+    DB --> Response["JSON success response"]
+    Route -. error .-> Error["Central error handler"]
+    Auth -. auth error .-> Error
+    Validate -. validation error .-> Error
+    Service -. application error .-> Error
+```
+
+For game results, the server should validate ownership, session status,
+accepted mode, non-negative values, sensible duration, and duplicate
+submissions rather than trusting the client alone. Verify which checks
+are present in the implementation.
+
+## Environment Variables
+
+Create local environment files and configure production secrets through
+the hosting provider. Never commit secrets. These names are examples;
+use the exact names expected by `config.ts`, `db.ts`, and the frontend
+configuration.
+
+### Server example
+
+``` env
+NODE_ENV=development
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/slice-storm
+JWT_ACCESS_SECRET=replace_with_a_long_random_secret
+JWT_REFRESH_SECRET=replace_with_a_different_long_random_secret
+CLIENT_URL=http://localhost:5173
+```
