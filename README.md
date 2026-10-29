@@ -432,3 +432,154 @@ update strategy.
 
 The exact summary fields are defined by `dashboard.service.ts` and the
 dashboard controller.
+
+## Frontend Routes
+
+These routes are taken from the supplied React Router configuration.
+
+  Route            Access      Layout         Page
+  ---------------- ----------- -------------- ------------------
+  `/`              Public      No wrapper     Landing
+  `/login`         Public      `AuthLayout`   Login
+  `/register`      Public      `AuthLayout`   Register
+  `/terms`         Public      `GameLayout`   Terms of Service
+  `/privacy`       Public      `GameLayout`   Privacy Policy
+  `/safety`        Public      `GameLayout`   Arcade Safety
+  `/support`       Public      `GameLayout`   Customer Support
+  `/arcade`        Protected   `GameLayout`   Game
+  `/dashboard`     Protected   `GameLayout`   Dashboard
+  `/leaderboard`   Protected   `GameLayout`   Leaderboard
+  `/history`       Protected   `GameLayout`   History
+  `*`              Fallback    Error page     Not found
+
+``` mermaid
+flowchart TD
+    Router["Browser Router"] --> Public["PublicRoute"]
+    Public --> Landing["/"]
+    Public --> Auth["AuthLayout"]
+    Auth --> Login["/login"]
+    Auth --> Register["/register"]
+    Router --> Legal["GameLayout: public information"]
+    Legal --> Terms["/terms"]
+    Legal --> Privacy["/privacy"]
+    Legal --> Safety["/safety"]
+    Legal --> Support["/support"]
+    Router --> Guard["ProtectedRoute"]
+    Guard --> Protected["GameLayout"]
+    Protected --> Arcade["/arcade"]
+    Protected --> Dashboard["/dashboard"]
+    Protected --> Leaderboard["/leaderboard"]
+    Protected --> History["/history"]
+    Router --> NotFound["* Error page"]
+```
+
+## Backend API
+
+Assuming routers are mounted under `/api`, the supplied Express route
+files expose these paths.
+
+  ------------------------------------------------------------------------------------------------------
+  Method            Endpoint                                 Auth                      Purpose
+  ----------------- ---------------------------------------- ------------------------- -----------------
+  `GET`             `/api/dashboard/summary`                 Required                  Dashboard summary
+
+  `POST`            `/api/games`                             Required                  Save a game
+                                                                                       result
+
+  `GET`             `/api/games/history`                     Required                  Game history
+
+  `POST`            `/api/game-sessions`                     Required                  Create session
+
+  `PATCH`           `/api/game-sessions/:sessionId/status`   Required                  Update session
+                                                                                       status
+
+  `GET`             `/api/leaderboards/global`               Not applied in supplied   Global
+                                                             router                    leaderboard
+
+  `GET`             `/api/leaderboards/:mode`                Not applied in supplied   Mode leaderboard
+                                                             router                    
+
+  `POST`            `/api/users/register`                    Not required              Register
+
+  `POST`            `/api/users/login`                       Not required              Login
+
+  `POST`            `/api/users/logout`                      Required                  Logout
+
+  `POST`            `/api/users/refresh-token`               Token handling is         Refresh access
+                                                             implementation-specific   authentication
+
+  `GET`             `/api/users/profile`                     Required                  Current player
+                                                                                       profile
+  ------------------------------------------------------------------------------------------------------
+
+**Prefix note:** Express routers do not define their full URL prefix
+themselves. Check `server.ts` or `app.ts` and update the paths if the
+mount prefixes differ.
+
+## Project Structure
+
+This is a simplified representation based on the supplied VS Code
+screenshots. Some nested files are omitted.
+
+``` text
+SLICE-STORM/
+├── client/
+│   ├── public/
+│   └── src/
+│       ├── app/
+│       │   ├── layout/
+│       │   ├── routes/
+│       │   │   ├── protectedRoutes.tsx
+│       │   │   ├── publicRoutes.tsx
+│       │   │   └── routes.tsx
+│       │   ├── App.tsx
+│       │   └── store.ts
+│       ├── config/
+│       │   └── axiosInstance.ts
+│       ├── features/
+│       │   ├── auth/
+│       │   │   ├── api/
+│       │   │   ├── hooks/
+│       │   │   ├── state/
+│       │   │   ├── ui/
+│       │   │   └── validators/
+│       │   ├── dashboard/
+│       │   │   ├── api/
+│       │   │   ├── hooks/
+│       │   │   ├── state/
+│       │   │   └── ui/
+│       │   ├── games/
+│       │   │   ├── apis/
+│       │   │   ├── config/
+│       │   │   ├── engine/
+│       │   │   ├── hooks/
+│       │   │   ├── rendering/
+│       │   │   ├── systems/
+│       │   │   └── ui/
+│       │   ├── history/
+│       │   ├── landing/
+│       │   └── leaderboard/
+│       ├── shared/
+│       │   ├── components/
+│       │   └── utils/
+│       └── main.tsx
+├── server/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middlewares/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   └── validators/
+│   ├── public/
+│   ├── server.ts
+│   ├── package.json
+│   └── tsconfig.json
+└── README.md
+```
+
+Treat the actual repository as the definitive source for exact filenames
+and nesting.
