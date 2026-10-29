@@ -251,3 +251,96 @@ flowchart TD
 This is the intended product flow. Confirm exact request timing and
 result-screen behavior against the current page and service
 implementation.
+
+## Game Engine Flow
+
+``` mermaid
+flowchart TD
+    Input["Mouse / touch input"] --> Track["Track pointer positions"]
+    Track --> Loop["requestAnimationFrame loop"]
+    Loop --> Delta["Calculate frame delta"]
+    Delta --> Spawn["Spawn objects from mode config"]
+    Spawn --> Physics["Update position, velocity, gravity, rotation"]
+    Physics --> Collision["Test swipe segment against active objects"]
+    Collision --> Sliced{"Fruit sliced?"}
+    Sliced -- Yes --> Split["Create two sliced halves"]
+    Split --> Effects["Particles, blade feedback, sound, combo"]
+    Sliced -- No --> Cleanup["Clean expired/off-screen objects"]
+    Effects --> Cleanup
+    Cleanup --> Render["Render background, fruit, effects, blade, HUD"]
+    Render --> State{"Paused or session finished?"}
+    State -- No --> Loop
+    State -- Yes --> Stop["Stop or suspend active loop"]
+```
+
+### Engine responsibilities
+
+-   **Spawner:** creates fruit according to mode and difficulty.
+-   **Physics:** updates position using delta time, velocity, gravity,
+    and rotation.
+-   **Collision:** tests the line segment between previous and current
+    pointer positions.
+-   **Slicing:** marks the original fruit as sliced once, creates
+    halves, and applies separation velocity.
+-   **Particles:** creates and removes effects without retaining expired
+    objects.
+-   **Audio:** respects user settings and browser autoplay restrictions.
+-   **Renderer:** clips drawing to canvas bounds and scales on viewport
+    changes.
+-   **Cleanup:** removes objects that have permanently left the play
+    area and prevents sliced halves from reappearing as whole fruits.
+
+## Authentication Flow
+
+The supplied user router exposes registration, login, logout, token
+refresh, and profile endpoints.
+
+``` mermaid
+sequenceDiagram
+    actor Player
+    participant UI as React Auth UI
+    participant API as User API
+    participant Auth as Auth Middleware
+    participant Service as Controller / Service
+    participant DB as MongoDB
+    Player->>UI: Submit registration or login
+    UI->>API: POST /api/users/register or /api/users/login
+    API->>Service: Validate and process credentials
+    Service->>DB: Read or create user
+    DB-->>Service: User record
+    Service-->>UI: Authentication response
+    UI->>API: GET /api/users/profile
+    API->>Auth: Authenticate request
+    Auth->>Service: Continue authenticated request
+    Service-->>UI: Profile response
+```
+
+**Security note:** this is a high-level flow. Token storage, refresh
+rotation, cookie flags, password hashing, and response payloads depend
+on the actual implementation. The diagram alone does not prove every
+control is implemented.
+
+## Session and Result Flow
+
+``` mermaid
+sequenceDiagram
+    actor Player
+    participant UI as Arcade UI
+    participant Sessions as Game Session API
+    participant Games as Game API
+    participant DB as MongoDB
+    Player->>UI: Choose mode and start
+    UI->>Sessions: POST /api/game-sessions
+    Sessions->>DB: Create session
+    DB-->>Sessions: Session data
+    Sessions-->>UI: Session identifier and data
+    UI->>UI: Run Canvas gameplay
+    Player->>UI: Finish game
+    UI->>Games: POST /api/games with result
+    Games->>DB: Persist completed game
+    DB-->>Games: Saved game
+    Games-->>UI: Result response
+```
+
+The supplied routes do **not** expose a separate `POST /complete`
+endpoint. Result submission is represented by `POST /api/games`.
