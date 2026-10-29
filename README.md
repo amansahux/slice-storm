@@ -169,3 +169,46 @@ rates, and difficulty curves should match the actual game configuration.
   Shared middleware                   Authentication, validation, async
                                       handling, and errors
   -----------------------------------------------------------------------
+
+  ## System Architecture
+
+``` mermaid
+flowchart TB
+    Player["Player"]
+    subgraph Client["React + TypeScript Client"]
+        Router["React Router"]
+        Guards["PublicRoute / ProtectedRoute"]
+        Layouts["AuthLayout / GameLayout"]
+        Pages["Landing, Auth, Arcade, Dashboard, History, Leaderboard"]
+        State["Redux Toolkit: shared client state"]
+        Hooks["Feature hooks and API modules"]
+        Engine["Canvas Game Engine"]
+        Render["Rendering: fruits, blade, particles"]
+        Systems["Physics, collision, spawning, audio"]
+    end
+    subgraph Server["Express + TypeScript API"]
+        Routes["API Routes"]
+        Auth["Authentication Middleware"]
+        Validate["Zod Validation Middleware"]
+        Controllers["Controllers"]
+        Services["Services"]
+        Models["Mongoose Models"]
+        Errors["Async Handler / Error Middleware"]
+    end
+    DB[("MongoDB")]
+    Player --> Router --> Guards --> Layouts --> Pages
+    Pages <--> State
+    Pages --> Hooks
+    Pages --> Engine
+    Engine --> Render
+    Engine --> Systems
+    Hooks --> Routes
+    Routes --> Auth
+    Routes --> Validate
+    Auth --> Controllers
+    Validate --> Controllers
+    Controllers --> Services --> Models
+    Models <--> DB
+    Controllers -. errors .-> Errors
+```
+
