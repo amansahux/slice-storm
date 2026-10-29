@@ -212,3 +212,42 @@ flowchart TB
     Controllers -. errors .-> Errors
 ```
 
+### Architecture boundaries
+
+1.  **UI:** pages, forms, overlays, HUD, and reusable components.
+2.  **Feature API layer:** HTTP calls grouped by feature.
+3.  **Feature hooks:** fetching, mutations, loading/error state, and
+    cache invalidation where implemented.
+4.  **Redux Toolkit:** shared client state, not per-frame physics
+    objects.
+5.  **Game engine:** timing, fruit/bomb objects, movement, collision,
+    slicing, and particles.
+6.  **Controllers:** translate HTTP requests into service calls and
+    responses.
+7.  **Services:** application/business logic.
+8.  **Models/database:** persist users, sessions, and finalized game
+    records.
+
+## End-to-End Flow
+
+``` mermaid
+flowchart TD
+    Start["Open SLICE STORM"] --> Landing["Landing page"] --> Auth{"Authenticated?"}
+    Auth -- No --> Login["Login / Register"]
+    Login --> Protected["Protected game area"]
+    Auth -- Yes --> Protected
+    Protected --> Select["Choose mode"]
+    Select --> Session["Create game session"]
+    Session --> Play["Run Canvas gameplay"]
+    Play --> Finish["Game ends or timer expires"]
+    Finish --> Submit["Submit result"]
+    Submit --> Validate["Backend validates request and session"]
+    Validate --> Save["Save game result and update player data"]
+    Save --> Result["Show result / return to dashboard"]
+    Result --> History["View history"]
+    Result --> Leaderboard["View global or mode leaderboard"]
+```
+
+This is the intended product flow. Confirm exact request timing and
+result-screen behavior against the current page and service
+implementation.
