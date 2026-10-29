@@ -583,3 +583,58 @@ SLICE-STORM/
 
 Treat the actual repository as the definitive source for exact filenames
 and nesting.
+
+
+## Data Model
+
+The screenshots show Mongoose models for users, game sessions, and game
+results. Confirm exact fields in the model files.
+
+``` mermaid
+erDiagram
+    USER ||--o{ GAME_SESSION : starts
+    USER ||--o{ GAME : records
+    USER {
+        ObjectId _id
+        string name
+        string email
+        string avatar
+        number highestScore
+        number totalGames
+        number totalFruitsSliced
+        number highestCombo
+        number averageScore
+    }
+    GAME_SESSION {
+        ObjectId _id
+        string sessionId
+        ObjectId userId
+        string mode
+        date startedAt
+        date expiresAt
+        string status
+    }
+    GAME {
+        ObjectId _id
+        ObjectId userId
+        string sessionId
+        string mode
+        number score
+        number fruitsSliced
+        number fruitsMissed
+        number bombsHit
+        number maxCombo
+        number accuracy
+        number duration
+        date createdAt
+    }
+```
+
+-   **User:** player identity and persistent profile/statistics.
+-   **GameSession:** an individual attempt and its lifecycle.
+-   **Game:** finalized result used by history, dashboard, and
+    leaderboard queries.
+
+A separate leaderboard collection is not required when rankings can be
+queried from completed game records. Choose indexes based on real query
+patterns and verify them with query plans.
