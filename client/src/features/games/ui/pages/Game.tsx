@@ -36,16 +36,10 @@ export const Game: React.FC = memo(() => {
     isSavingGame,
   } = useGame();
 
-  const battlefieldClass =
-    gameMode === "zen"
-      ? "bg-[#F0F7F2] zen-pastel-pattern"
-      : gameMode === "arcade"
-      ? "bg-[#FFF2C6] arcade-pattern"
-      : "bg-[#F7E8C3] classic-pattern paper-pattern";
-
   return (
     <div
-      className={`relative w-full h-[calc(100vh-120px)] min-h-[580px] text-[#1b1c1c] font-['Rubik',sans-serif] overflow-hidden flex flex-col justify-between select-none transition-colors duration-500 ${battlefieldClass}`}
+      className="relative w-full h-[calc(100vh-90px)] min-h-[580px] text-[#1b1c1c] font-['Rubik',sans-serif] overflow-hidden flex flex-col justify-between select-none bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/canvas-bg.png')" }}
     >
       {/* GAME HUD DOCK (Visible once game starts: COUNTDOWN, PLAYING, PAUSED, GAMEOVER) */}
       {gameState !== "START" && (

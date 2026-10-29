@@ -129,7 +129,7 @@ export const Navbar: React.FC<NavbarProps> = memo(
       : "S";
 
     return (
-      <header className="relative w-full z-50 bg-white border-b-4 border-[#1b1c1c] shadow-[0_4px_0_0_#1b1c1c] transition-all select-none">
+      <header className="relative w-full z-50 bg-[#FFF7E5] border-b-4 border-[#1b1c1c] shadow-[0_4px_0_0_#1b1c1c] transition-all select-none">
         <div className="flex justify-between items-center w-full px-3 sm:px-6 py-2.5 max-w-7xl mx-auto gap-2">
           {/* Logo */}
           <Link

@@ -39,7 +39,7 @@ export const GameHud: React.FC<GameHudProps> = memo(
         <div className="flex flex-row justify-between items-center gap-1.5 sm:gap-3 md:gap-4">
           {/* 1. TOP-LEFT SCORE / FRUITS SLICED BOX */}
           {gameMode === "zen" ? (
-            <div className="pointer-events-auto bg-[#e8f5e9] border-2 sm:border-4 border-[#1b1c1c] rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 shadow-[2px_2px_0px_#1b1c1c] sm:shadow-[4px_4px_0px_#1b1c1c] flex items-center gap-1.5 sm:gap-2 transform -rotate-1 shrink-0">
+            <div className="pointer-events-auto bg-[#e8f5e9] bg-cover bg-center border-2 sm:border-4 border-[#1b1c1c] rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 shadow-[2px_2px_0px_#1b1c1c] sm:shadow-[4px_4px_0px_#1b1c1c] flex items-center gap-1.5 sm:gap-2 transform -rotate-1 shrink-0" style={{ backgroundImage: "url('/canvas%20bg.png')" }}>
               <div className="bg-[#2e7d32] text-white w-6 h-6 sm:w-8 sm:h-8 rounded border sm:border-2 border-[#1b1c1c] flex items-center justify-center font-['Rubik',sans-serif] text-[10px] sm:text-xs font-bold shadow-[1px_1px_0px_#1b1c1c]">
                 🌸
               </div>
@@ -53,7 +53,7 @@ export const GameHud: React.FC<GameHudProps> = memo(
               </div>
             </div>
           ) : (
-            <div className="pointer-events-auto bg-[#FFF4D6] border-2 sm:border-4 border-[#1b1c1c] rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 shadow-[2px_2px_0px_#1b1c1c] sm:shadow-[4px_4px_0px_#1b1c1c] flex items-center gap-1.5 sm:gap-2 transform -rotate-1 shrink-0">
+            <div className="pointer-events-auto bg-[#FFF4D6] bg-cover bg-center border-2 sm:border-4 border-[#1b1c1c] rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 shadow-[2px_2px_0px_#1b1c1c] sm:shadow-[4px_4px_0px_#1b1c1c] flex items-center gap-1.5 sm:gap-2 transform -rotate-1 shrink-0" >
               <div className="bg-[#b61929] text-white w-6 h-6 sm:w-8 sm:h-8 rounded border sm:border-2 border-[#1b1c1c] flex items-center justify-center font-['Titan_One','Bricolage_Grotesque',sans-serif] text-[10px] sm:text-xs font-bold shadow-[1px_1px_0px_#1b1c1c]">
                 ★
               </div>
