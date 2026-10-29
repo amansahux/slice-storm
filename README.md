@@ -344,3 +344,91 @@ sequenceDiagram
 
 The supplied routes do **not** expose a separate `POST /complete`
 endpoint. Result submission is represented by `POST /api/games`.
+
+
+### Session endpoints
+
+  ----------------------------------------------------------------------------------------------
+  Method            Endpoint                                 Access            Purpose
+  ----------------- ---------------------------------------- ----------------- -----------------
+  `POST`            `/api/game-sessions`                     Authenticated     Create a game
+                                                                               session
+
+  `PATCH`           `/api/game-sessions/:sessionId/status`   Authenticated     Update session
+                                                                               status, subject
+                                                                               to validator
+                                                                               rules
+  ----------------------------------------------------------------------------------------------
+
+### Game endpoints
+
+  ----------------------------------------------------------------------------
+  Method            Endpoint               Access            Purpose
+  ----------------- ---------------------- ----------------- -----------------
+  `POST`            `/api/games`           Authenticated     Save a game
+                                                             result
+
+  `GET`             `/api/games/history`   Authenticated     Retrieve the
+                                                             current player's
+                                                             history
+  ----------------------------------------------------------------------------
+
+For trustworthy records, the backend should verify session ownership,
+allowed status transitions, duration, mode, plausible values, and
+duplicate submissions. Confirm which checks are implemented in the
+current service.
+
+## Leaderboards and Dashboard
+
+``` mermaid
+flowchart LR
+    Games[("Completed game records")]
+    Users[("User records")]
+    Global["Global leaderboard service"]
+    Mode["Mode leaderboard service"]
+    Dashboard["Dashboard summary service"]
+    History["Game history service"]
+    Global --> GlobalUI["Leaderboard page"]
+    Mode --> GlobalUI
+    Dashboard --> DashboardUI["Dashboard page"]
+    History --> HistoryUI["History page"]
+    Games --> Global
+    Games --> Mode
+    Games --> Dashboard
+    Games --> History
+    Users --> Global
+    Users --> Mode
+    Users --> Dashboard
+```
+
+### Leaderboard endpoints
+
+  ----------------------------------------------------------------------------------
+  Method            Endpoint                     Access in         Purpose
+                                                 supplied router   
+  ----------------- ---------------------------- ----------------- -----------------
+  `GET`             `/api/leaderboards/global`   Public            Global
+                                                                   leaderboard
+
+  `GET`             `/api/leaderboards/:mode`    Public            Mode-specific
+                                                                   leaderboard
+  ----------------------------------------------------------------------------------
+
+Global and mode-specific rankings can be queried from completed game
+records; they do not inherently require separate highest-score fields
+for each mode on the user document. Personal bests by mode can be
+calculated from game records or stored as derived data with a defined
+update strategy.
+
+### Dashboard endpoint
+
+  --------------------------------------------------------------------------------
+  Method            Endpoint                   Access            Purpose
+  ----------------- -------------------------- ----------------- -----------------
+  `GET`             `/api/dashboard/summary`   Authenticated     Current player's
+                                                                 dashboard summary
+
+  --------------------------------------------------------------------------------
+
+The exact summary fields are defined by `dashboard.service.ts` and the
+dashboard controller.
