@@ -683,3 +683,67 @@ JWT_ACCESS_SECRET=replace_with_a_long_random_secret
 JWT_REFRESH_SECRET=replace_with_a_different_long_random_secret
 CLIENT_URL=http://localhost:5173
 ```
+
+### Client example
+
+``` env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+If your code expects different variable names, keep the names required
+by the implementation.
+
+## Local Development
+
+### Prerequisites
+
+-   Node.js compatible with the project package files.
+-   npm.
+-   A MongoDB connection string.
+-   Git.
+
+### 1. Clone the repository
+
+``` bash
+git clone <your-repository-url>
+cd SLICE-STORM
+```
+
+### 2. Install dependencies
+
+If client and server use separate package files:
+
+``` bash
+cd client
+npm install
+
+cd ../server
+npm install
+```
+
+### 3. Configure environment variables
+
+Create the required `.env` files using the names expected by the
+application.
+
+### 4. Start the backend
+
+From `server/`, use the script defined in `server/package.json`, for
+example:
+
+``` bash
+npm run dev
+```
+
+### 5. Start the frontend
+
+From `client/`, use the script defined in `client/package.json`, for
+example:
+
+``` bash
+npm run dev
+```
+
+Open the local URL printed by the frontend development server. The exact
+scripts were not included in the supplied route snippets, so use each
+package file as the source of truth.
