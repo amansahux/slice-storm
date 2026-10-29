@@ -747,3 +747,82 @@ npm run dev
 Open the local URL printed by the frontend development server. The exact
 scripts were not included in the supplied route snippets, so use each
 package file as the source of truth.
+
+
+
+
+
+
+
+
+
+## Deployment
+
+### Backend
+
+-   Configure production environment variables.
+-   Ensure MongoDB is reachable.
+-   Use the production start script in `server/package.json`.
+-   Configure CORS for the deployed frontend origin.
+-   Test the deployed APIs and health endpoint, if one exists.
+
+### Frontend
+
+-   Set the production API base URL.
+-   Run the frontend production build.
+-   Deploy the generated static assets.
+-   Configure SPA fallback so direct navigation to `/dashboard` or
+    `/leaderboard` returns the frontend entry point.
+
+### Post-deployment checks
+
+-   Register and log in.
+-   Refresh a protected route.
+-   Start and finish a game.
+-   Verify results are saved once.
+-   Check dashboard, history, and leaderboards.
+-   Test audio after a user gesture.
+-   Test mobile touch input, short viewport heights, and 100%/110%
+    browser zoom.
+
+## Engineering Notes
+
+-   **Frame performance:** keep per-frame objects out of Redux and
+    manage one animation loop.
+-   **Canvas scaling:** separate CSS dimensions from backing-store
+    dimensions and account for device pixel ratio.
+-   **Object lifecycle:** remove expired particles and off-screen
+    fruits; never reinsert sliced halves into the intact-fruit pool.
+-   **Audio:** resume `AudioContext` after a user gesture and clean up
+    timers/nodes when stopping music.
+-   **Session integrity:** enforce ownership and valid status
+    transitions.
+-   **Result integrity:** validate submitted results and prevent
+    duplicate completion.
+-   **Accessibility:** use clear labels, visible focus states,
+    reduced-motion support, and touch-friendly controls.
+-   **Database efficiency:** index frequent history and leaderboard
+    queries based on measured query patterns.
+
+## Roadmap
+
+Potential follow-up work, depending on what is already implemented:
+
+-   [ ] Add automated tests for session lifecycle and result validation.
+-   [ ] Add API integration tests for auth, history, dashboard, and
+    leaderboards.
+-   [ ] Document the exact API response contracts.
+-   [ ] Profile Canvas performance on lower-powered mobile devices.
+-   [ ] Add accessibility and reduced-motion checks.
+-   [ ] Document deployment URLs and health checks.
+-   [ ] Add gameplay screenshots and a short demo recording.
+
+------------------------------------------------------------------------
+
+## Acknowledgements
+
+SLICE STORM is an original arcade game project built to explore
+full-stack development, real-time browser rendering, interactive
+gameplay systems, and persistent player experiences.
+
+**SLICE. COMBO. SURVIVE.**
